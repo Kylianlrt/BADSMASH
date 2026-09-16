@@ -53,20 +53,13 @@ async function fetchHtml(url) {
 }
 
 function discoverEvents(html) {
-  // Recherche l'attribut data-markers indépendamment de l'ordre exact des classes HTML
-  const markerMatch = html.match(/data-markers="([^"]*)"/i) || html.match(/data-markers='([^']*)'/i);
-  if (!markerMatch) throw new Error('La liste publique BadNet n’a pas été trouvée.');
+  // DIAGNOSTIC : Afficher un aperçu du HTML reçu et chercher si "data-markers" existe vraiment
+  console.log("Taille du HTML reçu :", html.length);
+  console.log("Contient 'data-markers' ?", html.includes('data-markers'));
   
-  let rawJson = decodeHtml(markerMatch[1]);
-
-  try {
-    return JSON.parse(rawJson)
-      .filter(event => !/\bamical\b/i.test(String(event.name || '')))
-      .slice(0, MAX_EVENTS);
-  } catch (e) {
-    throw new Error('Erreur lors du parsing JSON des tournois BadNet : ' + e.message);
-  }
-}
+  const markerMatch = html.match(/data-markers="((?:\\.|[^"\\])*)"/i) || html.match(/data-markers='((?:\\.|[^'\\])*)'/i);
+  if (!markerMatch) throw new Error('La liste publique BadNet n’a pas été trouvée.');
+  ...
 
 function poonaNumber(html) {
   const text = decodeHtml(html.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ');
