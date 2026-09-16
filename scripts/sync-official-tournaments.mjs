@@ -47,18 +47,19 @@ async function fetchHtml(url) {
 }
 
 function discoverEvents(html) {
-  const markerMatch = html.match(/class="b-markers hidden"[^>]*data-markers="([\s\S]*?)"/i) 
-                   || html.match(/class="b-markers hidden"[^>]*data-markers='([\s\S]*?)'/i);
+  // Recherche l'attribut data-markers indépendamment de l'ordre exact des classes HTML
+  const markerMatch = html.match(/data-markers="([^"]*)"/i) || html.match(/data-markers='([^']*)'/i);
   if (!markerMatch) throw new Error('La liste publique BadNet n’a pas été trouvée.');
   
-  // Nettoyage des entités HTML ou guillemets échappés
-  let rawJson = decodeHtml(markerMatch[1])
-    .replace(/\\"/g, '"')
-    .replace(/\\'/g, "'");
+  let rawJson = decodeHtml(markerMatch[1]);
 
-  return JSON.parse(rawJson)
-    .filter(event => !/\bamical\b/i.test(String(event.name || '')))
-    .slice(0, MAX_EVENTS);
+  try {
+    return JSON.parse(rawJson)
+      .filter(event => !/\bamical\b/i.test(String(event.name || '')))
+      .slice(0, MAX_EVENTS);
+  } catch (e) {
+    throw new Error('Erreur lors du parsing JSON des tournois BadNet : ' + e.message);
+  }
 }
 
 function poonaNumber(html) {
