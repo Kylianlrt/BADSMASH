@@ -47,10 +47,17 @@ async function fetchHtml(url) {
 }
 
 function discoverEvents(html) {
-  const markerMatch = html.match(/class="b-markers hidden"[^>]*data-markers="([\s\S]*?)"/i);
+  const markerMatch = html.match(/class="b-markers hidden"[^>]*data-markers="([\s\S]*?)"/i) 
+                   || html.match(/class="b-markers hidden"[^>]*data-markers='([\s\S]*?)'/i);
   if (!markerMatch) throw new Error('La liste publique BadNet n’a pas été trouvée.');
-  return JSON.parse(decodeHtml(markerMatch[1]))
-    .filter(event => !/\\bamical\\b/i.test(String(event.name || '')))
+  
+  // Nettoyage des entités HTML ou guillemets échappés
+  let rawJson = decodeHtml(markerMatch[1])
+    .replace(/\\"/g, '"')
+    .replace(/\\'/g, "'");
+
+  return JSON.parse(rawJson)
+    .filter(event => !/\bamical\b/i.test(String(event.name || '')))
     .slice(0, MAX_EVENTS);
 }
 
