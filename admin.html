@@ -4,23 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Administration BADSMASH : clubs, joueurs, tournois, tableaux et matchs.">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0a1a2e">
     <title>BADSMASH - Administration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --bg: #0f172a; 
-            --card: #1e293b; 
-            --green: #10b981; 
-            --green-hover: #059669;
-            --text: #f8fafc; 
-            --sub: #94a3b8; 
-            --border: #334155; 
-            --accent: #3b82f6; 
-            --danger: #ef4444;
+        :root {
+            --bg: #0a1120;
+            --card: #141e32;
+            --green: #22c55e;
+            --green-hover: #16a34a;
+            --text: #f3f7fa;
+            --sub: #9aa9c4;
+            --border: #263455;
+            --accent: #4f8fd1;
+            --danger: #ef3d4e;
+            --gold: #f6b93b;
+            --violet: #8b5cf6;
         }
+        :root[data-theme="light"] {
+            --bg: #eef2f9;
+            --card: #ffffff;
+            --green: #16a34a;
+            --green-hover: #15803d;
+            --text: #101828;
+            --sub: #52607a;
+            --border: #dbe2ee;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .3s cubic-bezier(0.16,1,0.3,1);
+            z-index: 50;
+        }
+        .theme-toggle:hover { border-color: var(--violet); color: var(--violet); transform: rotate(20deg); }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; transition: background-color .4s, color .4s; }
         .container { max-width: 900px; margin: 0 auto; }
         
         .card { 
@@ -32,7 +65,9 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        h1 { color: var(--green); margin-bottom: 20px; text-align: center; font-size: 1.8rem; }
+        h1 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; letter-spacing: 0.03em; color: var(--green); margin-bottom: 20px; text-align: center; font-size: 2.1rem; }
+        h1 a { color: inherit; text-decoration: none; transition: filter .25s; }
+        h1 a:hover { filter: brightness(1.25); }
         h2 { color: var(--accent); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; font-size: 1.3rem; }
         h3 { color: var(--sub); margin: 16px 0 10px 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
 
@@ -52,7 +87,7 @@
             transition: border-color 0.2s;
         }
         input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-        :focus-visible { outline: 3px solid rgba(16, 185, 129, 0.75); outline-offset: 3px; }
+        :focus-visible { outline: 3px solid rgba(47, 174, 110, 0.75); outline-offset: 3px; }
         button:disabled { cursor: not-allowed; opacity: 0.55; }
 
         button { 
@@ -119,6 +154,18 @@
             font-weight: normal;
         }
         .checklist input[type="checkbox"] { width: auto; cursor: pointer; }
+        .joueur-convocation-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .joueur-convocation-row .convocation-field {
+            display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+            background: var(--card); border: 1px solid var(--accent); border-radius: 8px;
+            padding: 3px 8px; font-size: .8rem;
+        }
+        .joueur-convocation-row .input-heure-convocation { width: 100px; margin: 0; padding: 3px 4px; font-size: .82rem; border: none; background: none; }
+        .horaires-editor { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin: -4px 0 14px; }
+        .horaires-editor h4 { margin-bottom: 10px; font-size: .9rem; color: var(--green); }
+        .horaires-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+        .horaires-row:last-of-type { border-bottom: none; }
+        .horaires-row input[type="time"] { width: 120px; margin: 0; padding: 6px 8px; font-size: .82rem; }
 
         /* Styles spécifique à la liste des joueurs */
         .player-item {
@@ -141,7 +188,7 @@
             color: white;
             font-size: 0.85rem;
         }
-        .btn-edit:hover { background: #2563eb; }
+        .btn-edit:hover { background: #3d7bc2; }
         .btn-cancel {
             background: var(--sub);
             margin-top: 5px;
@@ -211,8 +258,8 @@
             transition: background 0.15s;
         }
         .bracket-entry:last-child { border-bottom: none; }
-        .bracket-entry:hover:not(.bye):not(.empty) { background: rgba(59, 130, 246, 0.15); }
-        .bracket-entry.winner { background: rgba(16, 185, 129, 0.15); color: var(--green); font-weight: bold; cursor: default; }
+        .bracket-entry:hover:not(.bye):not(.empty) { background: rgba(79, 143, 209, 0.15); }
+        .bracket-entry.winner { background: rgba(47, 174, 110, 0.15); color: var(--green); font-weight: bold; cursor: default; }
         .bracket-entry.bye { color: var(--sub); font-style: italic; cursor: default; }
         .bracket-entry.empty { color: var(--sub); cursor: default; opacity: 0.85; }
         .bracket-entry select.slot-select {
@@ -262,7 +309,7 @@
             background: var(--accent);
             color: white;
         }
-        .btn-save-score:hover { background: #2563eb; }
+        .btn-save-score:hover { background: #3d7bc2; }
         .score-entry-wo {
             margin-top: 8px;
             text-align: center;
@@ -332,12 +379,60 @@
             font-size: 0.85rem;
         }
         .btn-delete:hover { background: #dc2626; }
+        .btn-horaires {
+            width: auto;
+            margin-top: 0;
+            padding: 6px 12px;
+            background: #f6b93b;
+            color: #1e1300;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+        .btn-horaires:hover { background: #d97706; }
     </style>
 </head>
 <body>
+<!-- ===== BADSMASH — Décor : volants flottants ===== -->
+<div class="badsmash-shuttles" aria-hidden="true">
+    <span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span>
+    <span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span>
+</div>
+<style>
+    .badsmash-shuttles { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    .badsmash-shuttles span {
+        position: absolute; bottom: -10%; display: block; opacity: .28;
+        filter: drop-shadow(0 0 6px rgba(34,197,94,.3));
+        animation: badsmashShuttleFloat linear infinite;
+        will-change: transform, opacity;
+    }
+    :root[data-theme="light"] .badsmash-shuttles span { opacity: .2; filter: drop-shadow(0 0 6px rgba(22,163,74,.22)); }
+    @keyframes badsmashShuttleFloat {
+        0%   { transform: translate(0,0) rotate(-20deg); opacity: 0; }
+        10%  { opacity: .28; }
+        50%  { transform: translate(30px,-58vh) rotate(15deg); }
+        90%  { opacity: .28; }
+        100% { transform: translate(-25px,-118vh) rotate(-15deg); opacity: 0; }
+    }
+    .badsmash-shuttles span:nth-child(1)  { left: 4%;  font-size: 20px; animation-duration: 17s; animation-delay: -2s; }
+    .badsmash-shuttles span:nth-child(2)  { left: 14%; font-size: 14px; animation-duration: 13s; animation-delay: -8s; }
+    .badsmash-shuttles span:nth-child(3)  { left: 24%; font-size: 24px; animation-duration: 21s; animation-delay: -4s; }
+    .badsmash-shuttles span:nth-child(4)  { left: 34%; font-size: 16px; animation-duration: 15s; animation-delay: -11s; }
+    .badsmash-shuttles span:nth-child(5)  { left: 44%; font-size: 22px; animation-duration: 19s; animation-delay: -6s; }
+    .badsmash-shuttles span:nth-child(6)  { left: 54%; font-size: 15px; animation-duration: 14s; animation-delay: -1s; }
+    .badsmash-shuttles span:nth-child(7)  { left: 64%; font-size: 26px; animation-duration: 23s; animation-delay: -14s; }
+    .badsmash-shuttles span:nth-child(8)  { left: 73%; font-size: 17px; animation-duration: 16s; animation-delay: -9s; }
+    .badsmash-shuttles span:nth-child(9)  { left: 82%; font-size: 21px; animation-duration: 18s; animation-delay: -3s; }
+    .badsmash-shuttles span:nth-child(10) { left: 90%; font-size: 14px; animation-duration: 12s; animation-delay: -7s; }
+    .badsmash-shuttles span:nth-child(11) { left: 9%;  font-size: 18px; animation-duration: 20s; animation-delay: -16s; }
+    .badsmash-shuttles span:nth-child(12) { left: 59%; font-size: 19px; animation-duration: 22s; animation-delay: -18s; }
+    @media (prefers-reduced-motion: reduce) { .badsmash-shuttles { display: none; } }
+</style>
+
+
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Changer de thème">🌙</button>
 
 <div class="container">
-    <a href="index.html" class="btn-home">🏠 Accueil</a>
+    <a href="index.html" style="display:inline-block; font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.03em; color:var(--text); text-decoration:none; margin-bottom:16px; transition:transform .25s cubic-bezier(0.16,1,0.3,1);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">BAD<span style="color:var(--green);">SMASH</span></a>
 
     <!-- CONNEXION -->
     <div class="card" id="login-box">
@@ -353,7 +448,7 @@
 
     <!-- PANNEAU ADMIN -->
     <div id="admin-panel">
-        <h1>Gestion BADSMASH</h1>
+        <h1><a href="index.html">Gestion BADSMASH</a></h1>
 
         <div class="nav-tabs">
             <button type="button" class="btn-tab active" data-tab="tab-clubs">Clubs</button>
@@ -419,8 +514,9 @@
                 <!-- Champs espace membre -->
                 <div class="grid-2" id="box-compte-fields" style="display: none;">
                     <div class="form-group">
-                        <label for="joueur-email">Email (Identifiant de connexion)</label>
-                        <input type="email" id="joueur-email" placeholder="joueur@badsmash.fr">
+                        <label for="joueur-identifiant">Identifiant de connexion (prénom.nom)</label>
+                        <input type="text" id="joueur-identifiant" placeholder="ex: jean.dupont">
+                        <small style="color: var(--sub); font-size: 0.75rem;">Généré automatiquement depuis le prénom et le nom — modifiable si besoin.</small>
                     </div>
                     <div class="form-group">
                         <label for="joueur-pass">Mot de Passe Espace Perso</label>
@@ -494,6 +590,11 @@
                     <input type="text" id="tournoi-lieu" placeholder="ex: Gymnase Central" required>
                 </div>
 
+                <div class="form-group" style="display:flex; align-items:center; gap:10px; background: rgba(47,174,110,0.06); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px;">
+                    <input type="checkbox" id="tournoi-visible" checked style="width:auto; accent-color: var(--green); cursor:pointer;">
+                    <label for="tournoi-visible" style="margin:0; color: var(--text); cursor:pointer;">👁️ Visible dans l'espace public (Spectateur)</label>
+                </div>
+
                 <button type="submit" id="btn-submit-tournoi">Créer le Tournoi</button>
                 <button type="button" id="btn-cancel-edit-tournoi" class="btn-cancel" style="display: none;">Annuler la modification</button>
             </form>
@@ -541,12 +642,44 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <!-- SIMPLE : inscription joueur par joueur -->
+                    <div class="form-group" id="bloc-serie-joueurs">
                         <label>Inscrire des Joueurs dans cette série</label>
+                        <p class="empty-state" style="margin-bottom: 10px;">💡 Cochez un joueur pour l'inscrire : un champ <strong>🕒 Heure de convocation</strong> apparaît alors à droite de son nom (optionnel).</p>
                         <div class="search-box">
                             <input type="text" id="search-tournoi-joueurs" placeholder="Rechercher un joueur (nom, prénom)...">
                         </div>
                         <div class="checklist" id="tournoi-joueurs-list"></div>
+                    </div>
+
+                    <!-- DOUBLE / MIXTE : inscription par PAIRES (2 joueurs) -->
+                    <div class="form-group" id="bloc-serie-paires" style="display: none;">
+                        <label>Inscrire des Paires dans cette série (2 joueurs)</label>
+                        <p class="empty-state" style="margin-bottom: 10px;">En Double et en Mixte, l'inscription se fait par paire. La moyenne de la paire est la moyenne des points des deux joueurs dans la discipline du tableau sélectionné.</p>
+                        <div class="grid-2">
+                            <div>
+                                <label for="paire-j1" style="font-size: 0.8rem;">Joueur 1</label>
+                                <div class="search-box">
+                                    <input type="text" id="search-paire-j1" placeholder="Rechercher un joueur (nom, prénom)...">
+                                </div>
+                                <select id="paire-j1" size="6"><option value="">Sélectionner...</option></select>
+                            </div>
+                            <div>
+                                <label for="paire-j2" style="font-size: 0.8rem;">Joueur 2</label>
+                                <div class="search-box">
+                                    <input type="text" id="search-paire-j2" placeholder="Rechercher un joueur (nom, prénom)...">
+                                </div>
+                                <select id="paire-j2" size="6"><option value="">Sélectionner...</option></select>
+                            </div>
+                        </div>
+                        <div class="grid-2" style="margin-top: 10px; align-items: end;">
+                            <div>
+                                <label for="paire-heure" style="font-size: 0.8rem;">🕒 Heure de convocation (optionnel)</label>
+                                <input type="time" id="paire-heure">
+                            </div>
+                            <button type="button" id="btn-add-paire">➕ Ajouter cette paire</button>
+                        </div>
+                        <div id="liste-paires" style="margin-top: 12px;"></div>
                     </div>
 
                     <button type="submit" id="btn-submit-serie">Ajouter cette Série</button>
@@ -554,6 +687,7 @@
                 </form>
 
                 <h3 style="margin-top: 24px;">📋 Séries existantes de ce tournoi</h3>
+                <p class="empty-state" style="margin: 6px 0 12px;">💡 Pour ajouter ou modifier une heure de convocation après coup, cliquez sur <strong>🕒 Horaires</strong> sur la série concernée ci-dessous.</p>
                 <div id="liste-series"></div>
             </div>
         </div>
@@ -813,7 +947,9 @@
     let cacheClubs = {};        // tous les clubs enregistrés
     let cacheEvenements = {};   // entraînements + interclubs
     let unsubscribeDraws = null;
+    let currentSeriePaires = [];           // [{ j1: idJoueur, j2: idJoueur, heure: 'HH:MM' }] pour les séries Double / Mixte
     let currentSerieCheckedIds = new Set(); // joueurs cochés dans le formulaire d'une série en cours d'édition
+    let currentSerieConvocations = {};      // { idJoueur: 'HH:MM' } pour les séries Simple
 
     // --- Date du jour au format YYYY-MM-DD (pour pré-remplir les champs date) ---
     function todayISO() {
@@ -863,6 +999,42 @@
         });
     });
 
+    // --- Génération automatique de l'identifiant prenom.nom ---
+    function normalizeIdPart(str) {
+        return (str || '')
+            .toString()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // enlève les accents
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, ''); // enlève espaces, tirets, apostrophes...
+    }
+    function normalizeFullIdentifiant(str) {
+        return (str || '')
+            .toString()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, '')
+            .replace(/[^a-z0-9.]+/g, '');
+    }
+    function generateIdentifiant(prenom, nom) {
+        const p = normalizeIdPart(prenom);
+        const n = normalizeIdPart(nom);
+        if (!p && !n) return '';
+        return `${p}.${n}`;
+    }
+    function autoFillIdentifiant() {
+        // Ne régénère pas si on est en train de modifier un joueur existant
+        if (document.getElementById('edit-joueur-id').value) return;
+        if (joueurTypeSelect.value !== 'compte') return;
+        document.getElementById('joueur-identifiant').value = generateIdentifiant(
+            document.getElementById('joueur-prenom').value,
+            document.getElementById('joueur-nom').value
+        );
+    }
+    document.getElementById('joueur-prenom').addEventListener('input', autoFillIdentifiant);
+    document.getElementById('joueur-nom').addEventListener('input', autoFillIdentifiant);
+
     // --- Changement dynamiques des formulaires ---
     const joueurTypeSelect = document.getElementById('joueur-type');
     joueurTypeSelect.addEventListener('change', () => {
@@ -871,8 +1043,9 @@
         const isPro = (type === 'pro');
 
         document.getElementById('box-compte-fields').style.display = needAccount ? 'grid' : 'none';
-        document.getElementById('joueur-email').required = needAccount;
+        document.getElementById('joueur-identifiant').required = needAccount;
         document.getElementById('joueur-pass').required = needAccount;
+        if (needAccount) autoFillIdentifiant();
 
         if (isPro) {
             document.getElementById('box-joueur-club').style.display = 'none';
@@ -986,6 +1159,151 @@
         return `${genreTag}${j.prenom} ${j.nom} ${tag}`;
     }
 
+    // ============================================================
+    //   SÉRIES DOUBLE / MIXTE : INSCRIPTION PAR PAIRES
+    // ============================================================
+
+    // Points d'un joueur dans la discipline du tableau sélectionné
+    function pointsJoueurPourType(id, type) {
+        const j = cacheJoueurs[id];
+        if (!j) return 0;
+        if (type === 'double') return Number(j.ptsDouble || 0);
+        if (type === 'mixte') return Number(j.ptsMixte || 0);
+        return Number(j.ptsSimple || 0);
+    }
+
+    // Moyenne d'une paire = moyenne mathématique des points des 2 joueurs dans le tableau choisi
+    function moyennePaire(paire, type) {
+        return (pointsJoueurPourType(paire.j1, type) + pointsJoueurPourType(paire.j2, type)) / 2;
+    }
+
+    function nomCourtJoueur(id) {
+        const j = cacheJoueurs[id];
+        return j ? `${j.prenom} ${(j.nom || '').toUpperCase()}` : 'Joueur inconnu';
+    }
+
+    // Affiche ou masque le bloc "joueurs" ou le bloc "paires" selon la discipline choisie
+    function updateSerieFormMode() {
+        const type = document.getElementById('serie-type').value;
+        const estPaire = (type === 'double' || type === 'mixte');
+        document.getElementById('bloc-serie-joueurs').style.display = estPaire ? 'none' : 'block';
+        document.getElementById('bloc-serie-paires').style.display = estPaire ? 'block' : 'none';
+        if (estPaire) {
+            renderPaireSelects();
+            renderPairesList();
+        }
+    }
+
+    // Remplit les 2 listes déroulantes (joueurs déjà engagés dans une paire exclus),
+    // en tenant compte du champ de recherche propre à chaque liste.
+    function renderPaireSelects() {
+        const dejaPris = new Set();
+        currentSeriePaires.forEach(p => { dejaPris.add(p.j1); dejaPris.add(p.j2); });
+
+        const disponibles = Object.keys(cacheJoueurs)
+            .filter(id => !dejaPris.has(id))
+            .sort((a, b) => normalizeText(`${cacheJoueurs[a].nom} ${cacheJoueurs[a].prenom}`)
+                .localeCompare(normalizeText(`${cacheJoueurs[b].nom} ${cacheJoueurs[b].prenom}`)));
+
+        ['j1', 'j2'].forEach(slot => {
+            const select = document.getElementById(`paire-${slot}`);
+            const recherche = normalizeText(document.getElementById(`search-paire-${slot}`).value);
+            const ancienneValeur = select.value;
+
+            const trouves = disponibles.filter(id => !recherche
+                || normalizeText(`${cacheJoueurs[id].prenom} ${cacheJoueurs[id].nom}`).includes(recherche)
+                || normalizeText(`${cacheJoueurs[id].nom} ${cacheJoueurs[id].prenom}`).includes(recherche));
+
+            select.innerHTML = trouves.length
+                ? ['<option value="">Sélectionner...</option>'].concat(
+                    trouves.map(id => `<option value="${id}">${playerFullLabel(cacheJoueurs[id])}</option>`)).join('')
+                : '<option value="">Aucun joueur ne correspond à la recherche</option>';
+
+            if (ancienneValeur && trouves.includes(ancienneValeur)) select.value = ancienneValeur;
+        });
+    }
+    document.getElementById('search-paire-j1').addEventListener('input', renderPaireSelects);
+    document.getElementById('search-paire-j2').addEventListener('input', renderPaireSelects);
+
+    function renderPairesList() {
+        const container = document.getElementById('liste-paires');
+        const type = document.getElementById('serie-type').value;
+
+        if (currentSeriePaires.length === 0) {
+            container.innerHTML = '<p class="empty-state">Aucune paire inscrite pour le moment.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        currentSeriePaires.forEach((paire, index) => {
+            const p1 = pointsJoueurPourType(paire.j1, type);
+            const p2 = pointsJoueurPourType(paire.j2, type);
+            const moyenne = moyennePaire(paire, type);
+
+            const item = document.createElement('div');
+            item.className = 'player-item';
+            item.innerHTML = `
+                <span>
+                    <strong>${nomCourtJoueur(paire.j1)} / ${nomCourtJoueur(paire.j2)}</strong><br>
+                    <span style="color: var(--sub); font-size: 0.85rem;">
+                        ${p1} pts + ${p2} pts → moyenne de la paire : <strong>${moyenne.toFixed(2)} pts</strong>
+                        ${paire.heure ? ` · 🕒 Convocation : <strong>${paire.heure}</strong>` : ''}
+                    </span>
+                </span>
+                <span style="display:flex; gap:6px;">
+                    <button type="button" class="btn-edit-heure-paire" data-index="${index}">🕒 Heure</button>
+                    <button type="button" class="btn-delete" data-index="${index}">🗑️ Retirer</button>
+                </span>
+            `;
+            container.appendChild(item);
+        });
+
+        container.querySelectorAll('.btn-edit-heure-paire').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const index = Number(btn.dataset.index);
+                const actuelle = currentSeriePaires[index].heure || '';
+                const saisie = prompt("Heure de convocation de cette paire (format HH:MM) :", actuelle);
+                if (saisie === null) return;
+                currentSeriePaires[index].heure = saisie.trim();
+                renderPairesList();
+            });
+        });
+        container.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentSeriePaires.splice(Number(btn.dataset.index), 1);
+                renderPaireSelects();
+                renderPairesList();
+            });
+        });
+    }
+
+    document.getElementById('serie-type').addEventListener('change', updateSerieFormMode);
+
+    document.getElementById('btn-add-paire').addEventListener('click', () => {
+        const j1 = document.getElementById('paire-j1').value;
+        const j2 = document.getElementById('paire-j2').value;
+        const type = document.getElementById('serie-type').value;
+
+        if (!j1 || !j2) { alert("⚠️ Merci de sélectionner les deux joueurs de la paire."); return; }
+        if (j1 === j2) { alert("⚠️ Une paire doit être composée de deux joueurs différents."); return; }
+
+        if (type === 'mixte') {
+            const g1 = cacheJoueurs[j1]?.genre, g2 = cacheJoueurs[j2]?.genre;
+            const valide = (g1 === 'H' && g2 === 'F') || (g1 === 'F' && g2 === 'H');
+            if (!valide && !confirm("⚠️ En Mixte, une paire doit normalement être composée d'un homme et d'une femme. Continuer quand même ?")) return;
+        }
+
+        const heure = document.getElementById('paire-heure').value;
+        currentSeriePaires.push({ j1, j2, heure: heure || '' });
+        document.getElementById('search-paire-j1').value = '';
+        document.getElementById('search-paire-j2').value = '';
+        document.getElementById('paire-heure').value = '';
+        renderPaireSelects();
+        renderPairesList();
+    });
+
+    // ============================================================
+
     // --- Liste des joueurs pour inscription à une série de tournoi (avec recherche) ---
     function renderTournoiJoueursList() {
         const tournoiList = document.getElementById('tournoi-joueurs-list');
@@ -999,9 +1317,11 @@
             if (!matches) return;
 
             const isChecked = currentSerieCheckedIds.has(id);
+            const heureVal = currentSerieConvocations[id] || '';
             tournoiList.innerHTML += `
-                <label>
-                    <input type="checkbox" name="tournoi-joueur" value="${id}" ${isChecked ? 'checked' : ''}> ${label}
+                <label class="joueur-convocation-row">
+                    <span><input type="checkbox" name="tournoi-joueur" value="${id}" ${isChecked ? 'checked' : ''}> ${label}</span>
+                    ${isChecked ? `<span class="convocation-field">🕒 <input type="time" class="input-heure-convocation" data-id="${id}" value="${heureVal}" title="Heure de convocation"></span>` : ''}
                 </label>`;
         });
 
@@ -1011,9 +1331,13 @@
 
         tournoiList.querySelectorAll('input[name="tournoi-joueur"]').forEach(box => {
             box.addEventListener('change', () => {
-                if (box.checked) currentSerieCheckedIds.add(box.value);
-                else currentSerieCheckedIds.delete(box.value);
+                if (box.checked) { currentSerieCheckedIds.add(box.value); }
+                else { currentSerieCheckedIds.delete(box.value); delete currentSerieConvocations[box.value]; }
+                renderTournoiJoueursList();
             });
+        });
+        tournoiList.querySelectorAll('.input-heure-convocation').forEach(input => {
+            input.addEventListener('change', () => { currentSerieConvocations[input.dataset.id] = input.value; });
         });
     }
     document.getElementById('search-tournoi-joueurs').addEventListener('input', renderTournoiJoueursList);
@@ -1060,7 +1384,7 @@
         document.getElementById('joueur-genre').value = j.genre || '';
         document.getElementById('joueur-type').value = j.typeCompte || (j.isPro ? 'pro' : (j.hasAccount ? 'compte' : 'externe'));
         
-        document.getElementById('joueur-email').value = j.email || '';
+        document.getElementById('joueur-identifiant').value = j.identifiant || '';
         document.getElementById('joueur-pass').value = j.password || '';
         document.getElementById('joueur-club').value = j.clubId || '';
         document.getElementById('joueur-pays').value = j.pays || '';
@@ -1735,15 +2059,22 @@
 
             const dateLabel = (t.dateFin && t.dateFin !== t.date) ? `${t.date || ''} → ${t.dateFin}` : (t.date || '');
             const nbSeries = t.series ? Object.keys(t.series).length : (t.serie ? 1 : 0);
+            const isVisible = t.visible !== false;
+            const visBadge = isVisible
+                ? `<span style="color: var(--green); font-weight:700;">👁️ Visible</span>`
+                : `<span style="color: var(--danger); font-weight:700;">🚫 Masqué</span>`;
 
             const item = document.createElement('div');
             item.className = 'player-item';
             item.innerHTML = `
                 <span>
                     <strong>${t.nom}</strong><br>
-                    <span style="color: var(--sub); font-size: 0.85rem;">📅 ${dateLabel} — 📍 ${t.lieu || ''} — ${nbSeries} série${nbSeries > 1 ? 's' : ''}</span>
+                    <span style="color: var(--sub); font-size: 0.85rem;">📅 ${dateLabel} — 📍 ${t.lieu || ''} — ${nbSeries} série${nbSeries > 1 ? 's' : ''} — ${visBadge}</span>
                 </span>
-                <button type="button" class="btn-edit" data-id="${id}">✏️ Modifier</button>
+                <span style="display:flex; gap:8px;">
+                    <button type="button" class="btn-toggle-visible" data-id="${id}" data-visible="${isVisible}" style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; cursor:pointer;">${isVisible ? '🚫 Masquer' : '👁️ Afficher'}</button>
+                    <button type="button" class="btn-edit" data-id="${id}">✏️ Modifier</button>
+                </span>
             `;
             container.appendChild(item);
         });
@@ -1754,6 +2085,17 @@
 
         container.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', (e) => editTournoi(e.currentTarget.dataset.id));
+        });
+
+        container.querySelectorAll('.btn-toggle-visible').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.currentTarget.dataset.id;
+                const currentlyVisible = e.currentTarget.dataset.visible === 'true';
+                update(ref(db, `tournois/${id}`), { visible: !currentlyVisible }).catch((error) => {
+                    console.error("Erreur mise à jour visibilité tournoi :", error);
+                    alert("❌ Impossible de mettre à jour la visibilité.\n\nErreur Firebase : " + error.message);
+                });
+            });
         });
     }
     document.getElementById('search-tournois-edit').addEventListener('input', renderTournoisEditList);
@@ -1767,6 +2109,7 @@
         document.getElementById('tournoi-date').value = t.date || '';
         document.getElementById('tournoi-date-fin').value = t.dateFin || '';
         document.getElementById('tournoi-lieu').value = t.lieu || '';
+        document.getElementById('tournoi-visible').checked = t.visible !== false;
 
         document.getElementById('tournoi-form-title').innerText = "✏️ Modifier le Tournoi";
         document.getElementById('btn-submit-tournoi').innerText = "Mettre à jour le Tournoi";
@@ -1799,7 +2142,8 @@
             nom: document.getElementById('tournoi-nom').value.trim(),
             date: dateDebut,
             dateFin: dateFin,
-            lieu: document.getElementById('tournoi-lieu').value.trim()
+            lieu: document.getElementById('tournoi-lieu').value.trim(),
+            visible: document.getElementById('tournoi-visible').checked
         };
 
         if (editId) {
@@ -1872,13 +2216,25 @@
                     <span style="color: var(--sub); font-size: 0.85rem;">${s.ptsMin} - ${s.ptsMax} pts · ${nbJoueurs} joueur${nbJoueurs > 1 ? 's' : ''} inscrit${nbJoueurs > 1 ? 's' : ''}</span>
                 </span>
                 <span style="display: flex; gap: 6px;">
+                    <button type="button" class="btn-horaires" data-tid="${tournoiId}" data-sid="${sid}">🕒 Horaires</button>
                     <button type="button" class="btn-edit" data-tid="${tournoiId}" data-sid="${sid}">✏️ Modifier</button>
                     <button type="button" class="btn-delete" data-tid="${tournoiId}" data-sid="${sid}">🗑️ Supprimer</button>
                 </span>
             `;
             container.appendChild(item);
+
+            // Panneau d'édition rapide des heures de convocation, replié par défaut :
+            // permet d'ajouter/modifier les convocations sans rouvrir tout le formulaire de série.
+            const panel = document.createElement('div');
+            panel.className = 'horaires-editor';
+            panel.id = `horaires-editor-${sid}`;
+            panel.style.display = 'none';
+            container.appendChild(panel);
         });
 
+        container.querySelectorAll('.btn-horaires').forEach(btn => {
+            btn.addEventListener('click', () => toggleHorairesEditor(btn.dataset.tid, btn.dataset.sid));
+        });
         container.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', () => editSerie(btn.dataset.tid, btn.dataset.sid));
         });
@@ -1886,6 +2242,76 @@
             btn.addEventListener('click', () => deleteSerie(btn.dataset.tid, btn.dataset.sid));
         });
     }
+
+    // --- Édition rapide des heures de convocation d'une série déjà créée ---
+    function toggleHorairesEditor(tournoiId, serieId) {
+        const panel = document.getElementById(`horaires-editor-${serieId}`);
+        if (!panel) return;
+        const estOuvert = panel.style.display !== 'none';
+        panel.style.display = estOuvert ? 'none' : 'block';
+        if (!estOuvert) renderHorairesEditor(tournoiId, serieId);
+    }
+
+    function renderHorairesEditor(tournoiId, serieId) {
+        const panel = document.getElementById(`horaires-editor-${serieId}`);
+        const t = cacheTournois[tournoiId];
+        const s = t && t.series && t.series[serieId];
+        if (!panel || !s) return;
+
+        const estPaire = (s.type === 'double' || s.type === 'mixte');
+
+        let lignesHtml;
+        if (estPaire) {
+            const paires = Array.isArray(s.paires) ? s.paires : [];
+            lignesHtml = paires.length ? paires.map((paire, index) => `
+                <div class="horaires-row">
+                    <span>${nomCourtJoueur(paire.j1)} / ${nomCourtJoueur(paire.j2)}</span>
+                    <input type="time" data-index="${index}" value="${paire.heure || ''}">
+                </div>`).join('') : '<p class="empty-state">Aucune paire inscrite dans cette série.</p>';
+        } else {
+            const joueurs = Array.isArray(s.joueurs) ? s.joueurs : [];
+            const convocations = s.convocations || {};
+            lignesHtml = joueurs.length ? joueurs.map(id => `
+                <div class="horaires-row">
+                    <span>${nomCourtJoueur(id)}</span>
+                    <input type="time" data-id="${id}" value="${convocations[id] || ''}">
+                </div>`).join('') : '<p class="empty-state">Aucun joueur inscrit dans cette série.</p>';
+        }
+
+        panel.innerHTML = `
+            <h4>🕒 Heures de convocation — ${s.nom}</h4>
+            ${lignesHtml}
+            <button type="button" class="btn-save-horaires" style="margin-top: 10px;">💾 Enregistrer les horaires</button>
+        `;
+
+        panel.querySelector('.btn-save-horaires').addEventListener('click', () => {
+            if (estPaire) {
+                const paires = (s.paires || []).map((paire, index) => ({
+                    ...paire,
+                    heure: panel.querySelector(`input[data-index="${index}"]`).value || ''
+                }));
+                update(ref(db, `tournois/${tournoiId}/series/${serieId}`), { paires }).then(() => {
+                    alert("✅ Horaires enregistrés !");
+                }).catch(error => {
+                    console.error("Erreur enregistrement horaires :", error);
+                    alert("❌ Impossible d'enregistrer les horaires.\\n\\nErreur Firebase : " + error.message);
+                });
+            } else {
+                const convocations = {};
+                (s.joueurs || []).forEach(id => {
+                    const val = panel.querySelector(`input[data-id="${id}"]`).value;
+                    if (val) convocations[id] = val;
+                });
+                update(ref(db, `tournois/${tournoiId}/series/${serieId}`), { convocations }).then(() => {
+                    alert("✅ Horaires enregistrés !");
+                }).catch(error => {
+                    console.error("Erreur enregistrement horaires :", error);
+                    alert("❌ Impossible d'enregistrer les horaires.\\n\\nErreur Firebase : " + error.message);
+                });
+            }
+        });
+    }
+
 
     function editSerie(tournoiId, serieId) {
         const t = cacheTournois[tournoiId];
@@ -1899,8 +2325,11 @@
         document.getElementById('serie-pts-max').value = s.ptsMax || 0;
 
         currentSerieCheckedIds = new Set(s.joueurs || []);
+        currentSeriePaires = Array.isArray(s.paires) ? s.paires.map(p => ({ j1: p.j1, j2: p.j2, heure: p.heure || '' })) : [];
+        currentSerieConvocations = { ...(s.convocations || {}) };
         document.getElementById('search-tournoi-joueurs').value = '';
         renderTournoiJoueursList();
+        updateSerieFormMode();
 
         document.getElementById('serie-form-title').innerText = "✏️ Modifier la Série";
         document.getElementById('btn-submit-serie').innerText = "Mettre à jour la Série";
@@ -1913,8 +2342,11 @@
         document.getElementById('form-serie').reset();
         document.getElementById('edit-serie-id').value = '';
         currentSerieCheckedIds = new Set();
+        currentSeriePaires = [];
+        currentSerieConvocations = {};
         document.getElementById('search-tournoi-joueurs').value = '';
         renderTournoiJoueursList();
+        updateSerieFormMode();
 
         document.getElementById('serie-form-title').innerText = "➕ Ajouter une Série";
         document.getElementById('btn-submit-serie').innerText = "Ajouter cette Série";
@@ -1938,12 +2370,31 @@
         if (!tournoiId) { alert("⚠️ Merci de sélectionner un tournoi."); return; }
 
         const editSerieId = document.getElementById('edit-serie-id').value;
+        const typeSerie = document.getElementById('serie-type').value;
+        const estPaire = (typeSerie === 'double' || typeSerie === 'mixte');
+
+        if (estPaire && currentSeriePaires.length === 0) {
+            alert("⚠️ En Double / Mixte, merci d'inscrire au moins une paire.");
+            return;
+        }
+
         const serieData = {
             nom: document.getElementById('serie-nom').value.trim(),
-            type: document.getElementById('serie-type').value,
+            type: typeSerie,
             ptsMin: parseFloat(document.getElementById('serie-pts-min').value) || 0,
             ptsMax: parseFloat(document.getElementById('serie-pts-max').value) || 0,
-            joueurs: Array.from(currentSerieCheckedIds)
+            // En Double / Mixte : on stocke les paires ET la liste à plat des joueurs
+            // (pour rester compatible avec les tableaux et l'espace joueur).
+            paires: estPaire ? currentSeriePaires.map(p => ({ j1: p.j1, j2: p.j2, heure: p.heure || '' })) : null,
+            joueurs: estPaire
+                ? currentSeriePaires.flatMap(p => [p.j1, p.j2])
+                : Array.from(currentSerieCheckedIds),
+            // Heures de convocation : par joueur en Simple (uniquement ceux inscrits), par paire en Double/Mixte
+            convocations: estPaire
+                ? null
+                : Object.fromEntries(Array.from(currentSerieCheckedIds)
+                    .filter(id => currentSerieConvocations[id])
+                    .map(id => [id, currentSerieConvocations[id]]))
         };
 
         if (editSerieId) {
@@ -2078,7 +2529,7 @@
             typeCompte: typeSelect,
             hasAccount: hasAccount,
             isPro: isPro,
-            email: hasAccount ? document.getElementById('joueur-email').value.trim() : null,
+            identifiant: hasAccount ? (normalizeFullIdentifiant(document.getElementById('joueur-identifiant').value) || generateIdentifiant(document.getElementById('joueur-prenom').value, document.getElementById('joueur-nom').value)) : null,
             password: hasAccount ? document.getElementById('joueur-pass').value : null,
             clubId: isPro ? null : document.getElementById('joueur-club').value,
             pays: isPro ? document.getElementById('joueur-pays').value.trim() : null,
@@ -2166,6 +2617,24 @@
             matchTableauTypeSelect.dispatchEvent(new Event('change'));
         });
     });
+</script>
+
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        const btn = document.getElementById('themeToggle');
+        if (btn) btn.textContent = theme === 'light' ? '☀️' : '🌙';
+        localStorage.setItem('badsmash_theme', theme);
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        applyTheme(current === 'light' ? 'dark' : 'light');
+    }
+    (function initTheme() {
+        const saved = localStorage.getItem('badsmash_theme');
+        const preferLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        applyTheme(saved || (preferLight ? 'light' : 'dark'));
+    })();
 </script>
 </body>
 </html>

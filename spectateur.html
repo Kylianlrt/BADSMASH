@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BADSMASH : scores en direct, tournois, tableaux et classements de badminton.">
+    <meta name="description" content="BADSMASH : tableaux et classements de badminton FFBaD.">
     <meta name="theme-color" content="#101b18">
-<title>BADSMASH — Live &amp; Classements</title>
+<title>BADSMASH — Tableaux &amp; Classements</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -15,23 +15,48 @@
             *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
         }
     :root {
-        --court-navy: #0a1a2e;
-        --court-navy-deep: #071322;
-        --card: #10233d;
-        --card-raised: #142c4a;
-        --line: #24405f;
-        --line-soft: #1a3050;
+        --court-navy: #0a1120;
+        --court-navy-deep: #071019;
+        --card: #141e32;
+        --card-raised: #1a2740;
+        --line: #263455;
+        --line-soft: #1a2743;
         --chalk: #f3f7fa;
-        --chalk-dim: #9db1c7;
-        --court-green: #2fae6e;
-        --court-green-deep: #1c7a4c;
+        --chalk-dim: #9aa9c4;
+        --court-green: #22c55e;
+        --court-green-deep: #16a34a;
         --net-white: #e7edf3;
         --live-red: #ef3d4e;
         --gold: #f6b93b;
         --silver: #c9d3dd;
         --bronze: #d08a4a;
         --shuttle: #ffd166;
+        --violet: #8b5cf6;
     }
+    :root[data-theme="light"] {
+        --court-navy: #eef2f9;
+        --court-navy-deep: #e3e9f5;
+        --card: #ffffff;
+        --card-raised: #f4f7fc;
+        --line: #dbe2ee;
+        --line-soft: #e6ebf4;
+        --chalk: #101828;
+        --chalk-dim: #52607a;
+        --court-green: #16a34a;
+        --court-green-deep: #15803d;
+    }
+    body { transition: background-color .4s cubic-bezier(0.16,1,0.3,1), color .4s; }
+    .theme-toggle {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
+        color: var(--chalk);
+        width: 38px; height: 38px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 1.05rem;
+        transition: all .3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .theme-toggle:hover { border-color: var(--violet); color: var(--violet); transform: rotate(20deg); }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -58,7 +83,8 @@
         max-width: 1040px; margin: 0 auto; padding: 18px 20px;
         display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; transition: transform .25s cubic-bezier(0.16,1,0.3,1), filter .25s; }
+    .brand:hover { transform: scale(1.03); filter: brightness(1.1); }
     .brand .mark {
         width: 42px; height: 42px; border-radius: 10px;
         background: linear-gradient(155deg, var(--court-green) 0%, var(--court-green-deep) 100%);
@@ -109,30 +135,6 @@
         opacity: 0.7;
     }
 
-    /* ===== LIVE BADGE ===== */
-    .live-badge {
-        background: var(--live-red); color: white; padding: 3px 10px; border-radius: 4px;
-        font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
-        display: inline-flex; align-items: center; gap: 5px;
-    }
-    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: pulse 1.3s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.75); } }
-    @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
-
-    /* ===== CIRCUIT SELECTOR ===== */
-    .circuit-selector {
-        display: flex; gap: 8px; margin: 22px 0 4px;
-        background: var(--court-navy-deep); padding: 6px; border-radius: 12px; border: 1px solid var(--line);
-    }
-    .btn-circuit {
-        flex: 1; padding: 13px 10px; background: transparent; border: none; border-radius: 8px;
-        color: var(--chalk-dim); font-weight: 700; font-size: 0.92rem; cursor: pointer; text-align: center;
-        transition: all 0.18s; letter-spacing: 0.01em;
-    }
-    .btn-circuit.active[data-circuit="bwf"] { background: linear-gradient(155deg, #f6b93b, #d99420); color: #211200; }
-    .btn-circuit.active[data-circuit="ffbad"] { background: linear-gradient(155deg, var(--court-green), var(--court-green-deep)); color: #04150c; }
-    .btn-circuit:not(.active):hover { color: var(--chalk); background: rgba(255,255,255,0.04); }
-
     /* ===== CARD ===== */
     .card {
         background: var(--card);
@@ -140,88 +142,6 @@
         border-radius: 14px;
         padding: 22px;
     }
-
-    /* ===== LIVE MATCH SCOREBOARD CARDS ===== */
-    .grid-matchs { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
-    .match-card {
-        background: var(--card-raised);
-        border-radius: 10px;
-        border: 1px solid var(--line);
-        overflow: hidden;
-        position: relative;
-    }
-    .match-card::before {
-        content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-        background: var(--court-green);
-    }
-    .match-card.is-live::before { background: var(--live-red); }
-    .match-card-body { padding: 15px 16px 13px 18px; }
-    .mc-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .mc-inprogress { color: var(--court-green); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; display:flex; align-items:center; gap:6px; }
-    .mc-winner-tag { color: var(--gold); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-
-    .mc-players { display: flex; flex-direction: column; gap: 3px; margin-bottom: 12px; }
-    .mc-player { font-size: 0.98rem; font-weight: 600; color: var(--chalk); }
-    .mc-player.winner { color: var(--gold); }
-    .mc-vs {
-        font-family: 'Bebas Neue', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em;
-        color: var(--chalk-dim); display: flex; align-items: center; gap: 8px; margin: 2px 0;
-    }
-    .mc-vs::before, .mc-vs::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-    .mc-flag { margin-right: 6px; }
-
-    .mc-sets { display: flex; gap: 6px; flex-wrap: wrap; }
-    .set-chip {
-        font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.82rem;
-        background: var(--court-navy-deep); border: 1px solid var(--line);
-        border-radius: 5px; padding: 4px 8px; color: var(--net-white);
-        font-variant-numeric: tabular-nums;
-    }
-    .mc-empty-score { font-size: 0.78rem; color: var(--chalk-dim); font-style: italic; }
-
-    .results-divider {
-        grid-column: 1 / -1;
-        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-        color: var(--chalk-dim); margin: 10px 0 2px; padding-top: 14px; border-top: 1px dashed var(--line);
-    }
-    .match-card.is-live { box-shadow: 0 0 0 1px rgba(239,61,78,0.25); }
-    .match-card:not(.is-live) { opacity: 0.88; }
-
-    /* ===== TOURNAMENTS ===== */
-    .tournoi-item {
-        padding: 14px 16px; background: var(--card-raised); border: 1px solid var(--line); border-radius: 10px;
-        margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
-    }
-    .tournoi-item:last-child { margin-bottom: 0; }
-    .tournoi-name { font-weight: 700; color: var(--chalk); font-size: 0.98rem; }
-    .tournoi-meta { font-size: 0.78rem; color: var(--chalk-dim); margin-top: 3px; display: flex; gap: 12px; flex-wrap: wrap; }
-    .tournoi-badge {
-        font-size: 0.68rem; padding: 5px 10px; border-radius: 20px; font-weight: 800;
-        letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
-    }
-    .tournoi-source-link {
-        display: inline-flex; align-items: center; gap: 5px; margin-top: 9px;
-        color: var(--court-green); font-size: .78rem; font-weight: 700;
-        text-decoration: none;
-    }
-    .tournoi-source-link:hover { text-decoration: underline; }
-    .official-note { color: var(--chalk-dim); font-size: .8rem; margin: 10px 0 0; }
-    .badge-bwf { background: rgba(246, 185, 59, 0.14); color: var(--gold); border: 1px solid rgba(246,185,59,0.4); }
-    .badge-ffbad { background: rgba(47, 174, 110, 0.14); color: var(--court-green); border: 1px solid rgba(47,174,110,0.4); }
-
-    .status-pill {
-        font-size: 0.66rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase;
-        padding: 3px 9px; border-radius: 20px; margin-right: 8px;
-    }
-    .status-live { background: rgba(239, 61, 78, 0.16); color: var(--live-red); border: 1px solid rgba(239,61,78,0.4); }
-    .status-upcoming { background: rgba(147, 174, 209, 0.12); color: var(--chalk-dim); border: 1px solid var(--line); }
-    .status-finished { background: rgba(47, 174, 110, 0.10); color: var(--court-green); border: 1px solid rgba(47,174,110,0.3); opacity: 0.8; }
-
-    .tournoi-group-title {
-        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-        color: var(--chalk-dim); margin: 18px 0 10px; display: flex; align-items: center; gap: 8px;
-    }
-    .tournoi-group-title:first-child { margin-top: 0; }
 
     /* ===== RANKING TABS ===== */
     .bwf-tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
@@ -247,11 +167,27 @@
     .medal { margin-right: 4px; }
     .player-name strong { color: var(--chalk); }
     .pts { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--court-green); font-variant-numeric: tabular-nums; }
-    .flag { font-size: 1.05rem; margin-right: 7px; }
 
     .empty-state {
         color: var(--chalk-dim); font-style: italic; font-size: 0.88rem; padding: 22px 10px; text-align: center;
     }
+
+    /* ===== LISTE DES TOURNOIS ===== */
+    .tournois-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .tournoi-card {
+        background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px;
+        transition: border-color .2s, transform .2s;
+    }
+    .tournoi-card:hover { border-color: var(--court-green); transform: translateY(-2px); }
+    .tournoi-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.03em; color: var(--chalk); margin: 10px 0 6px; }
+    .tournoi-meta { font-size: 0.82rem; color: var(--chalk-dim); display: flex; flex-direction: column; gap: 4px; }
+    .tournoi-badge {
+        display: inline-flex; align-items: center; gap: 6px; font-size: 0.68rem; font-weight: 700;
+        letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px;
+    }
+    .tournoi-badge.upcoming { background: rgba(139,92,246,0.12); color: var(--violet); }
+    .tournoi-badge.live { background: rgba(239,61,78,0.12); color: var(--live-red); }
+    .tournoi-badge.done { background: rgba(154,169,196,0.12); color: var(--chalk-dim); }
 
     footer { text-align: center; margin-top: 44px; font-size: 0.72rem; color: var(--chalk-dim); letter-spacing: 0.06em; }
     footer strong { color: var(--court-green); }
@@ -292,64 +228,76 @@
 
     @media (max-width: 560px) {
         h1.wordmark { font-size: 1.7rem; }
-        .grid-matchs { grid-template-columns: 1fr; }
         table { display: block; overflow-x: auto; white-space: nowrap; }
     }
 </style>
 </head>
 <body>
+<!-- ===== BADSMASH — Décor : volants flottants ===== -->
+<div class="badsmash-shuttles" aria-hidden="true">
+    <span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span>
+    <span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span>
+</div>
+<style>
+    .badsmash-shuttles { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    .badsmash-shuttles span {
+        position: absolute; bottom: -10%; display: block; opacity: .28;
+        filter: drop-shadow(0 0 6px rgba(34,197,94,.3));
+        animation: badsmashShuttleFloat linear infinite;
+        will-change: transform, opacity;
+    }
+    :root[data-theme="light"] .badsmash-shuttles span { opacity: .2; filter: drop-shadow(0 0 6px rgba(22,163,74,.22)); }
+    @keyframes badsmashShuttleFloat {
+        0%   { transform: translate(0,0) rotate(-20deg); opacity: 0; }
+        10%  { opacity: .28; }
+        50%  { transform: translate(30px,-58vh) rotate(15deg); }
+        90%  { opacity: .28; }
+        100% { transform: translate(-25px,-118vh) rotate(-15deg); opacity: 0; }
+    }
+    .badsmash-shuttles span:nth-child(1)  { left: 4%;  font-size: 20px; animation-duration: 17s; animation-delay: -2s; }
+    .badsmash-shuttles span:nth-child(2)  { left: 14%; font-size: 14px; animation-duration: 13s; animation-delay: -8s; }
+    .badsmash-shuttles span:nth-child(3)  { left: 24%; font-size: 24px; animation-duration: 21s; animation-delay: -4s; }
+    .badsmash-shuttles span:nth-child(4)  { left: 34%; font-size: 16px; animation-duration: 15s; animation-delay: -11s; }
+    .badsmash-shuttles span:nth-child(5)  { left: 44%; font-size: 22px; animation-duration: 19s; animation-delay: -6s; }
+    .badsmash-shuttles span:nth-child(6)  { left: 54%; font-size: 15px; animation-duration: 14s; animation-delay: -1s; }
+    .badsmash-shuttles span:nth-child(7)  { left: 64%; font-size: 26px; animation-duration: 23s; animation-delay: -14s; }
+    .badsmash-shuttles span:nth-child(8)  { left: 73%; font-size: 17px; animation-duration: 16s; animation-delay: -9s; }
+    .badsmash-shuttles span:nth-child(9)  { left: 82%; font-size: 21px; animation-duration: 18s; animation-delay: -3s; }
+    .badsmash-shuttles span:nth-child(10) { left: 90%; font-size: 14px; animation-duration: 12s; animation-delay: -7s; }
+    .badsmash-shuttles span:nth-child(11) { left: 9%;  font-size: 18px; animation-duration: 20s; animation-delay: -16s; }
+    .badsmash-shuttles span:nth-child(12) { left: 59%; font-size: 19px; animation-duration: 22s; animation-delay: -18s; }
+    @media (prefers-reduced-motion: reduce) { .badsmash-shuttles { display: none; } }
+</style>
+
 
 <div class="topbar">
     <div class="topbar-inner">
-        <div class="brand">
+        <a href="index.html" class="brand">
             <div class="mark">🏸</div>
             <div>
                 <h1 class="wordmark">BAD<span>SMASH</span></h1>
-                <div class="tagline">Résultats &amp; classements en direct</div>
+                <div class="tagline">Tableaux &amp; classements FFBaD</div>
             </div>
+        </a>
+        <div class="topbar-actions">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Changer de thème">🌙</button>
+            <a href="admin.html" class="btn-admin">⚙ Espace admin</a>
         </div>
-        <a href="admin.html" class="btn-admin">⚙ Espace admin</a>
     </div>
 </div>
 
 <div class="wrap">
-
-    <!-- Choix du Circuit -->
-    <div class="circuit-selector">
-        <button class="btn-circuit active" data-circuit="bwf">⭐ Circuit BWF · Pro</button>
-        <button class="btn-circuit" data-circuit="ffbad">🇫🇷 Circuit FFBaD · Amateur / Club</button>
-    </div>
-
-    <!-- Matchs en Direct -->
-    <section>
-        <div class="section-head">
-            <div>
-                <div class="eyebrow">Court central</div>
-                <h2 class="section-title">Matchs <span class="live-badge"><span class="live-dot"></span>Live</span></h2>
-            </div>
-        </div>
-        <div class="card">
-            <div id="live-matchs" class="grid-matchs">
-                <div class="empty-state">Chargement des matchs…</div>
-            </div>
-        </div>
-    </section>
-
-    <div class="net-divider"><span class="net-pole"></span><span class="net-mesh"></span><span class="net-pole"></span></div>
 
     <!-- Tournois -->
     <section>
         <div class="section-head">
             <div>
                 <div class="eyebrow">Calendrier</div>
-                <h2 class="section-title" id="tournois-title">Tournois en cours</h2>
+                <h2 class="section-title">Tournois</h2>
             </div>
         </div>
-        <div class="card">
-            <div id="tournois-list">
-                <div class="empty-state">Chargement des tournois…</div>
-            </div>
-            <p id="official-tournaments-note" class="official-note"></p>
+        <div id="spec-tournois-list" class="tournois-grid">
+            <div class="empty-state">Aucun tournoi publié pour le moment.</div>
         </div>
     </section>
 
@@ -415,7 +363,7 @@
         </div>
     </section>
 
-    <footer>BADSMASH · <strong>BWF</strong> Pro &amp; <strong>FFBaD</strong> Amateur, un seul filet 🏸</footer>
+    <footer>BADSMASH · <strong>FFBaD</strong> Amateur, un seul filet 🏸</footer>
 </div>
 
 <script type="module">
@@ -435,108 +383,16 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    let activeCircuit = 'bwf';
+    // Le site public ne propose plus que le circuit FFBaD (le circuit BWF Pro a été retiré).
+    const activeCircuit = 'ffbad';
     let currentCat = 'SH';
     let dbJoueurs = {};
     let dbClubs = {};
     let dbTournois = {};
-    let dbTournoisOfficiels = {};
-    let dbMatchs = {};
-
-    const flagsMap = {
-        "Chine": "🇨🇳", "China": "🇨🇳", "CHN": "🇨🇳",
-        "Thaïlande": "🇹🇭", "Thailand": "🇹🇭", "THA": "🇹🇭",
-        "Indonésie": "🇮🇩", "Indonesia": "🇮🇩", "INA": "🇮🇩",
-        "Danemark": "🇩🇰", "Denmark": "🇩🇰", "DEN": "🇩🇰",
-        "France": "🇫🇷", "FRA": "🇫🇷",
-        "Chinese Taipei": "🇹🇼", "Taïwan": "🇹🇼", "TPE": "🇹🇼",
-        "Canada": "🇨🇦", "CAN": "🇨🇦",
-        "Corée du Sud": "🇰🇷", "Korea": "🇰🇷", "KOR": "🇰🇷",
-        "Japon": "🇯🇵", "Japan": "🇯🇵", "JPN": "🇯🇵",
-        "Malaisie": "🇲🇾", "Malaysia": "🇲🇾", "MAS": "🇲🇾",
-        "Inde": "🇮🇳", "India": "🇮🇳", "IND": "🇮🇳",
-        "Espagne": "🇪🇸", "Spain": "🇪🇸", "ESP": "🇪🇸",
-        "Angleterre": "🏴", "England": "🏴", "ENG": "🏴"
-    };
-
-    function getFlag(pays) {
-        if (!pays) return "🌍";
-        for (let key in flagsMap) {
-            if (pays.toLowerCase().includes(key.toLowerCase())) return flagsMap[key];
-        }
-        return "🌍";
-    }
 
     function escapeHtml(str) {
         return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
-
-    // Déduit le vainqueur à partir des sets joués (best of 3) quand le champ
-    // "vainqueur" n'a pas été renseigné côté admin, pour éviter qu'un match
-    // déjà fini reste affiché comme "en cours".
-    function inferWinner(m) {
-        if (m.vainqueur) return m.vainqueur;
-        const sets = [m.set1, m.set2, m.set3].filter(Boolean);
-        let j1Wins = 0, j2Wins = 0;
-        sets.forEach(s => {
-            const parts = String(s).split(/[-–]/).map(x => parseInt(x.trim(), 10));
-            if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-                if (parts[0] > parts[1]) j1Wins++;
-                else if (parts[1] > parts[0]) j2Wins++;
-            }
-        });
-        if (j1Wins >= 2) return m.j1;
-        if (j2Wins >= 2) return m.j2;
-        return null;
-    }
-
-    // Essaie de parser une date FR (DD/MM/YYYY) ou ISO (YYYY-MM-DD).
-    function parseDateFlexible(str) {
-        if (!str) return null;
-        str = String(str).trim();
-        let m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-        if (m) return new Date(+m[3], +m[2] - 1, +m[1]);
-        m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-        if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
-        const d = new Date(str);
-        return isNaN(d.getTime()) ? null : d;
-    }
-
-    // Détermine le statut d'un tournoi : à venir / en cours / terminé.
-    // Priorité : champ explicite t.statut > dateDebut/dateFin > date simple ou plage "d1 - d2".
-    function getTournoiStatus(t) {
-        if (t.statut) {
-            const s = String(t.statut).toLowerCase();
-            if (s.includes('venir') || s.includes('upcoming')) return 'upcoming';
-            if (s.includes('termin') || s.includes('finished') || s.includes('past')) return 'finished';
-            return 'live';
-        }
-
-        const today = new Date(); today.setHours(0, 0, 0, 0);
-        let start = parseDateFlexible(t.dateDebut);
-        let end = parseDateFlexible(t.dateFin);
-
-        if (!start && t.date) {
-            const parts = String(t.date).split(/\s*-\s*/);
-            start = parseDateFlexible(parts[0]);
-            end = parts[1] ? parseDateFlexible(parts[1]) : start;
-        }
-        if (!end) end = start;
-
-        if (start && today < start) return 'upcoming';
-        if (end && today > end) return 'finished';
-        if (start || end) return 'live';
-        return 'live'; // pas de date exploitable : on ne change rien par défaut
-    }
-
-    document.querySelectorAll('.btn-circuit').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.btn-circuit').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            activeCircuit = e.target.dataset.circuit;
-            renderAll();
-        });
-    });
 
     document.querySelectorAll('.bwf-tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
@@ -550,164 +406,56 @@
     onValue(ref(db, 'clubs'), (snap) => { dbClubs = snap.val() || {}; renderAll(); });
     onValue(ref(db, 'joueurs'), (snap) => { dbJoueurs = snap.val() || {}; renderAll(); });
     onValue(ref(db, 'tournois'), (snap) => { dbTournois = snap.val() || {}; renderAll(); });
-    // Alimenté exclusivement par le synchroniseur serveur BadNet/eBad.
-    // Les tournois locaux restent dans "tournois" pour préserver les fonctions admin existantes.
-    onValue(ref(db, 'tournoisOfficiels'), (snap) => { dbTournoisOfficiels = snap.val() || {}; renderAll(); });
-    onValue(ref(db, 'matchs'), (snap) => { dbMatchs = snap.val() || {}; renderAll(); });
 
     function renderAll() {
-        renderMatchsLive();
-        renderTournois();
+        renderTournoisList();
         populateSpecSelectors();
         renderRanking();
     }
 
-    function renderMatchsLive() {
-        const container = document.getElementById('live-matchs');
-        const all = Object.keys(dbMatchs).map(id => dbMatchs[id]);
+    // ============================================================
+    //                  LISTE DES TOURNOIS (VISIBLES)
+    // ============================================================
+    // NB : ici on liste TOUS les tournois visibles, même ceux qui n'ont
+    // pas encore de tableaux (draws) configurés — c'est ce qui manquait :
+    // un tournoi marqué "visible" mais sans tableau n'apparaissait nulle part.
 
-        // On ne garde dans "Matchs en direct" QUE les matchs réellement en cours
-        // (pas de vainqueur, ni déduit des sets). Les matchs finis passent dans
-        // "Derniers résultats" plus bas.
-        const enCours = all.filter(m => !inferWinner(m));
-        const termines = all.filter(m => inferWinner(m)).reverse().slice(0, 4);
+    function renderTournoisList() {
+        const container = document.getElementById('spec-tournois-list');
+        const visibles = Object.keys(dbTournois)
+            .filter(id => dbTournois[id].visible !== false)
+            .map(id => ({ id, ...dbTournois[id] }))
+            .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
-        if (enCours.length === 0 && termines.length === 0) {
-            container.innerHTML = `<div class="empty-state">🏸 Aucun match récent ou en direct pour le moment.</div>`;
+        if (!visibles.length) {
+            container.innerHTML = '<div class="empty-state">Aucun tournoi publié pour le moment.</div>';
             return;
         }
 
-        let html = '';
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const fmt = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
 
-        if (enCours.length > 0) {
-            html += enCours.map(m => renderMatchCard(m)).join('');
-        } else {
-            html += `<div class="empty-state" style="grid-column:1/-1;">🏸 Aucun match en direct actuellement.</div>`;
-        }
+        container.innerHTML = visibles.map(t => {
+            let badge = { cls: 'upcoming', label: '📅 À venir' };
+            if (t.date && t.date <= todayStr && (!t.dateFin || t.dateFin >= todayStr)) {
+                badge = { cls: 'live', label: '🔴 En cours' };
+            } else if (t.dateFin && t.dateFin < todayStr) {
+                badge = { cls: 'done', label: '✅ Terminé' };
+            }
 
-        if (termines.length > 0) {
-            html += `<div class="results-divider">Derniers résultats</div>` + termines.map(m => renderMatchCard(m)).join('');
-        }
+            const dates = (!t.dateFin || t.date === t.dateFin) ? fmt(t.date) : `${fmt(t.date)} → ${fmt(t.dateFin)}`;
 
-        container.innerHTML = html;
-    }
-
-    function renderMatchCard(m) {
-        const j1Obj = dbJoueurs[m.j1];
-        const j2Obj = dbJoueurs[m.j2];
-        const j1Pays = j1Obj && (j1Obj.pays || j1Obj.nationalite || j1Obj.country);
-        const j2Pays = j2Obj && (j2Obj.pays || j2Obj.nationalite || j2Obj.country);
-        const j1Flag = j1Pays ? `<span class="mc-flag">${getFlag(j1Pays)}</span>` : '';
-        const j2Flag = j2Pays ? `<span class="mc-flag">${getFlag(j2Pays)}</span>` : '';
-        const j1 = j1Obj ? `${j1Obj.nom.toUpperCase()} ${j1Obj.prenom || ''}` : 'Joueur 1';
-        const j2 = j2Obj ? `${j2Obj.nom.toUpperCase()} ${j2Obj.prenom || ''}` : 'Joueur 2';
-
-        const winnerId = inferWinner(m);
-        const winnerObj = dbJoueurs[winnerId];
-        const winner = winnerObj ? `${winnerObj.nom.toUpperCase()} ${winnerObj.prenom || ''}` : '';
-        const isLive = !winnerId;
-
-        const sets = [m.set1, m.set2, m.set3].filter(Boolean);
-        const setsHtml = sets.length
-            ? `<div class="mc-sets">${sets.map(s => `<span class="set-chip">${escapeHtml(s)}</span>`).join('')}</div>`
-            : `<div class="mc-empty-score">Score à venir</div>`;
-
-        return `
-            <div class="match-card ${isLive ? 'is-live' : ''}">
-                <div class="match-card-body">
-                    <div class="mc-status">
-                        ${isLive
-                            ? `<span class="mc-inprogress"><span class="live-dot" style="background:var(--live-red);"></span>En cours</span>`
-                            : `<span class="mc-winner-tag">🏆 ${escapeHtml(winner)}</span>`}
-                    </div>
-                    <div class="mc-players">
-                        <div class="mc-player ${winnerId === m.j1 ? 'winner' : ''}">${j1Flag}${escapeHtml(j1)}</div>
-                        <div class="mc-vs">VS</div>
-                        <div class="mc-player ${winnerId === m.j2 ? 'winner' : ''}">${j2Flag}${escapeHtml(j2)}</div>
-                    </div>
-                    ${setsHtml}
-                </div>
-            </div>
-        `;
-    }
-
-    function renderTournois() {
-        const title = document.getElementById('tournois-title');
-        const container = document.getElementById('tournois-list');
-        title.innerHTML = activeCircuit === 'bwf' ? 'Tournois <span style="color:var(--chalk-dim); font-size:1rem;">— Circuit BWF</span>' : 'Tournois <span style="color:var(--chalk-dim); font-size:1rem;">— Circuit FFBaD</span>';
-
-        const localTournois = Object.keys(dbTournois).map(id => ({ id, ...dbTournois[id] }));
-        const officiels = Object.keys(dbTournoisOfficiels).map(id => ({
-            id: `official:${id}`,
-            ...dbTournoisOfficiels[id],
-            officiel: true
-        }));
-        let list = [...localTournois, ...officiels];
-
-        list = list.filter(t => {
-            const isPro = t.type === 'bwf' || (t.serie && t.serie.ptsMin >= 1000);
-            // Un tournoi fédéral doit venir du synchroniseur et porter une source
-            // eBad ou BadNet ainsi qu'un identifiant d'évènement vérifiable.
-            const isOfficialFfbad = t.officiel === true &&
-                ['badnet', 'ebad'].includes(String(t.source || '').toLowerCase()) &&
-                Boolean(t.sourceEventId);
-            return activeCircuit === 'bwf' ? isPro : isOfficialFfbad;
-        });
-
-        if (list.length === 0) {
-            container.innerHTML = `<div class="empty-state">Aucun tournoi ${activeCircuit.toUpperCase()} pour le moment.</div>`;
-            document.getElementById('official-tournaments-note').textContent = activeCircuit === 'ffbad'
-                ? 'Les tournois apparaîtront dès la première synchronisation officielle BadNet/eBad.'
-                : '';
-            return;
-        }
-
-        const groups = { live: [], upcoming: [], finished: [] };
-        list.forEach(t => groups[getTournoiStatus(t)].push(t));
-
-        const renderItem = (t, status) => {
-            const pill = status === 'upcoming'
-                ? `<span class="status-pill status-upcoming">À venir</span>`
-                : status === 'finished'
-                    ? `<span class="status-pill status-finished">Terminé</span>`
-                    : `<span class="status-pill status-live"><span class="live-dot" style="background:var(--live-red); display:inline-block; margin-right:4px; vertical-align:middle;"></span>En cours</span>`;
-            const source = String(t.source || '').toLowerCase();
-            const sourceLabel = source === 'ebad' ? 'Voir sur eBad' : 'Voir sur BadNet';
-            const sourceLink = t.sourceUrl
-                ? `<a class="tournoi-source-link" href="${escapeHtml(t.sourceUrl)}" target="_blank" rel="noopener noreferrer">↗ ${sourceLabel}</a>`
-                : '';
             return `
-            <div class="tournoi-item">
-                <div>
-                    <div class="tournoi-name">${pill}${escapeHtml(t.nom)}</div>
+                <div class="tournoi-card">
+                    <span class="tournoi-badge ${badge.cls}">${badge.label}</span>
+                    <h3>${escapeHtml(t.nom || 'Tournoi')}</h3>
                     <div class="tournoi-meta">
+                        <span>📆 ${escapeHtml(dates)}</span>
                         <span>📍 ${escapeHtml(t.lieu || 'Lieu à confirmer')}</span>
-                        <span>📅 ${escapeHtml(t.date || '—')}</span>
                     </div>
-                    ${sourceLink}
                 </div>
-                <span class="tournoi-badge ${activeCircuit === 'bwf' ? 'badge-bwf' : 'badge-ffbad'}">
-                    ${activeCircuit === 'bwf' ? '⭐ BWF' : '🇫🇷 FFBaD'}
-                </span>
-            </div>`;
-        };
-
-        let html = '';
-        if (groups.live.length) {
-            html += `<div class="tournoi-group-title">🔴 En cours</div>` + groups.live.map(t => renderItem(t, 'live')).join('');
-        }
-        if (groups.upcoming.length) {
-            html += `<div class="tournoi-group-title">🗓️ À venir</div>` + groups.upcoming.map(t => renderItem(t, 'upcoming')).join('');
-        }
-        if (groups.finished.length) {
-            html += `<div class="tournoi-group-title">✅ Terminés</div>` + groups.finished.map(t => renderItem(t, 'finished')).join('');
-        }
-
-        container.innerHTML = html;
-        const officialNote = document.getElementById('official-tournaments-note');
-        officialNote.textContent = activeCircuit === 'ffbad'
-            ? 'Données officielles synchronisées depuis BadNet et eBad. Les liens ouvrent la source publiée par l’organisateur.'
-            : '';
+            `;
+        }).join('');
     }
 
     // ============================================================
@@ -720,7 +468,7 @@
 
     function populateSpecSelectors() {
         const currentT = specTournoiSelect.value;
-        const withDraws = Object.keys(dbTournois).filter(id => dbTournois[id].draws && Object.keys(dbTournois[id].draws).length);
+        const withDraws = Object.keys(dbTournois).filter(id => dbTournois[id].visible !== false && dbTournois[id].draws && Object.keys(dbTournois[id].draws).length);
 
         specTournoiSelect.innerHTML = '<option value="">Sélectionner un tournoi...</option>' +
             withDraws.map(id => `<option value="${id}">${escapeHtml(dbTournois[id].nom)}</option>`).join('');
@@ -817,10 +565,10 @@
 
         let list = Object.keys(dbJoueurs).map(id => ({ id, ...dbJoueurs[id] }));
 
-        // 1. FILTRAGE STRICT DU CIRCUIT (BWF PRO vs FFBAD AMATEUR)
+        // 1. FILTRAGE : SEULS LES JOUEURS AMATEURS / CLUB (FFBAD) SONT AFFICHÉS
         list = list.filter(j => {
             const isJoueurPro = j.isPro === true || j.isPro === 'true' || j.circuit === 'bwf';
-            return activeCircuit === 'bwf' ? isJoueurPro : !isJoueurPro;
+            return !isJoueurPro;
         });
 
         // 2. EXTRACTION DES POINTS SELON LA CATÉGORIE ACTIVE
@@ -855,27 +603,15 @@
         list.sort((a, b) => getPoints(b) - getPoints(a));
 
         // 6. EN-TÊTE DE TABLEAU
-        if (activeCircuit === 'bwf') {
-            title.innerHTML = 'Classement <span style="color:var(--gold);">BWF</span> <span style="color:var(--chalk-dim); font-size:1rem;">— Professionnels</span>';
-            thead.innerHTML = `
-                <tr>
-                    <th class="rank">#</th>
-                    <th>Joueur</th>
-                    <th>Pays</th>
-                    <th style="text-align: right;">Points BWF</th>
-                </tr>
-            `;
-        } else {
-            title.innerHTML = 'Classement <span style="color:var(--court-green);">FFBaD</span> <span style="color:var(--chalk-dim); font-size:1rem;">— Amateurs / Clubs</span>';
-            thead.innerHTML = `
-                <tr>
-                    <th class="rank">#</th>
-                    <th>Joueur</th>
-                    <th>Club</th>
-                    <th style="text-align: right;">Points FFBaD</th>
-                </tr>
-            `;
-        }
+        title.innerHTML = 'Classement <span style="color:var(--court-green);">FFBaD</span> <span style="color:var(--chalk-dim); font-size:1rem;">— Amateurs / Clubs</span>';
+        thead.innerHTML = `
+            <tr>
+                <th class="rank">#</th>
+                <th>Joueur</th>
+                <th>Club</th>
+                <th style="text-align: right;">Points FFBaD</th>
+            </tr>
+        `;
 
         if (list.length === 0) {
             tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Aucun joueur classé trouvé pour ce tableau (${escapeHtml(currentCat)}).</td></tr>`;
@@ -889,31 +625,35 @@
             const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
             const medal = idx < 3 ? `<span class="medal">${medals[idx]}</span>` : '';
             const pts = getPoints(j);
-
-            if (activeCircuit === 'bwf') {
-                const flagEmoji = getFlag(j.pays);
-                const paysText = j.pays || 'International';
-                return `
-                    <tr>
-                        <td class="rank ${rankClass}">${medal}#${idx + 1}</td>
-                        <td class="player-name"><strong>${escapeHtml((j.nom || '').toUpperCase())}</strong> ${escapeHtml(j.prenom || '')}</td>
-                        <td><span class="flag">${flagEmoji}</span>${escapeHtml(paysText)}</td>
-                        <td style="text-align: right;" class="pts">${pts.toLocaleString('fr-FR')} pts</td>
-                    </tr>
-                `;
-            } else {
-                const clubNom = dbClubs[j.clubId] ? dbClubs[j.clubId].nom : (j.club || 'Sans club');
-                return `
-                    <tr>
-                        <td class="rank ${rankClass}">${medal}#${idx + 1}</td>
-                        <td class="player-name"><strong>${escapeHtml((j.nom || '').toUpperCase())}</strong> ${escapeHtml(j.prenom || '')}</td>
-                        <td>${escapeHtml(clubNom)}</td>
-                        <td style="text-align: right;" class="pts">${pts.toLocaleString('fr-FR')} pts</td>
-                    </tr>
-                `;
-            }
+            const clubNom = dbClubs[j.clubId] ? dbClubs[j.clubId].nom : (j.club || 'Sans club');
+            return `
+                <tr>
+                    <td class="rank ${rankClass}">${medal}#${idx + 1}</td>
+                    <td class="player-name"><strong>${escapeHtml((j.nom || '').toUpperCase())}</strong> ${escapeHtml(j.prenom || '')}</td>
+                    <td>${escapeHtml(clubNom)}</td>
+                    <td style="text-align: right;" class="pts">${pts.toLocaleString('fr-FR')} pts</td>
+                </tr>
+            `;
         }).join('');
     }
+</script>
+
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        const btn = document.getElementById('themeToggle');
+        if (btn) btn.textContent = theme === 'light' ? '☀️' : '🌙';
+        localStorage.setItem('badsmash_theme', theme);
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        applyTheme(current === 'light' ? 'dark' : 'light');
+    }
+    (function initTheme() {
+        const saved = localStorage.getItem('badsmash_theme');
+        const preferLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        applyTheme(saved || (preferLight ? 'light' : 'dark'));
+    })();
 </script>
 
 </body>

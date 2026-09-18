@@ -4,33 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Votre tableau de bord joueur BADSMASH : classements, matchs, objectifs et entraînements.">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0a1a2e">
     <title>BADSMASH - Mon Espace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --bg: #0f172a; --card: #1e293b; --green: #10b981; 
-            --text: #f8fafc; --sub: #94a3b8; --border: #334155; --accent: #3b82f6;
-            --danger: #ef4444; --gold: #f59e0b;
+        :root {
+            --bg: #0a1120; --card: #141e32; --green: #22c55e;
+            --text: #f3f7fa; --sub: #9aa9c4; --border: #263455; --accent: #4f8fd1;
+            --danger: #ef3d4e; --gold: #f6b93b; --violet: #8b5cf6;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 20px; }
+        :root[data-theme="light"] {
+            --bg: #eef2f9; --card: #ffffff; --green: #16a34a;
+            --text: #101828; --sub: #52607a; --border: #dbe2ee;
+        }
+        .theme-toggle {
+            position: fixed; top: 16px; right: 16px;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--card); border: 1px solid var(--border); color: var(--text);
+            cursor: pointer; font-size: 1.05rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .3s cubic-bezier(0.16,1,0.3,1);
+            z-index: 50;
+        }
+        .theme-toggle:hover { border-color: var(--violet); color: var(--violet); transform: rotate(20deg); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; transition: background-color .4s, color .4s; }
         .container { max-width: 1000px; margin: 0 auto; }
         
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 10px; flex-wrap: wrap; }
         .header-left { display: flex; align-items: center; gap: 16px; }
-        .btn-home {
-            background: var(--card);
+        .logo-mini {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: 0.03em;
             color: var(--text);
-            border: 1px solid var(--border);
-            padding: 8px 14px;
-            border-radius: 8px;
             text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: bold;
-            transition: border-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
         }
-        .btn-home:hover { border-color: var(--green); }
-        h1 { color: var(--green); }
+        .logo-mini:hover { transform: scale(1.06); }
+        .logo-mini span { color: var(--green); }
+        h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.1rem; font-weight: 400; letter-spacing: 0.03em; color: var(--green); }
         .btn-logout { background: var(--danger); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
         .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
@@ -44,14 +63,15 @@
 
         .stat-box { background: var(--bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
         .stat-box .title { font-size: 0.8rem; color: var(--sub); }
-        .stat-box .val { font-size: 1.4rem; font-weight: bold; color: var(--green); margin-top: 4px; }
+        .stat-box .val { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: bold; color: var(--green); margin-top: 4px; font-variant-numeric: tabular-nums; }
 
         ul { list-style: none; }
         li { background: var(--bg); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; font-size: 0.9rem; }
         .li-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+        li.li-interclub { background: #071322; }
         .tag { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 6px; }
-        .tag-win { background: rgba(16, 185, 129, 0.2); color: var(--green); }
-        .tag-loss { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .tag-win { background: rgba(47, 174, 110, 0.2); color: var(--green); }
+        .tag-loss { background: rgba(239, 61, 78, 0.2); color: var(--danger); }
         .sub-ratio { font-size: 0.85rem; color: var(--sub); font-weight: normal; }
 
         textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); resize: vertical; min-height: 80px; }
@@ -69,7 +89,7 @@
             margin-bottom: 8px;
         }
         input[type="date"]:focus, input[type="time"]:focus, input[type="text"]:focus { border-color: var(--accent); }
-        :focus-visible { outline: 3px solid rgba(16, 185, 129, 0.75); outline-offset: 3px; }
+        :focus-visible { outline: 3px solid rgba(47, 174, 110, 0.75); outline-offset: 3px; }
         button:disabled { cursor: not-allowed; opacity: 0.55; }
         .btn-delete-event {
             background: var(--danger);
@@ -118,7 +138,7 @@
         .tab-content.active { display: block; }
 
         /* Onglet tournois */
-        .tournoi-select-card { background: linear-gradient(135deg, rgba(16, 185, 129, .12), rgba(59, 130, 246, .10)); }
+        .tournoi-select-card { background: linear-gradient(135deg, rgba(47, 174, 110, .12), rgba(79, 143, 209, .10)); }
         .tournoi-select-card select { width: 100%; padding: 12px; border-radius: 9px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; }
         .tournoi-showcase { overflow: hidden; }
         .tournoi-showcase-head { padding: 22px; margin: -20px -20px 20px; background: linear-gradient(120deg, #0d3b32, #102b49); border-bottom: 1px solid var(--border); }
@@ -139,11 +159,11 @@
         .planner-form textarea { min-height: 110px; }
         .points-chart { padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); overflow-x: auto; }
         .points-chart svg { display: block; width: 100%; min-width: 580px; height: 285px; }
-        .points-chart-grid { stroke: #334155; stroke-width: 1; }
-        .points-chart-line { fill: none; stroke: #60a5fa; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-        .points-chart-dot { fill: #34d399; stroke: #0f172a; stroke-width: 3; }
-        .points-chart-label { fill: #cbd5e1; font-size: 11px; }
-        .points-chart-value { fill: #f8fafc; font-size: 11px; font-weight: 700; }
+        .points-chart-grid { stroke: #24405f; stroke-width: 1; }
+        .points-chart-line { fill: none; stroke: #4f8fd1; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+        .points-chart-dot { fill: #2fae6e; stroke: #0a1a2e; stroke-width: 3; }
+        .points-chart-label { fill: #9db1c7; font-size: 11px; }
+        .points-chart-value { fill: #f3f7fa; font-size: 11px; font-weight: 700; }
         .calendar-form { display: grid; grid-template-columns: 140px 150px 1fr auto; gap: 10px; align-items: end; }
         .calendar-form input, .calendar-form select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
         .calendar-entry { display: grid; grid-template-columns: 108px 1fr auto; gap: 12px; align-items: center; }
@@ -181,7 +201,7 @@
 
         .player-pick-item { cursor: pointer; transition: border-color 0.15s, background 0.15s; }
         .player-pick-item:hover { border-color: var(--accent); }
-        .player-pick-item.active { border-color: var(--green); background: rgba(16, 185, 129, 0.08); }
+        .player-pick-item.active { border-color: var(--green); background: rgba(47, 174, 110, 0.08); }
 
         /* --- Lignes de match (listes de matchs + historique face-à-face) : plus lisibles --- */
         .match-line {
@@ -232,14 +252,165 @@
             border-radius: 12px;
             letter-spacing: 0.03em;
         }
+
+        /* --- Carte "Prochain tournoi" cliquable --- */
+        .clickable-card { cursor: pointer; border-radius: 8px; transition: background 0.15s; }
+        .clickable-card:hover { background: rgba(79, 143, 209, 0.08); }
+        .click-hint { display: block; margin-top: 8px; font-size: 0.75rem; color: var(--accent); font-weight: 700; }
+
+        /* --- Séries d'un tournoi (courbes + paires) --- */
+        .serie-block { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+        .serie-block-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .serie-block-head h4 { color: var(--green); font-size: 1rem; }
+        .serie-block-head small { color: var(--sub); }
+        .discipline-title { margin: 22px 0 10px; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--sub); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+        .paires-table { width: 100%; border-collapse: collapse; font-size: .82rem; margin-top: 10px; }
+        .paires-table th, .paires-table td { padding: 6px 5px; border-bottom: 1px solid var(--border); text-align: left; }
+        .paires-table th { color: var(--sub); font-weight: 600; }
+        .paires-table td:last-child, .paires-table th:last-child { text-align: right; color: var(--green); font-weight: 700; }
+
+        /* --- Sous-pages Interclubs (club / rencontre) --- */
+        .subview { display: none; }
+        .subview.active { display: block; }
+        .btn-back { background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 16px; }
+        .btn-back:hover { border-color: var(--green); }
+        /* (plus aucun lien : tout est cliquable sous forme de carte) */
+        .club-section-title { margin: 18px 0 10px; color: var(--green); font-size: .95rem; }
+        .player-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .winrate { font-weight: 800; }
+        .winrate-high { color: var(--green); }
+        .winrate-low { color: var(--danger); }
+        .winrate-bar { height: 6px; border-radius: 4px; background: var(--border); width: 120px; overflow: hidden; }
+        .winrate-bar span { display: block; height: 100%; background: var(--green); }
+
+        /* --- Feuille de match (SH1, SH2, SD1, SD2, DH, DD, MIX1, MIX2) --- */
+        .mdr { display: grid; grid-template-columns: 70px 1fr 1fr 130px 120px; gap: 8px; align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); margin-bottom: 8px; }
+        .mdr-code { font-weight: 800; color: var(--green); font-size: .85rem; }
+        .mdr input, .mdr select { width: 100%; margin: 0; padding: 8px; border-radius: 7px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: .85rem; }
+        .mdr-head { color: var(--sub); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; background: none; border: none; padding: 0 10px; margin-bottom: 4px; }
+        .rencontre-score { font-size: 1.6rem; font-weight: 800; color: var(--green); text-align: center; margin: 10px 0; }
+        @media (max-width: 760px) { .mdr { grid-template-columns: 1fr; } .mdr-head { display: none; } }
+
+        /* --- Cartes d'équipe cliquables dans les poules --- */
+        .team-row { display: flex; gap: 6px; align-items: stretch; margin-bottom: 8px; }
+        .team-card {
+            flex: 1; width: auto; margin: 0; text-align: left;
+            padding: 12px 14px; border-radius: 8px;
+            background: var(--card); color: var(--text);
+            border: 1px solid var(--border);
+            font: inherit; font-weight: 600; cursor: pointer;
+            transition: border-color .15s, background .15s, transform .1s;
+        }
+        .team-card:hover { border-color: var(--green); background: rgba(47, 174, 110, 0.08); }
+        .team-card.rencontre-tag { background: #071322; }
+        .team-card.rencontre-tag:hover { background: rgba(47, 174, 110, 0.08); }
+        .team-card:active { transform: scale(0.995); }
+        .team-card .team-card-meta { display: block; font-size: .75rem; color: var(--sub); font-weight: 500; margin-top: 3px; }
+        .team-card-top { display: flex; align-items: baseline; gap: 10px; }
+        .team-rank {
+            flex-shrink: 0; min-width: 26px; height: 26px; line-height: 26px; text-align: center;
+            border-radius: 7px; background: var(--bg); border: 1px solid var(--border);
+            color: var(--sub); font-size: .8rem; font-weight: 800;
+        }
+        .team-rank-1 { background: rgba(245, 158, 11, .18); border-color: var(--gold); color: #fde68a; }
+        .team-name { font-weight: 700; }
+        .team-score { color: var(--green); font-weight: 800; padding: 0 2px; }
+        .team-stats { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+        .team-stat {
+            font-size: .7rem; font-weight: 700; color: var(--sub);
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 6px; padding: 2px 7px;
+        }
+        .team-stat b { color: var(--text); }
+        .team-stat-pts { color: var(--green); }
+        .team-stat-pts b { color: var(--green); }
+
+        /* --- Face-à-Face compact --- */
+        .card-compact { padding: 14px 20px; }
+        .h2-compact { margin-bottom: 10px; padding-bottom: 6px; font-size: 1.05rem; }
+        .opponent-select { width: 100%; padding: 9px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: .88rem; }
+        .opponent-result { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+        .opponent-result .winrate-bar { width: 90px; }
+        .opponent-result-name { font-size: .85rem; }
+        .opponent-result-name small { display: block; color: var(--sub); font-size: .75rem; font-weight: 500; }
+        .team-tools { display: flex; flex-direction: column; gap: 4px; }
+        .team-tools button {
+            width: 34px; margin: 0; padding: 0; height: 100%;
+            background: var(--card); border: 1px solid var(--border); color: var(--sub);
+            border-radius: 8px; cursor: pointer; font-size: .8rem;
+        }
+        .team-tools button:hover { border-color: var(--accent); color: var(--text); }
+
+        /* --- Effectif d'une équipe --- */
+        .rencontre-item { background: none; border: none; padding: 0; margin-bottom: 14px; }
+        .rencontre-item .result-form { margin-top: 6px; padding-left: 4px; }
+        .roster-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; margin-top: 12px; }
+        .roster-form select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+        .roster-form button { width: auto; margin: 0; padding: 10px 16px; }
+        .btn-remove-player { width: auto; margin: 0; padding: 4px 9px; font-size: .75rem; background: var(--danger); color: white; border: none; border-radius: 6px; cursor: pointer; }
+        @media (max-width: 600px) { .roster-form { grid-template-columns: 1fr; } .roster-form button { width: 100%; } }
+
+        /* --- Sélecteur de discipline d'une série --- */
+        .convocations-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+        .convocation-chip {
+            display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+            font-size: .78rem; font-weight: 600; color: var(--text);
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 6px 10px;
+        }
+        .convocation-name { font-weight: 700; }
+        .convocation-time { color: var(--green); font-weight: 700; font-size: .74rem; }
+        .serie-discipline-badge {
+            padding: 4px 12px; border-radius: 20px;
+            background: var(--card); color: var(--text); border: 1px solid var(--border);
+            font-size: .78rem; font-weight: 700;
+        }
     </style>
 </head>
 <body>
+<!-- ===== BADSMASH — Décor : volants flottants ===== -->
+<div class="badsmash-shuttles" aria-hidden="true">
+    <span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span>
+    <span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span>
+</div>
+<style>
+    .badsmash-shuttles { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    .badsmash-shuttles span {
+        position: absolute; bottom: -10%; display: block; opacity: .28;
+        filter: drop-shadow(0 0 6px rgba(34,197,94,.3));
+        animation: badsmashShuttleFloat linear infinite;
+        will-change: transform, opacity;
+    }
+    :root[data-theme="light"] .badsmash-shuttles span { opacity: .2; filter: drop-shadow(0 0 6px rgba(22,163,74,.22)); }
+    @keyframes badsmashShuttleFloat {
+        0%   { transform: translate(0,0) rotate(-20deg); opacity: 0; }
+        10%  { opacity: .28; }
+        50%  { transform: translate(30px,-58vh) rotate(15deg); }
+        90%  { opacity: .28; }
+        100% { transform: translate(-25px,-118vh) rotate(-15deg); opacity: 0; }
+    }
+    .badsmash-shuttles span:nth-child(1)  { left: 4%;  font-size: 20px; animation-duration: 17s; animation-delay: -2s; }
+    .badsmash-shuttles span:nth-child(2)  { left: 14%; font-size: 14px; animation-duration: 13s; animation-delay: -8s; }
+    .badsmash-shuttles span:nth-child(3)  { left: 24%; font-size: 24px; animation-duration: 21s; animation-delay: -4s; }
+    .badsmash-shuttles span:nth-child(4)  { left: 34%; font-size: 16px; animation-duration: 15s; animation-delay: -11s; }
+    .badsmash-shuttles span:nth-child(5)  { left: 44%; font-size: 22px; animation-duration: 19s; animation-delay: -6s; }
+    .badsmash-shuttles span:nth-child(6)  { left: 54%; font-size: 15px; animation-duration: 14s; animation-delay: -1s; }
+    .badsmash-shuttles span:nth-child(7)  { left: 64%; font-size: 26px; animation-duration: 23s; animation-delay: -14s; }
+    .badsmash-shuttles span:nth-child(8)  { left: 73%; font-size: 17px; animation-duration: 16s; animation-delay: -9s; }
+    .badsmash-shuttles span:nth-child(9)  { left: 82%; font-size: 21px; animation-duration: 18s; animation-delay: -3s; }
+    .badsmash-shuttles span:nth-child(10) { left: 90%; font-size: 14px; animation-duration: 12s; animation-delay: -7s; }
+    .badsmash-shuttles span:nth-child(11) { left: 9%;  font-size: 18px; animation-duration: 20s; animation-delay: -16s; }
+    .badsmash-shuttles span:nth-child(12) { left: 59%; font-size: 19px; animation-duration: 22s; animation-delay: -18s; }
+    @media (prefers-reduced-motion: reduce) { .badsmash-shuttles { display: none; } }
+</style>
+
+
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Changer de thème">🌙</button>
 
 <div class="container">
     <header>
         <div class="header-left">
-            <a href="index.html" class="btn-home">🏠 Accueil</a>
+            <a href="index.html" class="logo-mini">BAD<span>SMASH</span></a>
             <div>
                 <h1 id="user-name">Chargement...</h1>
                 <p id="user-club" style="color: var(--sub); font-size: 0.9rem;">Club : -</p>
@@ -305,7 +476,7 @@
             </div>
             <div class="card">
                 <h2>🏆 Prochain Tournoi</h2>
-                <div id="prochain-tournoi-info"><p>Aucun tournoi à venir.</p></div>
+                <div id="prochain-tournoi-info" class="clickable-card" role="button" tabindex="0" title="Voir ce tournoi dans l'onglet Tournois"><p>Aucun tournoi à venir.</p></div>
                 <div id="prochain-tournoi-objectif" style="display: none;">
                     <label style="display: block; font-size: 0.8rem; color: var(--sub); margin: 12px 0 6px;">Objectif de résultat pour ce tournoi</label>
                     <textarea id="tournoi-objectif" placeholder="ex: Atteindre les quarts de finale, gagner au moins 2 matchs..."></textarea>
@@ -357,9 +528,10 @@
         </div>
 
         <!-- HISTORIQUE ADVERSAIRES (H2H) -->
-        <div class="card">
-            <h2>🥊 Face-à-Face (Historique des Adversaires)</h2>
-            <ul id="list-opponents"><li>Aucun adversaire joué</li></ul>
+        <div class="card card-compact">
+            <h2 class="h2-compact">🥊 Face-à-Face</h2>
+            <select id="opponent-select" class="opponent-select"><option value="">Aucun adversaire joué</option></select>
+            <div id="opponent-result" class="opponent-result" style="display: none;"></div>
         </div>
     </div>
 
@@ -380,6 +552,32 @@
 
     <!-- ONGLET INTERCLUB -->
     <div id="tab-interclubs" class="tab-content">
+
+    <!-- SOUS-PAGE : DÉTAIL D'UN CLUB DE LA POULE -->
+    <div id="view-club" class="subview">
+        <button type="button" class="btn-back" id="btn-back-club">← Retour aux poules</button>
+        <div class="card">
+            <h2 id="club-view-title">Club</h2>
+            <p id="club-view-sub" style="color: var(--sub); font-size: .85rem;"></p>
+            <div id="club-view-content"></div>
+        </div>
+    </div>
+
+    <!-- SOUS-PAGE : FEUILLE DE MATCH D'UNE RENCONTRE -->
+    <div id="view-rencontre" class="subview">
+        <button type="button" class="btn-back" id="btn-back-rencontre">← Retour aux rencontres</button>
+        <div class="card">
+            <h2 id="rencontre-view-title">Rencontre</h2>
+            <p id="rencontre-view-sub" style="color: var(--sub); font-size: .85rem;"></p>
+            <div class="rencontre-score" id="rencontre-score">0 — 0</div>
+            <div class="mdr mdr-head"><span>Match</span><span>Domicile</span><span>Extérieur</span><span>Score</span><span>Vainqueur</span></div>
+            <div id="rencontre-slots"></div>
+            <button class="btn-save" type="button" id="btn-save-rencontre">💾 Enregistrer la feuille de match</button>
+        </div>
+    </div>
+
+    <!-- VUE PRINCIPALE -->
+    <div id="view-interclub-main" class="subview active">
         <div class="tab-hero"><h2>🛡️ Interclubs</h2><p>Préparez vos rencontres de club et retrouvez votre calendrier.</p></div>
         <div class="card">
             <h2>🏁 Mes deux poules & Classement</h2>
@@ -401,6 +599,7 @@
             <h2>📅 Rencontres à venir</h2>
             <ul id="list-interclubs-full"><li>Aucun interclub prévu</li></ul>
         </div>
+    </div>
     </div>
 
     <!-- ONGLET NUTRITION -->
@@ -521,10 +720,12 @@
     function computeStandingsRows(pool, pools, matches) {
         const rows = (pools[pool] || []).filter(Boolean).map(team => ({ team, played: 0, wins: 0, draws: 0, losses: 0, diff: 0, points: 0 }));
         const byTeam = Object.fromEntries(rows.map(row => [row.team, row]));
-        matches.filter(match => match.pool === pool && Number.isFinite(match.scoreA) && Number.isFinite(match.scoreB)).forEach(match => {
+        matches.filter(match => match.pool === pool).forEach(match => {
+            const { scoreA, scoreB, aResultat } = computeRencontreScore(match);
+            if (!aResultat) return;
             const [home, away] = String(match.teams).split(' — ');
             if (!byTeam[home] || !byTeam[away]) return;
-            const a = Number(match.scoreA), b = Number(match.scoreB);
+            const a = scoreA, b = scoreB;
             byTeam[home].played++; byTeam[away].played++; byTeam[home].diff += a - b; byTeam[away].diff += b - a;
             if (a > b) { byTeam[home].wins++; byTeam[home].points += 3; byTeam[away].losses++; }
             else if (b > a) { byTeam[away].wins++; byTeam[away].points += 3; byTeam[home].losses++; }
@@ -533,27 +734,85 @@
         rows.sort((a, b) => b.points - a.points || b.diff - a.diff || a.team.localeCompare(b.team));
         return rows;
     }
-    function standingsTableHtml(rows) {
-        return `<table class="standings-table"><thead><tr><th>#</th><th>Équipe</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Diff.</th><th>Pts</th></tr></thead><tbody>${rows.length ? rows.map((row, index) => `<tr><td>${index + 1}</td><td>${escapeHtml(row.team)}</td><td>${row.played}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td><td>${row.diff > 0 ? '+' : ''}${row.diff}</td><td>${row.points}</td></tr>`).join('') : '<tr><td colspan="8">Ajoutez les équipes.</td></tr>'}</tbody></table>`;
+    function teamCardHtml(pool, index, team, rank, stats) {
+        const s = stats || { played: 0, wins: 0, draws: 0, losses: 0, diff: 0, points: 0 };
+        return `<div class="team-row">
+            <button type="button" class="team-card" data-team="${escapeHtml(team)}">
+                <span class="team-card-top">
+                    <span class="team-rank ${rank === 1 ? 'team-rank-1' : ''}">${rank || '-'}</span>
+                    <span class="team-name">${escapeHtml(team)}</span>
+                </span>
+                <span class="team-card-meta">${rosterCountLabel(team)} · cliquez pour ouvrir la fiche</span>
+                <span class="team-stats">
+                    <span class="team-stat">J <b>${s.played}</b></span>
+                    <span class="team-stat">V <b>${s.wins}</b></span>
+                    <span class="team-stat">N <b>${s.draws}</b></span>
+                    <span class="team-stat">D <b>${s.losses}</b></span>
+                    <span class="team-stat">Diff. <b>${s.diff > 0 ? '+' : ''}${s.diff}</b></span>
+                    <span class="team-stat team-stat-pts"><b>${s.points}</b> pts</span>
+                </span>
+            </button>
+            <span class="team-tools">
+                <button type="button" class="btn-rename-team" data-pool="${pool}" data-index="${index}" title="Renommer cette équipe">✏️</button>
+                <button type="button" class="btn-remove-team" data-pool="${pool}" data-index="${index}" title="Retirer cette équipe">🗑️</button>
+            </span>
+        </div>`;
     }
+
     function renderPools() {
         const pools = readPools();
         const matches = readLocalPlan('interclub_matches');
         const target = document.getElementById('interclub-pools');
+
         target.innerHTML = ['A', 'B'].map(pool => {
+            // Classement calculé, puis appliqué directement sur les cartes
             const rows = computeStandingsRows(pool, pools, matches);
+            const rankByTeam = {}, statsByTeam = {};
+            rows.forEach((row, i) => { rankByTeam[row.team] = i + 1; statsByTeam[row.team] = row; });
+
+            const slots = pools[pool].map((team, index) => ({ team, index }));
+            const remplis = slots.filter(slot => slot.team.trim())
+                .sort((a, b) => (rankByTeam[a.team] || 99) - (rankByTeam[b.team] || 99));
+            const vides = slots.filter(slot => !slot.team.trim());
+
             return `<section class="pool-card">
                 <h3>🛡️ Poule ${pool}</h3>
-                ${pools[pool].map((team, index) => `<input type="text" data-pool="${pool}" data-index="${index}" value="${escapeHtml(team)}" placeholder="Équipe ${index + 1}">`).join('')}
-                <h4>🏆 Classement</h4>
-                ${standingsTableHtml(rows)}
+                ${remplis.map(slot => teamCardHtml(pool, slot.index, slot.team, rankByTeam[slot.team], statsByTeam[slot.team])).join('')}
+                ${vides.map(slot => `<input type="text" data-pool="${pool}" data-index="${slot.index}" value="" placeholder="Ajouter une équipe…">`).join('')}
             </section>`;
         }).join('');
+
+        // Au clic sur la carte d'un club : page dédiée du club
+        target.querySelectorAll('.team-card').forEach(btn => {
+            btn.addEventListener('click', () => openClubView(btn.dataset.team));
+        });
+        // Renommer une équipe
+        target.querySelectorAll('.btn-rename-team').forEach(btn => btn.addEventListener('click', () => {
+            const pools = readPools();
+            const ancien = pools[btn.dataset.pool][Number(btn.dataset.index)];
+            const nouveau = prompt("Nom de l'équipe :", ancien);
+            if (nouveau === null) return;
+            pools[btn.dataset.pool][Number(btn.dataset.index)] = nouveau.trim();
+            writeLocalPlan('interclub_pools', pools);
+            renameRoster(ancien, nouveau.trim());
+            renderPools();
+        }));
+        // Retirer une équipe
+        target.querySelectorAll('.btn-remove-team').forEach(btn => btn.addEventListener('click', () => {
+            const pools = readPools();
+            if (!confirm(`Retirer « ${pools[btn.dataset.pool][Number(btn.dataset.index)]} » de la poule ?`)) return;
+            pools[btn.dataset.pool][Number(btn.dataset.index)] = '';
+            writeLocalPlan('interclub_pools', pools);
+            renderPools();
+        }));
         updatePoolMatchOptions();
     }
     function savePools() {
-        const pools = { A: Array(6).fill(''), B: Array(6).fill('') };
-        document.querySelectorAll('#interclub-pools input').forEach(input => { pools[input.dataset.pool][Number(input.dataset.index)] = input.value.trim(); });
+        // On repart des équipes déjà enregistrées, et on complète avec les cases vides saisies
+        const pools = readPools();
+        document.querySelectorAll('#interclub-pools input[data-pool]').forEach(input => {
+            pools[input.dataset.pool][Number(input.dataset.index)] = input.value.trim();
+        });
         writeLocalPlan('interclub_pools', pools);
         renderPools();
     }
@@ -568,9 +827,35 @@
     function renderPoolMatches() {
         const list = document.getElementById('list-pool-matchs');
         const matches = readLocalPlan('interclub_matches').sort((a, b) => String(a.date).localeCompare(String(b.date)));
-        list.innerHTML = matches.length ? matches.map((match, index) => `<li class="calendar-entry"><span class="calendar-date">${escapeHtml(dateLabel(match.date))}</span><span><b>${escapeHtml(match.teams)}</b><small>Poule ${escapeHtml(match.pool)}</small></span><form class="result-form" data-index="${index}"><input aria-label="Score équipe 1" type="number" min="0" value="${match.scoreA ?? ''}" placeholder="0"><span>—</span><input aria-label="Score équipe 2" type="number" min="0" value="${match.scoreB ?? ''}" placeholder="0"><button class="btn-save" type="submit">Résultat</button><button class="btn-delete-event" type="button" data-index="${index}" aria-label="Supprimer">🗑️</button></form></li>`).join('') : '<li>Aucune rencontre de poule programmée.</li>';
-        list.querySelectorAll('.result-form').forEach(form => form.addEventListener('submit', event => { event.preventDefault(); const inputs = form.querySelectorAll('input'); const scoreA = inputs[0].value, scoreB = inputs[1].value; if (scoreA === '' || scoreB === '') return; const current = readLocalPlan('interclub_matches').sort((a, b) => String(a.date).localeCompare(String(b.date))); current[Number(form.dataset.index)] = { ...current[Number(form.dataset.index)], scoreA: Number(scoreA), scoreB: Number(scoreB) }; writeLocalPlan('interclub_matches', current); renderPoolMatches(); renderStandings(); }));
+        list.innerHTML = matches.length ? matches.map((match, index) => {
+            const [dom, ext] = String(match.teams || '').split(' — ');
+            const { scoreA, scoreB, aResultat } = computeRencontreScore(match);
+            // Le score s'affiche directement entre les deux équipes, ex: "Juvibad 4 — 4 Toulouse..."
+            // Il est calculé à partir de la feuille de match détaillée (SH1, SH2, ...), pas saisi ici.
+            const titre = aResultat
+                ? `${escapeHtml(dom || match.teams)} <span class="team-score">${scoreA}</span> — <span class="team-score">${scoreB}</span> ${escapeHtml(ext || '')}`
+                : `${escapeHtml(dom || match.teams)} — ${escapeHtml(ext || '')}`;
+            return `<li class="rencontre-item">
+                <div class="team-row">
+                    <button type="button" class="team-card rencontre-tag" data-open-rencontre="${index}">
+                        <span class="team-card-top">
+                            <span class="team-rank">📅</span>
+                            <span class="team-name">${titre}</span>
+                        </span>
+                        <span class="team-card-meta">${escapeHtml(dateLabel(match.date))} · Poule ${escapeHtml(match.pool)} · cliquez pour la feuille de match</span>
+                        ${!aResultat ? '<span class="team-stats"><span class="team-stat">Résultat à saisir</span></span>' : ''}
+                    </button>
+                    <span class="team-tools">
+                        <button type="button" class="btn-delete-event" data-index="${index}" aria-label="Supprimer">🗑️</button>
+                    </span>
+                </div>
+            </li>`;
+        }).join('') : '<li>Aucune rencontre de poule programmée.</li>';
         list.querySelectorAll('.btn-delete-event').forEach(button => button.addEventListener('click', () => { const current = readLocalPlan('interclub_matches').sort((a, b) => String(a.date).localeCompare(String(b.date))); current.splice(Number(button.dataset.index), 1); writeLocalPlan('interclub_matches', current); renderPoolMatches(); renderStandings(); }));
+        // Au clic sur la carte d'une rencontre : ouverture de la feuille de match
+        list.querySelectorAll('[data-open-rencontre]').forEach(btn => btn.addEventListener('click', () => {
+            openRencontreView(matches[Number(btn.dataset.openRencontre)]);
+        }));
     }
     function renderStandings() {
         // Le classement est désormais intégré directement dans chaque carte de poule (voir renderPools).
@@ -583,14 +868,14 @@
     renderPoolMatches();
     renderStandings();
 
-    // --- Onglets principaux (Tableau de bord / Fiches Adversaires) ---
+    // --- Onglets principaux (Tableau de bord / Tournois / Interclubs / ...) ---
+    function activateTab(tabId) {
+        document.querySelectorAll('.btn-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+        document.querySelectorAll('.container > .tab-content').forEach(c => c.classList.toggle('active', c.id === tabId));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     document.querySelectorAll('.btn-tab').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.btn-tab').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll(':scope > .tab-content, .container > .tab-content').forEach(c => c.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            document.getElementById(e.currentTarget.dataset.tab).classList.add('active');
-        });
+        btn.addEventListener('click', (e) => activateTab(e.currentTarget.dataset.tab));
     });
 
     let allPlayers = {};
@@ -632,17 +917,77 @@
         return Number(player.ptsSimple || player.pointsSimple || 0);
     }
 
-    function renderSeriesChart(series) {
-        const target = document.getElementById('serie-points-chart');
-        if (!target) return;
-        const type = series.type || 'simple';
-        const rows = (series.joueurs || []).map(id => {
-            const player = allPlayers[id];
-            return { name: player ? `${player.prenom || ''} ${(player.nom || '').toUpperCase()}`.trim() : 'Joueur inconnu', points: pointsForSeriesPlayer(player, type) };
-        }).sort((a, b) => b.points - a.points);
-        if (!rows.length) { target.innerHTML = '<div class="tournoi-empty">Aucun joueur inscrit dans cette série pour le moment.</div>'; return; }
+    function shortPlayerName(player) {
+        if (!player) return 'Joueur inconnu';
+        return `${player.prenom || ''} ${(player.nom || '').toUpperCase()}`.trim();
+    }
 
-        const width = Math.max(620, rows.length * 105);
+    function formatPts(value) {
+        return Number.isInteger(value) ? String(value) : value.toFixed(2);
+    }
+
+    // --- Points à représenter pour une série -----------------------------------
+    // Le tableau (Simple / Double / Mixte) est choisi par l'utilisateur : on
+    // récupère toujours les points des joueurs DANS CE TABLEAU.
+    // En Double / Mixte, on prend les points respectifs des deux joueurs de la
+    // paire dans ce tableau, puis on en fait la moyenne mathématique.
+    function seriesEntries(series, type) {
+        type = type || defaultDiscipline(series);
+
+        if (type === 'double' || type === 'mixte') {
+            // 1) Paires enregistrées côté admin (avec heure de convocation éventuelle)
+            if (Array.isArray(series.paires) && series.paires.length) {
+                return series.paires.map(paire => pairEntry(paire.j1, paire.j2, type, paire.heure));
+            }
+            // 2) Sinon on regroupe la liste de joueurs 2 par 2
+            const ids = Array.isArray(series.joueurs) ? series.joueurs : [];
+            const out = [];
+            for (let i = 0; i < ids.length; i += 2) out.push(pairEntry(ids[i], ids[i + 1], type));
+            return out;
+        }
+
+        const convocations = series.convocations || {};
+        return (Array.isArray(series.joueurs) ? series.joueurs : []).map(id => {
+            const player = allPlayers[id];
+            const pts = pointsForSeriesPlayer(player, 'simple');
+            return { name: shortPlayerName(player), points: pts, detail: `${formatPts(pts)} pts en simple`, isPair: false, ids: [id], heure: convocations[id] || '' };
+        });
+    }
+
+    function pairEntry(id1, id2, type, heure) {
+        const a = allPlayers[id1];
+        const b = id2 ? allPlayers[id2] : null;
+        const pa = pointsForSeriesPlayer(a, type);
+        if (!b) return { name: shortPlayerName(a), points: pa, detail: `${formatPts(pa)} pts en ${type}`, isPair: false, ids: [id1], heure: heure || '' };
+        const pb = pointsForSeriesPlayer(b, type);
+        const moyenne = (pa + pb) / 2;
+        return {
+            name: `${shortPlayerName(a)} / ${shortPlayerName(b)}`,
+            points: moyenne,
+            detail: `${formatPts(pa)} + ${formatPts(pb)} → moyenne ${formatPts(moyenne)} (points ${type})`,
+            isPair: true,
+            ids: [id1, id2],
+            heure: heure || ''
+        };
+    }
+
+    // Discipline proposée par défaut : celle enregistrée, sinon devinée depuis le nom
+    function defaultDiscipline(series) {
+        if (series.type === 'simple' || series.type === 'double' || series.type === 'mixte') return series.type;
+        const nom = normalizeText(series.nom || '');
+        if (nom.includes('mixte') || nom.includes('mx')) return 'mixte';
+        if (nom.includes('double')) return 'double';
+        return 'simple';
+    }
+
+    const DISCIPLINE_LABELS = { simple: 'Simple', double: 'Double', mixte: 'Mixte' };
+
+    // --- Courbe d'évolution des points d'une série ------------------------------
+    function seriesChartHtml(series, type) {
+        const rows = seriesEntries(series, type).sort((a, b) => b.points - a.points);
+        if (!rows.length) return '<div class="tournoi-empty">Aucune inscription dans cette série pour le moment.</div>';
+
+        const width = Math.max(620, rows.length * 115);
         const height = 285, left = 52, right = 24, top = 28, bottom = 70;
         const min = Math.min(...rows.map(r => r.points));
         const max = Math.max(...rows.map(r => r.points));
@@ -651,9 +996,43 @@
         const x = i => left + i * ((width - left - right) / Math.max(rows.length - 1, 1));
         const y = value => top + (yMax - value) * ((height - top - bottom) / Math.max(yMax - yMin, 1));
         const points = rows.map((r, i) => `${x(i)},${y(r.points)}`).join(' ');
-        const grid = [0, .25, .5, .75, 1].map(ratio => { const value = yMin + (yMax - yMin) * ratio; const yy = y(value); return `<line class="points-chart-grid" x1="${left}" x2="${width - right}" y1="${yy}" y2="${yy}"/><text class="points-chart-label" x="4" y="${yy + 4}">${Math.round(value)}</text>`; }).join('');
-        const dots = rows.map((r, i) => `<circle class="points-chart-dot" cx="${x(i)}" cy="${y(r.points)}" r="5"/><text class="points-chart-value" text-anchor="middle" x="${x(i)}" y="${y(r.points) - 12}">${Math.round(r.points)} pts</text><text class="points-chart-label" text-anchor="middle" x="${x(i)}" y="${height - 38}">${escapeHtml(r.name.length > 16 ? r.name.slice(0, 15) + '…' : r.name)}</text>`).join('');
-        target.innerHTML = `<div class="points-chart"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Courbe des points des joueurs inscrits"><text class="points-chart-label" x="${left}" y="15">Points ${type === 'double' ? 'double' : type === 'mixte' ? 'mixte' : 'simple'}</text>${grid}<polyline class="points-chart-line" points="${points}"/>${dots}</svg></div>`;
+        const grid = [0, .25, .5, .75, 1].map(ratio => {
+            const value = yMin + (yMax - yMin) * ratio;
+            const yy = y(value);
+            return `<line class="points-chart-grid" x1="${left}" x2="${width - right}" y1="${yy}" y2="${yy}"/><text class="points-chart-label" x="4" y="${yy + 4}">${Math.round(value)}</text>`;
+        }).join('');
+        const dots = rows.map((r, i) => `<circle class="points-chart-dot" cx="${x(i)}" cy="${y(r.points)}" r="5"/><text class="points-chart-value" text-anchor="middle" x="${x(i)}" y="${y(r.points) - 12}">${formatPts(r.points)} pts</text><text class="points-chart-label" text-anchor="middle" x="${x(i)}" y="${height - 38}">${escapeHtml(r.name.length > 20 ? r.name.slice(0, 19) + '…' : r.name)}</text>`).join('');
+        const legende = (type === 'double' || type === 'mixte')
+            ? `Moyenne des paires — points ${DISCIPLINE_LABELS[type]}`
+            : 'Points Simple';
+
+        return `<div class="points-chart"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Courbe d'évolution des points de la série"><text class="points-chart-label" x="${left}" y="15">${escapeHtml(legende)}</text>${grid}<polyline class="points-chart-line" points="${points}"/>${dots}</svg></div>`;
+    }
+
+    // --- Heures de convocation, affichées à côté du graphe -----------------------
+    function seriesConvocationsHtml(series, type) {
+        const rows = seriesEntries(series, type).filter(r => r.heure);
+        if (!rows.length) return '';
+        rows.sort((a, b) => a.heure.localeCompare(b.heure));
+        return `<div class="convocations-row">${rows.map(r =>
+            `<span class="convocation-chip"><span class="convocation-name">${escapeHtml(r.name)}</span><span class="convocation-time">🕒 ${escapeHtml(r.heure)}</span></span>`
+        ).join('')}</div>`;
+    }
+
+    function seriesCountLabel(series, type) {
+        const n = seriesEntries(series, type).length;
+        return (type === 'double' || type === 'mixte')
+            ? `${n} paire${n > 1 ? 's' : ''} inscrite${n > 1 ? 's' : ''}`
+            : `${n} joueur${n > 1 ? 's' : ''} inscrit${n > 1 ? 's' : ''}`;
+    }
+
+    // Rendu (ou re-rendu après changement de tableau) du contenu d'une série
+    function renderSerieBody(series, type, index) {
+        const body = document.getElementById(`serie-body-${index}`);
+        const count = document.getElementById(`serie-count-${index}`);
+        if (!body) return;
+        body.innerHTML = seriesChartHtml(series, type) + seriesConvocationsHtml(series, type);
+        if (count) count.innerText = seriesCountLabel(series, type);
     }
 
     function renderTournamentView() {
@@ -674,28 +1053,337 @@
             return;
         }
 
-        const t = cacheTournois[select.value];
+        const tournoiId = select.value;
+        const t = cacheTournois[tournoiId];
         const series = tournamentSeries(t);
         const registered = series.some(s => Array.isArray(s.joueurs) && s.joueurs.includes(userId));
         const date = t.dateFin && t.dateFin !== t.date
             ? `${formatDateFR(t.date)} → ${formatDateFR(t.dateFin)}`
             : formatDateFR(t.date || 'Date à confirmer');
-        const seriesHtml = series.length ? series.map(s => {
-            const players = Array.isArray(s.joueurs) ? s.joueurs.length : 0;
-            const suffix = players > 1 ? 's' : '';
-            return `<article class="serie-card"><h3>${escapeHtml(s.nom || s.type || 'Série')}</h3><p>${players} joueur${suffix} inscrit${suffix}</p>${Array.isArray(s.joueurs) && s.joueurs.includes(userId) ? '<p style="color: var(--green); margin-top: 7px; font-weight: 700;">✓ Vous êtes inscrit</p>' : ''}</article>`;
-        }).join('') : '<p style="color: var(--sub);">Les séries seront annoncées prochainement.</p>';
 
-        const seriesOptions = series.map((s, index) => `<option value="${index}">${escapeHtml(s.nom || s.type || `Série ${index + 1}`)}</option>`).join('');
-        detail.innerHTML = `<div class="tournoi-showcase-head"><h2>🏆 ${escapeHtml(t.nom || 'Tournoi')}</h2><div class="tournoi-meta"><span>📅 ${escapeHtml(date)}</span><span>📍 ${escapeHtml(t.lieu || 'Lieu à confirmer')}</span>${registered ? '<span style="color: #6ee7b7; font-weight: 700;">✓ Inscrit</span>' : ''}</div></div><h3 style="margin-bottom: 12px;">Séries du tournoi</h3><div class="tournoi-series">${seriesHtml}</div>${series.length ? `<div style="margin-top: 22px;"><label for="tournoi-serie-view-select">Courbe des points par série</label><select id="tournoi-serie-view-select" style="width:100%; margin:8px 0 12px; padding:10px; border-radius:8px; background:var(--bg); color:var(--text); border:1px solid var(--border);">${seriesOptions}</select><div id="serie-points-chart"></div></div>` : ''}`;
-        if (series.length) {
-            const seriesSelect = document.getElementById('tournoi-serie-view-select');
-            seriesSelect.addEventListener('change', () => renderSeriesChart(series[Number(seriesSelect.value)]));
-            renderSeriesChart(series[0]);
+        // Une carte par série, avec le choix du tableau (Simple / Double / Mixte)
+        let seriesHtml = '';
+        if (!series.length) {
+            seriesHtml = '<p style="color: var(--sub);">Les séries seront annoncées prochainement.</p>';
+        } else {
+            seriesHtml = series.map((serie, index) => {
+                const type = defaultDiscipline(serie);
+                const inscrit = Array.isArray(serie.joueurs) && serie.joueurs.includes(userId);
+                const disciplineBadge = { simple: '🏸 Simple', double: '👥 Double', mixte: '⚥ Mixte' }[type];
+                return `<section class="serie-block">
+                    <div class="serie-block-head">
+                        <h4>${escapeHtml(serie.nom || serie.type || 'Série')}</h4>
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <small><span id="serie-count-${index}">${seriesCountLabel(serie, type)}</span>${inscrit ? ' · <span style="color: var(--green); font-weight: 700;">✓ Vous êtes inscrit</span>' : ''}</small>
+                            <span class="serie-discipline-badge">${disciplineBadge}</span>
+                        </div>
+                    </div>
+                    <div id="serie-body-${index}"></div>
+                </section>`;
+            }).join('');
         }
+
+        detail.innerHTML = `
+            <div class="tournoi-showcase-head">
+                <h2>🏆 ${escapeHtml(t.nom || 'Tournoi')}</h2>
+                <div class="tournoi-meta">
+                    <span>📅 ${escapeHtml(date)}</span>
+                    <span>📍 ${escapeHtml(t.lieu || 'Lieu à confirmer')}</span>
+                    ${registered ? '<span style="color: #5ecb8f; font-weight: 700;">✓ Inscrit</span>' : ''}
+                </div>
+            </div>
+            ${seriesHtml}
+            <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px;">
+                <label for="tournoi-note" style="display: block; font-size: .85rem; color: var(--sub); margin-bottom: 6px;">📝 Mes notes sur ce tournoi</label>
+                <textarea id="tournoi-note" placeholder="Notes libres : adversaires probables, stratégie, matériel, logistique, ressenti…"></textarea>
+                <button class="btn-save" type="button" id="btn-save-tournoi-note">💾 Enregistrer ma note</button>
+            </div>`;
+
+        // Dessin de chaque série avec son tableau (déduit automatiquement)
+        series.forEach((serie, index) => renderSerieBody(serie, defaultDiscipline(serie), index));
+
+        // Chargement de la note existante pour ce tournoi
+        const noteEl = document.getElementById('tournoi-note');
+        onValue(ref(db, `notesTournoi/${tournoiId}/${userId}`), snap => {
+            if (document.activeElement !== noteEl) noteEl.value = snap.val() || '';
+        }, { onlyOnce: true });
+
+        document.getElementById('btn-save-tournoi-note').addEventListener('click', () => {
+            update(ref(db), { [`notesTournoi/${tournoiId}/${userId}`]: noteEl.value })
+                .then(() => alert("✅ Note enregistrée !"))
+                .catch(error => {
+                    console.error("Erreur enregistrement note tournoi :", error);
+                    alert("❌ Impossible d'enregistrer cette note.\n\nErreur Firebase : " + error.message + "\n\nCela vient probablement des règles de sécurité de la base de données qui n'autorisent pas encore l'écriture du nœud « notesTournoi ».");
+                });
+        });
     }
 
+    // --- Ouvre l'onglet Tournois directement sur un tournoi donné ---
+    function openTournoiInTab(tournoiId) {
+        activateTab('tab-tournois');
+        const select = document.getElementById('tournoi-view-select');
+        if (tournoiId && cacheTournois[tournoiId]) select.value = tournoiId;
+        renderTournamentView();
+    }
+
+    // Au clic sur la carte « Prochain tournoi » : redirection vers l'onglet Tournois
+    const prochainTournoiEl = document.getElementById('prochain-tournoi-info');
+    prochainTournoiEl.addEventListener('click', () => { if (currentNextTournoiId) openTournoiInTab(currentNextTournoiId); });
+    prochainTournoiEl.addEventListener('keydown', e => {
+        if ((e.key === 'Enter' || e.key === ' ') && currentNextTournoiId) { e.preventDefault(); openTournoiInTab(currentNextTournoiId); }
+    });
+
     document.getElementById('tournoi-view-select').addEventListener('change', renderTournamentView);
+
+    // ============================================================
+    //      INTERCLUBS : PAGE CLUB & FEUILLE DE MATCH
+    // ============================================================
+
+    let allClubs = {};
+
+    function showInterclubView(viewId) {
+        ['view-interclub-main', 'view-club', 'view-rencontre'].forEach(id => {
+            document.getElementById(id).classList.toggle('active', id === viewId);
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.getElementById('btn-back-club').addEventListener('click', () => showInterclubView('view-interclub-main'));
+    document.getElementById('btn-back-rencontre').addEventListener('click', () => showInterclubView('view-interclub-main'));
+
+    // Retrouve un club de la base à partir du nom saisi dans la poule
+    function findClubByName(teamName) {
+        const needle = normalizeText(teamName);
+        if (!needle) return null;
+        const ids = Object.keys(allClubs);
+        let found = ids.find(id => normalizeText(allClubs[id].nom) === needle);
+        if (!found) found = ids.find(id => normalizeText(allClubs[id].nom).includes(needle) || needle.includes(normalizeText(allClubs[id].nom)));
+        return found ? { id: found, ...allClubs[found] } : null;
+    }
+
+    // --- Effectif d'une équipe : joueurs (créés dans l'admin) ajoutés à la main ---
+    // (déclarations de fonctions : utilisables dès le premier rendu des poules)
+    function readEffectifs() { try { return JSON.parse(localStorage.getItem(localPlanKey('interclub_effectifs')) || '{}'); } catch { return {}; } }
+    function writeEffectifs(value) { localStorage.setItem(localPlanKey('interclub_effectifs'), JSON.stringify(value)); }
+
+    function getRoster(teamName) {
+        const effectifs = readEffectifs();
+        if (Array.isArray(effectifs[teamName])) return effectifs[teamName].filter(id => allPlayers[id]);
+        // Première ouverture : si le club existe en base, on pré-remplit avec ses licenciés
+        const club = findClubByName(teamName);
+        const auto = club ? Object.keys(allPlayers).filter(id => allPlayers[id].clubId === club.id) : [];
+        effectifs[teamName] = auto;
+        writeEffectifs(effectifs);
+        return auto;
+    }
+    function setRoster(teamName, ids) {
+        const effectifs = readEffectifs();
+        effectifs[teamName] = ids;
+        writeEffectifs(effectifs);
+    }
+    function renameRoster(ancien, nouveau) {
+        if (!ancien || !nouveau || ancien === nouveau) return;
+        const effectifs = readEffectifs();
+        if (effectifs[ancien]) { effectifs[nouveau] = effectifs[ancien]; delete effectifs[ancien]; writeEffectifs(effectifs); }
+    }
+    function rosterCountLabel(teamName) {
+        const effectifs = readEffectifs();
+        const n = Array.isArray(effectifs[teamName]) ? effectifs[teamName].length : 0;
+        return n ? `${n} joueur${n > 1 ? 's' : ''} dans l'équipe` : 'Effectif à compléter';
+    }
+
+    // Taux de victoire d'un joueur lors des rencontres (matchs de club / interclubs)
+    function winRateForPlayer(playerId) {
+        let wins = 0, losses = 0;
+        Object.keys(cacheMatchsAll).forEach(id => {
+            const m = cacheMatchsAll[id];
+            if (m.type === 'tournoi') return; // on ne compte que les rencontres de club / interclubs
+            const role = getUserRoleInMatch(m, playerId);
+            if (!role.involved) return;
+            if (role.isWinner) wins++; else losses++;
+        });
+        const total = wins + losses;
+        return { wins, losses, total, pct: total ? Math.round((wins / total) * 100) : 0 };
+    }
+
+    function playerRowHtml(id, player) {
+        const stats = winRateForPlayer(id);
+        const cls = stats.pct >= 50 ? 'winrate-high' : 'winrate-low';
+        return `<li class="player-row">
+            <div>
+                <b>${escapeHtml(shortPlayerName(player))}</b>
+                <small style="display:block; color: var(--sub);">${stats.total} rencontre${stats.total > 1 ? 's' : ''} — ${stats.wins}V / ${stats.losses}D</small>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="winrate-bar"><span style="width: ${stats.pct}%;"></span></div>
+                <span class="winrate ${cls}">${stats.pct}%</span>
+                <button type="button" class="btn-remove-player" data-id="${id}" title="Retirer de l'équipe">✕</button>
+            </div>
+        </li>`;
+    }
+
+    // --- Page dédiée d'un club de la poule ---
+    let currentClubTeam = null;
+
+    function openClubView(teamName) {
+        currentClubTeam = teamName;
+        const club = findClubByName(teamName);
+
+        document.getElementById('club-view-title').innerText = `🛡️ ${teamName}`;
+        document.getElementById('club-view-sub').innerText = club
+            ? `${club.nom}${club.ville ? ' — ' + club.ville : ''} · Composition de l'équipe et taux de victoire en rencontre`
+            : "Composez l'équipe avec les joueurs créés dans l'espace administrateur.";
+
+        renderClubView();
+        showInterclubView('view-club');
+    }
+
+    function renderClubView() {
+        if (!currentClubTeam) return;
+        const teamName = currentClubTeam;
+        const roster = getRoster(teamName);
+        const content = document.getElementById('club-view-content');
+
+        const hommes = roster.filter(id => allPlayers[id].genre === 'H');
+        const femmes = roster.filter(id => allPlayers[id].genre === 'F');
+        const autres = roster.filter(id => allPlayers[id].genre !== 'H' && allPlayers[id].genre !== 'F');
+
+        const section = (titre, ids) => `
+            <h3 class="club-section-title">${titre} (${ids.length})</h3>
+            <ul>${ids.length
+                ? ids.slice().sort((a, b) => winRateForPlayer(b).pct - winRateForPlayer(a).pct).map(id => playerRowHtml(id, allPlayers[id])).join('')
+                : '<li>Aucun joueur dans cette section.</li>'}</ul>`;
+
+        // Liste déroulante des joueurs disponibles (créés côté admin) non encore dans l'équipe
+        const dispo = Object.keys(allPlayers)
+            .filter(id => !roster.includes(id))
+            .sort((a, b) => normalizeText(`${allPlayers[a].nom} ${allPlayers[a].prenom}`).localeCompare(normalizeText(`${allPlayers[b].nom} ${allPlayers[b].prenom}`)));
+
+        content.innerHTML = `
+            <div class="roster-form">
+                <div>
+                    <label for="club-add-player" style="display:block; font-size:.8rem; color:var(--sub); margin-bottom:6px;">➕ Ajouter un joueur à cette équipe</label>
+                    <select id="club-add-player">
+                        <option value="">${dispo.length ? 'Sélectionner un joueur…' : 'Tous les joueurs sont déjà dans l’équipe'}</option>
+                        ${dispo.map(id => `<option value="${id}">${escapeHtml(shortPlayerName(allPlayers[id]))}${allPlayers[id].genre ? ` (${allPlayers[id].genre})` : ''}</option>`).join('')}
+                    </select>
+                </div>
+                <button class="btn-save" type="button" id="btn-add-player-club">Ajouter</button>
+            </div>
+            ${section('👨 Hommes', hommes)}
+            ${section('👩 Femmes', femmes)}
+            ${autres.length ? section('❔ Genre non renseigné', autres) : ''}`;
+
+        document.getElementById('btn-add-player-club').addEventListener('click', () => {
+            const id = document.getElementById('club-add-player').value;
+            if (!id) return;
+            const current = getRoster(teamName);
+            if (current.includes(id)) return;
+            setRoster(teamName, [...current, id]);
+            renderClubView();
+            renderPools();
+        });
+
+        content.querySelectorAll('.btn-remove-player').forEach(btn => btn.addEventListener('click', () => {
+            setRoster(teamName, getRoster(teamName).filter(id => id !== btn.dataset.id));
+            renderClubView();
+            renderPools();
+        }));
+    }
+
+    // --- Feuille de match d'une rencontre ---
+    const MATCH_SLOTS = [
+        { code: 'SH1', label: 'Simple Homme 1' },
+        { code: 'SH2', label: 'Simple Homme 2' },
+        { code: 'SD1', label: 'Simple Dame 1' },
+        { code: 'SD2', label: 'Simple Dame 2' },
+        { code: 'DH', label: 'Double Hommes' },
+        { code: 'DD', label: 'Double Dames' },
+        { code: 'MIX1', label: 'Double Mixte 1' },
+        { code: 'MIX2', label: 'Double Mixte 2' }
+    ];
+
+    // Déclarations de fonction (hissées) : utilisables dès le premier rendu des poules,
+    // avant même d'atteindre cette ligne du script.
+    function rencontreKey(match) { return `${match.date || 'sans-date'}|${match.teams || ''}`; }
+    function readRencontres() { try { return JSON.parse(localStorage.getItem(localPlanKey('interclub_feuilles')) || '{}'); } catch { return {}; } }
+    function writeRencontres(value) { localStorage.setItem(localPlanKey('interclub_feuilles'), JSON.stringify(value)); }
+
+    // Score d'une rencontre = nombre de matchs gagnés par équipe dans la feuille de match détaillée
+    function computeRencontreScore(match) {
+        const feuille = readRencontres()[rencontreKey(match)];
+        if (!feuille) return { scoreA: null, scoreB: null, aResultat: false };
+        let scoreA = 0, scoreB = 0, aResultat = false;
+        Object.values(feuille).forEach(slot => {
+            if (slot && slot.vainqueur === 'dom') { scoreA++; aResultat = true; }
+            else if (slot && slot.vainqueur === 'ext') { scoreB++; aResultat = true; }
+        });
+        return { scoreA, scoreB, aResultat };
+    }
+
+    let currentRencontre = null;
+
+    function updateRencontreScore() {
+        let dom = 0, ext = 0;
+        document.querySelectorAll('#rencontre-slots select[data-field="vainqueur"]').forEach(sel => {
+            if (sel.value === 'dom') dom++;
+            else if (sel.value === 'ext') ext++;
+        });
+        document.getElementById('rencontre-score').innerText = `${dom} — ${ext}`;
+    }
+
+    function openRencontreView(match) {
+        if (!match) return;
+        currentRencontre = match;
+
+        const [dom, ext] = String(match.teams || '').split(' — ');
+        document.getElementById('rencontre-view-title').innerText = `🆚 ${match.teams || 'Rencontre'}`;
+        document.getElementById('rencontre-view-sub').innerText = `${dateLabel(match.date)} · Poule ${match.pool || '-'} — saisissez le détail des 8 matchs`;
+
+        const saved = readRencontres()[rencontreKey(match)] || {};
+
+        document.getElementById('rencontre-slots').innerHTML = MATCH_SLOTS.map(slot => {
+            const d = saved[slot.code] || {};
+            return `<div class="mdr" data-code="${slot.code}">
+                <span class="mdr-code" title="${escapeHtml(slot.label)}">${slot.code}</span>
+                <input type="text" data-field="joueursDom" value="${escapeHtml(d.joueursDom || '')}" placeholder="${escapeHtml(dom || 'Domicile')}">
+                <input type="text" data-field="joueursExt" value="${escapeHtml(d.joueursExt || '')}" placeholder="${escapeHtml(ext || 'Extérieur')}">
+                <input type="text" data-field="score" value="${escapeHtml(d.score || '')}" placeholder="21-15 / 21-18">
+                <select data-field="vainqueur">
+                    <option value="">Vainqueur…</option>
+                    <option value="dom" ${d.vainqueur === 'dom' ? 'selected' : ''}>${escapeHtml(dom || 'Domicile')}</option>
+                    <option value="ext" ${d.vainqueur === 'ext' ? 'selected' : ''}>${escapeHtml(ext || 'Extérieur')}</option>
+                </select>
+            </div>`;
+        }).join('');
+
+        document.querySelectorAll('#rencontre-slots select[data-field="vainqueur"]').forEach(sel => sel.addEventListener('change', updateRencontreScore));
+        updateRencontreScore();
+        showInterclubView('view-rencontre');
+    }
+
+    document.getElementById('btn-save-rencontre').addEventListener('click', () => {
+        if (!currentRencontre) return;
+        const feuille = {};
+        document.querySelectorAll('#rencontre-slots .mdr').forEach(row => {
+            feuille[row.dataset.code] = {
+                joueursDom: row.querySelector('[data-field="joueursDom"]').value.trim(),
+                joueursExt: row.querySelector('[data-field="joueursExt"]').value.trim(),
+                score: row.querySelector('[data-field="score"]').value.trim(),
+                vainqueur: row.querySelector('[data-field="vainqueur"]').value
+            };
+        });
+        const all = readRencontres();
+        all[rencontreKey(currentRencontre)] = feuille;
+        writeRencontres(all);
+        updateRencontreScore();
+        renderPoolMatches();
+        renderStandings();
+        alert("✅ Feuille de match enregistrée !");
+    });
+
+    onValue(ref(db, 'clubs'), snapshot => { allClubs = snapshot.val() || {}; });
+
+    // ============================================================
 
     // --- Clé de tri chronologique (plus récent en premier) : priorité à la date réelle
     //     du match, puis à l'horodatage d'enregistrement en cas d'égalité / absence de date. ---
@@ -949,8 +1637,8 @@
             const matchs = snapshot.val();
             cacheMatchsAll = matchs || {};
 
-            const listOpponents = document.getElementById('list-opponents');
-            listOpponents.innerHTML = '';
+            const opponentSelect = document.getElementById('opponent-select');
+            const opponentResult = document.getElementById('opponent-result');
 
             matchesByScope = {
                 tournoi: { simple: [], double: [], mixte: [] },
@@ -998,35 +1686,33 @@
                 renderFicheMatchHistory(currentFicheTargetId);
             }
 
-            // Génération de la liste des adversaires triée par nombre de matchs décroissant
+            // Liste déroulante des adversaires, triée par nombre de matchs décroissant
             const sortedOpponents = Object.keys(oppStats).sort((a, b) => oppStats[b].count - oppStats[a].count);
 
-            if (sortedOpponents.length > 0) {
-                sortedOpponents.forEach(advId => {
-                    const opp = oppStats[advId];
-                    const total = opp.count;
-                    const winPct = Math.round((opp.wins / total) * 100);
-                    const isPositive = opp.wins >= opp.losses;
-
-                    listOpponents.innerHTML += `
-                        <li class="li-flex">
-                            <div>
-                                <b>${opp.name}</b> 
-                                <span style="color: var(--sub); font-size: 0.8rem; margin-left: 8px;">
-                                    (${total} match${total > 1 ? 's' : ''})
-                                </span>
-                            </div>
-                            <div>
-                                <span class="tag ${isPositive ? 'tag-win' : 'tag-loss'}">
-                                    ${opp.wins}V / ${opp.losses}D (${winPct}%)
-                                </span>
-                            </div>
-                        </li>
-                    `;
-                });
-            } else {
-                listOpponents.innerHTML = '<li>Aucun adversaire joué</li>';
+            function renderOpponentResult(advId) {
+                if (!advId || !oppStats[advId]) { opponentResult.style.display = 'none'; return; }
+                const opp = oppStats[advId];
+                const winPct = opp.count ? Math.round((opp.wins / opp.count) * 100) : 0;
+                const cls = opp.wins >= opp.losses ? 'winrate-high' : 'winrate-low';
+                opponentResult.style.display = 'flex';
+                opponentResult.innerHTML = `
+                    <span class="opponent-result-name"><b>${escapeHtml(opp.name)}</b><small>${opp.count} match${opp.count > 1 ? 's' : ''}</small></span>
+                    <span style="display:flex; align-items:center; gap:8px;">
+                        <span class="winrate-bar"><span style="width: ${winPct}%;"></span></span>
+                        <span class="winrate ${cls}">${opp.wins}V / ${opp.losses}D (${winPct}%)</span>
+                    </span>`;
             }
+
+            const previousSelection = opponentSelect.value;
+            if (sortedOpponents.length > 0) {
+                opponentSelect.innerHTML = '<option value="">Sélectionner un adversaire…</option>' +
+                    sortedOpponents.map(advId => `<option value="${advId}">${escapeHtml(oppStats[advId].name)} (${oppStats[advId].count} match${oppStats[advId].count > 1 ? 's' : ''})</option>`).join('');
+                if (sortedOpponents.includes(previousSelection)) opponentSelect.value = previousSelection;
+            } else {
+                opponentSelect.innerHTML = '<option value="">Aucun adversaire joué</option>';
+            }
+            renderOpponentResult(opponentSelect.value);
+            opponentSelect.onchange = () => renderOpponentResult(opponentSelect.value);
         });
 
         // --- Prochain tournoi (le plus proche dans le temps parmi ceux où le joueur est inscrit) ---
@@ -1119,7 +1805,7 @@
                     const heureLabel = ev.heure ? ` à ${escapeHtml(ev.heure)}` : '';
                     const lieuLabel = ev.lieu ? ` — 📍 ${escapeHtml(ev.lieu)}` : '';
                     const interclubHtml = `
-                        <li class="li-flex">
+                        <li class="li-flex li-interclub">
                             <span><b>🆚 ${escapeHtml(ev.titre)}</b><br><small>📅 ${escapeHtml(ev.date)}${heureLabel}${lieuLabel}</small></span>
                             ${isMine ? `<button type="button" class="btn-delete-event" data-id="${id}" title="Supprimer">🗑️</button>` : ''}
                         </li>`;
@@ -1212,6 +1898,24 @@
             alert("❌ Impossible de supprimer cet événement.\n\nErreur Firebase : " + error.message);
         });
     }
+</script>
+
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        const btn = document.getElementById('themeToggle');
+        if (btn) btn.textContent = theme === 'light' ? '☀️' : '🌙';
+        localStorage.setItem('badsmash_theme', theme);
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        applyTheme(current === 'light' ? 'dark' : 'light');
+    }
+    (function initTheme() {
+        const saved = localStorage.getItem('badsmash_theme');
+        const preferLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        applyTheme(saved || (preferLight ? 'light' : 'dark'));
+    })();
 </script>
 
 </body>
