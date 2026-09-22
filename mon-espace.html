@@ -287,6 +287,7 @@
         .mdr { display: grid; grid-template-columns: 70px 1fr 1fr 130px 120px; gap: 8px; align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); margin-bottom: 8px; }
         .mdr-code { font-weight: 800; color: var(--green); font-size: .85rem; }
         .mdr input, .mdr select { width: 100%; margin: 0; padding: 8px; border-radius: 7px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: .85rem; }
+        .mdr-players { display: flex; flex-direction: column; gap: 4px; }
         .mdr-head { color: var(--sub); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; background: none; border: none; padding: 0 10px; margin-bottom: 4px; }
         .rencontre-score { font-size: 1.6rem; font-weight: 800; color: var(--green); text-align: center; margin: 10px 0; }
         @media (max-width: 760px) { .mdr { grid-template-columns: 1fr; } .mdr-head { display: none; } }
@@ -581,7 +582,7 @@
         <div class="tab-hero"><h2>🛡️ Interclubs</h2><p>Préparez vos rencontres de club et retrouvez votre calendrier.</p></div>
         <div class="card">
             <h2>🏁 Mes deux poules & Classement</h2>
-            <p style="color: var(--sub); font-size: .85rem; margin-bottom: 14px;">Saisissez jusqu’à 6 équipes par poule : le classement de chaque poule s’affiche juste en dessous et se met à jour automatiquement. Vos équipes sont conservées sur cet appareil.</p>
+            <p style="color: var(--sub); font-size: .85rem; margin-bottom: 14px;">Saisissez jusqu’à 6 équipes par poule : le classement de chaque poule s’affiche juste en dessous et se met à jour automatiquement. Vos équipes sont enregistrées en ligne et visibles sur tous vos appareils.</p>
             <div class="pool-grid" id="interclub-pools"></div>
             <button class="btn-save" type="button" id="btn-save-pools">Enregistrer les poules</button>
         </div>
@@ -649,7 +650,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, update, push, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyD5qiseJI4b-CwIGzKi8XYA6pSPqiMRV24",
@@ -710,13 +711,34 @@
     renderPersonalCalendar('nutrition', 'list-nutrition', e => e.type);
     renderPersonalCalendar('musculation', 'list-musculation', e => e.details);
 
-    function readPools() {
-        try {
-            const pools = JSON.parse(localStorage.getItem(localPlanKey('interclub_pools')) || 'null');
-            if (pools && Array.isArray(pools.A) && Array.isArray(pools.B)) return pools;
-        } catch {}
-        return { A: Array(6).fill(''), B: Array(6).fill('') };
+    // --- Interclubs (poules, rencontres, effectifs, feuilles de match) ---
+    // Ces données sont désormais stockées dans Firebase (nœud "interclubs") et
+    // partagées par tout le club : elles s'affichent donc sur tous les appareils,
+    // et non plus seulement sur celui où elles ont été saisies.
+    function teamKey(name) {
+        return String(name || '').trim().replace(/[.#$[\]/]/g, '_');
     }
+    function padPool(arr) {
+        const out = Array(6).fill('');
+        if (Array.isArray(arr)) {
+            arr.forEach((v, i) => { if (i < 6) out[i] = v || ''; });
+        } else if (arr && typeof arr === 'object') {
+            Object.keys(arr).forEach(k => { const i = Number(k); if (i >= 0 && i < 6) out[i] = arr[k] || ''; });
+        }
+        return out;
+    }
+
+    let interclubPools = { A: Array(6).fill(''), B: Array(6).fill('') };
+    let interclubMatches = {};
+    let interclubEffectifs = {};
+    let interclubFeuilles = {};
+
+    function matchesArray() {
+        return Object.keys(interclubMatches).map(key => ({ key, ...interclubMatches[key] }));
+    }
+
+    function readPools() { return interclubPools; }
+
     function computeStandingsRows(pool, pools, matches) {
         const rows = (pools[pool] || []).filter(Boolean).map(team => ({ team, played: 0, wins: 0, draws: 0, losses: 0, diff: 0, points: 0 }));
         const byTeam = Object.fromEntries(rows.map(row => [row.team, row]));
@@ -761,7 +783,7 @@
 
     function renderPools() {
         const pools = readPools();
-        const matches = readLocalPlan('interclub_matches');
+        const matches = matchesArray();
         const target = document.getElementById('interclub-pools');
 
         target.innerHTML = ['A', 'B'].map(pool => {
@@ -792,29 +814,35 @@
             const ancien = pools[btn.dataset.pool][Number(btn.dataset.index)];
             const nouveau = prompt("Nom de l'équipe :", ancien);
             if (nouveau === null) return;
-            pools[btn.dataset.pool][Number(btn.dataset.index)] = nouveau.trim();
-            writeLocalPlan('interclub_pools', pools);
+            const updated = { A: pools.A.slice(), B: pools.B.slice() };
+            updated[btn.dataset.pool][Number(btn.dataset.index)] = nouveau.trim();
+            set(ref(db, 'interclubs/pools'), updated).catch(error => {
+                alert("❌ Impossible de renommer cette équipe.\n\nErreur Firebase : " + error.message);
+            });
             renameRoster(ancien, nouveau.trim());
-            renderPools();
         }));
         // Retirer une équipe
         target.querySelectorAll('.btn-remove-team').forEach(btn => btn.addEventListener('click', () => {
             const pools = readPools();
             if (!confirm(`Retirer « ${pools[btn.dataset.pool][Number(btn.dataset.index)]} » de la poule ?`)) return;
-            pools[btn.dataset.pool][Number(btn.dataset.index)] = '';
-            writeLocalPlan('interclub_pools', pools);
-            renderPools();
+            const updated = { A: pools.A.slice(), B: pools.B.slice() };
+            updated[btn.dataset.pool][Number(btn.dataset.index)] = '';
+            set(ref(db, 'interclubs/pools'), updated).catch(error => {
+                alert("❌ Impossible de retirer cette équipe.\n\nErreur Firebase : " + error.message);
+            });
         }));
         updatePoolMatchOptions();
     }
     function savePools() {
         // On repart des équipes déjà enregistrées, et on complète avec les cases vides saisies
-        const pools = readPools();
+        const current = readPools();
+        const pools = { A: current.A.slice(), B: current.B.slice() };
         document.querySelectorAll('#interclub-pools input[data-pool]').forEach(input => {
             pools[input.dataset.pool][Number(input.dataset.index)] = input.value.trim();
         });
-        writeLocalPlan('interclub_pools', pools);
-        renderPools();
+        set(ref(db, 'interclubs/pools'), pools).catch(error => {
+            alert("❌ Impossible d'enregistrer les poules.\n\nErreur Firebase : " + error.message + "\n\nCela vient probablement des règles de sécurité de la base de données qui n'autorisent pas encore l'écriture du nœud « interclubs ».");
+        });
     }
     function updatePoolMatchOptions() {
         const pool = document.getElementById('pool-match-pool').value;
@@ -826,8 +854,8 @@
     }
     function renderPoolMatches() {
         const list = document.getElementById('list-pool-matchs');
-        const matches = readLocalPlan('interclub_matches').sort((a, b) => String(a.date).localeCompare(String(b.date)));
-        list.innerHTML = matches.length ? matches.map((match, index) => {
+        const matches = matchesArray().sort((a, b) => String(a.date).localeCompare(String(b.date)));
+        list.innerHTML = matches.length ? matches.map(match => {
             const [dom, ext] = String(match.teams || '').split(' — ');
             const { scoreA, scoreB, aResultat } = computeRencontreScore(match);
             // Le score s'affiche directement entre les deux équipes, ex: "Juvibad 4 — 4 Toulouse..."
@@ -837,7 +865,7 @@
                 : `${escapeHtml(dom || match.teams)} — ${escapeHtml(ext || '')}`;
             return `<li class="rencontre-item">
                 <div class="team-row">
-                    <button type="button" class="team-card rencontre-tag" data-open-rencontre="${index}">
+                    <button type="button" class="team-card rencontre-tag" data-open-rencontre="${match.key}">
                         <span class="team-card-top">
                             <span class="team-rank">📅</span>
                             <span class="team-name">${titre}</span>
@@ -846,27 +874,68 @@
                         ${!aResultat ? '<span class="team-stats"><span class="team-stat">Résultat à saisir</span></span>' : ''}
                     </button>
                     <span class="team-tools">
-                        <button type="button" class="btn-delete-event" data-index="${index}" aria-label="Supprimer">🗑️</button>
+                        <button type="button" class="btn-delete-event" data-key="${match.key}" aria-label="Supprimer">🗑️</button>
                     </span>
                 </div>
             </li>`;
         }).join('') : '<li>Aucune rencontre de poule programmée.</li>';
-        list.querySelectorAll('.btn-delete-event').forEach(button => button.addEventListener('click', () => { const current = readLocalPlan('interclub_matches').sort((a, b) => String(a.date).localeCompare(String(b.date))); current.splice(Number(button.dataset.index), 1); writeLocalPlan('interclub_matches', current); renderPoolMatches(); renderStandings(); }));
+        list.querySelectorAll('.btn-delete-event').forEach(button => button.addEventListener('click', () => {
+            if (!confirm('Supprimer cette rencontre et sa feuille de match ?')) return;
+            remove(ref(db, `interclubs/matches/${button.dataset.key}`));
+            remove(ref(db, `interclubs/feuilles/${button.dataset.key}`));
+        }));
         // Au clic sur la carte d'une rencontre : ouverture de la feuille de match
         list.querySelectorAll('[data-open-rencontre]').forEach(btn => btn.addEventListener('click', () => {
-            openRencontreView(matches[Number(btn.dataset.openRencontre)]);
+            const match = interclubMatches[btn.dataset.openRencontre];
+            if (match) openRencontreView(btn.dataset.openRencontre, match);
         }));
     }
     function renderStandings() {
         // Le classement est désormais intégré directement dans chaque carte de poule (voir renderPools).
         renderPools();
     }
-    document.getElementById('btn-save-pools').addEventListener('click', () => { savePools(); renderStandings(); });
+    document.getElementById('btn-save-pools').addEventListener('click', () => savePools());
     document.getElementById('pool-match-pool').addEventListener('change', updatePoolMatchOptions);
-    document.getElementById('form-pool-match').addEventListener('submit', event => { event.preventDefault(); const teams = document.getElementById('pool-match-teams').value; if (!teams) return; const matches = readLocalPlan('interclub_matches'); matches.push({ date: document.getElementById('pool-match-date').value, pool: document.getElementById('pool-match-pool').value, teams }); writeLocalPlan('interclub_matches', matches); event.currentTarget.reset(); updatePoolMatchOptions(); renderPoolMatches(); renderStandings(); });
-    renderPools();
-    renderPoolMatches();
-    renderStandings();
+    document.getElementById('form-pool-match').addEventListener('submit', event => {
+        event.preventDefault();
+        const teams = document.getElementById('pool-match-teams').value;
+        if (!teams) return;
+        push(ref(db, 'interclubs/matches'), {
+            date: document.getElementById('pool-match-date').value,
+            pool: document.getElementById('pool-match-pool').value,
+            teams,
+            timestamp: Date.now()
+        }).then(() => {
+            event.target.reset();
+            updatePoolMatchOptions();
+        }).catch(error => {
+            alert("❌ Impossible d'ajouter cette rencontre.\n\nErreur Firebase : " + error.message);
+        });
+    });
+
+    // Écoute en temps réel du nœud partagé "interclubs" : ces données sont communes
+    // à tout le club et se mettent à jour instantanément sur tous les appareils.
+    onValue(ref(db, 'interclubs/pools'), snapshot => {
+        const val = snapshot.val();
+        interclubPools = (val && (val.A || val.B)) ? { A: padPool(val.A), B: padPool(val.B) } : { A: Array(6).fill(''), B: Array(6).fill('') };
+        renderPools();
+    });
+    onValue(ref(db, 'interclubs/matches'), snapshot => {
+        interclubMatches = snapshot.val() || {};
+        renderPoolMatches();
+        renderStandings();
+    });
+    onValue(ref(db, 'interclubs/effectifs'), snapshot => {
+        interclubEffectifs = snapshot.val() || {};
+        renderPools();
+        if (currentClubTeam) renderClubView();
+    });
+    onValue(ref(db, 'interclubs/feuilles'), snapshot => {
+        interclubFeuilles = snapshot.val() || {};
+        renderPoolMatches();
+        renderStandings();
+        if (currentClubTeam) renderClubView();
+    });
 
     // --- Onglets principaux (Tableau de bord / Tournois / Interclubs / ...) ---
     function activateTab(tabId) {
@@ -1161,45 +1230,48 @@
     }
 
     // --- Effectif d'une équipe : joueurs (créés dans l'admin) ajoutés à la main ---
-    // (déclarations de fonctions : utilisables dès le premier rendu des poules)
-    function readEffectifs() { try { return JSON.parse(localStorage.getItem(localPlanKey('interclub_effectifs')) || '{}'); } catch { return {}; } }
-    function writeEffectifs(value) { localStorage.setItem(localPlanKey('interclub_effectifs'), JSON.stringify(value)); }
-
+    // Stocké dans Firebase (interclubs/effectifs), partagé par tout le club.
     function getRoster(teamName) {
-        const effectifs = readEffectifs();
-        if (Array.isArray(effectifs[teamName])) return effectifs[teamName].filter(id => allPlayers[id]);
+        const key = teamKey(teamName);
+        if (Array.isArray(interclubEffectifs[key])) return interclubEffectifs[key].filter(id => allPlayers[id]);
         // Première ouverture : si le club existe en base, on pré-remplit avec ses licenciés
         const club = findClubByName(teamName);
         const auto = club ? Object.keys(allPlayers).filter(id => allPlayers[id].clubId === club.id) : [];
-        effectifs[teamName] = auto;
-        writeEffectifs(effectifs);
+        set(ref(db, `interclubs/effectifs/${key}`), auto).catch(() => {});
         return auto;
     }
     function setRoster(teamName, ids) {
-        const effectifs = readEffectifs();
-        effectifs[teamName] = ids;
-        writeEffectifs(effectifs);
+        set(ref(db, `interclubs/effectifs/${teamKey(teamName)}`), ids).catch(error => {
+            alert("❌ Impossible de mettre à jour l'effectif de cette équipe.\n\nErreur Firebase : " + error.message);
+        });
     }
     function renameRoster(ancien, nouveau) {
         if (!ancien || !nouveau || ancien === nouveau) return;
-        const effectifs = readEffectifs();
-        if (effectifs[ancien]) { effectifs[nouveau] = effectifs[ancien]; delete effectifs[ancien]; writeEffectifs(effectifs); }
+        const ancienKey = teamKey(ancien), nouveauKey = teamKey(nouveau);
+        const ids = interclubEffectifs[ancienKey];
+        if (ids) update(ref(db, 'interclubs/effectifs'), { [nouveauKey]: ids, [ancienKey]: null });
     }
     function rosterCountLabel(teamName) {
-        const effectifs = readEffectifs();
-        const n = Array.isArray(effectifs[teamName]) ? effectifs[teamName].length : 0;
+        const ids = interclubEffectifs[teamKey(teamName)];
+        const n = Array.isArray(ids) ? ids.length : 0;
         return n ? `${n} joueur${n > 1 ? 's' : ''} dans l'équipe` : 'Effectif à compléter';
     }
 
-    // Taux de victoire d'un joueur lors des rencontres (matchs de club / interclubs)
+    // Taux de victoire d'un joueur, calculé UNIQUEMENT à partir des feuilles de match
+    // des rencontres interclub (poules) — les matchs de club « informels » saisis côté
+    // admin n'entrent plus dans ce calcul.
     function winRateForPlayer(playerId) {
         let wins = 0, losses = 0;
-        Object.keys(cacheMatchsAll).forEach(id => {
-            const m = cacheMatchsAll[id];
-            if (m.type === 'tournoi') return; // on ne compte que les rencontres de club / interclubs
-            const role = getUserRoleInMatch(m, playerId);
-            if (!role.involved) return;
-            if (role.isWinner) wins++; else losses++;
+        matchesArray().forEach(match => {
+            const feuille = interclubFeuilles[match.key];
+            if (!feuille) return;
+            Object.values(feuille).forEach(slot => {
+                if (!slot || !slot.vainqueur) return;
+                const domIds = Array.isArray(slot.domIds) ? slot.domIds : [];
+                const extIds = Array.isArray(slot.extIds) ? slot.extIds : [];
+                if (domIds.includes(playerId)) { if (slot.vainqueur === 'dom') wins++; else losses++; }
+                else if (extIds.includes(playerId)) { if (slot.vainqueur === 'ext') wins++; else losses++; }
+            });
         });
         const total = wins + losses;
         return { wins, losses, total, pct: total ? Math.round((wins / total) * 100) : 0 };
@@ -1279,38 +1351,32 @@
             const current = getRoster(teamName);
             if (current.includes(id)) return;
             setRoster(teamName, [...current, id]);
-            renderClubView();
-            renderPools();
         });
 
         content.querySelectorAll('.btn-remove-player').forEach(btn => btn.addEventListener('click', () => {
             setRoster(teamName, getRoster(teamName).filter(id => id !== btn.dataset.id));
-            renderClubView();
-            renderPools();
         }));
     }
 
     // --- Feuille de match d'une rencontre ---
+    // "count" = nombre de joueurs à sélectionner par équipe pour ce type de match
+    // (1 en simple, 2 en double/mixte). Les joueurs sont choisis dans l'effectif de
+    // chaque équipe, ce qui permet de relier chaque victoire/défaite à un joueur précis
+    // et donc de calculer un taux de victoire fiable, propre aux rencontres interclub.
     const MATCH_SLOTS = [
-        { code: 'SH1', label: 'Simple Homme 1' },
-        { code: 'SH2', label: 'Simple Homme 2' },
-        { code: 'SD1', label: 'Simple Dame 1' },
-        { code: 'SD2', label: 'Simple Dame 2' },
-        { code: 'DH', label: 'Double Hommes' },
-        { code: 'DD', label: 'Double Dames' },
-        { code: 'MIX1', label: 'Double Mixte 1' },
-        { code: 'MIX2', label: 'Double Mixte 2' }
+        { code: 'SH1', label: 'Simple Homme 1', count: 1 },
+        { code: 'SH2', label: 'Simple Homme 2', count: 1 },
+        { code: 'SD1', label: 'Simple Dame 1', count: 1 },
+        { code: 'SD2', label: 'Simple Dame 2', count: 1 },
+        { code: 'DH', label: 'Double Hommes', count: 2 },
+        { code: 'DD', label: 'Double Dames', count: 2 },
+        { code: 'MIX1', label: 'Double Mixte 1', count: 2 },
+        { code: 'MIX2', label: 'Double Mixte 2', count: 2 }
     ];
-
-    // Déclarations de fonction (hissées) : utilisables dès le premier rendu des poules,
-    // avant même d'atteindre cette ligne du script.
-    function rencontreKey(match) { return `${match.date || 'sans-date'}|${match.teams || ''}`; }
-    function readRencontres() { try { return JSON.parse(localStorage.getItem(localPlanKey('interclub_feuilles')) || '{}'); } catch { return {}; } }
-    function writeRencontres(value) { localStorage.setItem(localPlanKey('interclub_feuilles'), JSON.stringify(value)); }
 
     // Score d'une rencontre = nombre de matchs gagnés par équipe dans la feuille de match détaillée
     function computeRencontreScore(match) {
-        const feuille = readRencontres()[rencontreKey(match)];
+        const feuille = interclubFeuilles[match.key];
         if (!feuille) return { scoreA: null, scoreB: null, aResultat: false };
         let scoreA = 0, scoreB = 0, aResultat = false;
         Object.values(feuille).forEach(slot => {
@@ -1331,22 +1397,38 @@
         document.getElementById('rencontre-score').innerText = `${dom} — ${ext}`;
     }
 
-    function openRencontreView(match) {
+    // Rendu des sélecteurs de joueurs d'un côté (domicile/extérieur) d'un créneau de la feuille de match
+    function slotSideHtml(side, slot, ids, teamLabel, savedIds) {
+        const selected = Array.isArray(savedIds) ? savedIds : [];
+        const rows = [];
+        for (let i = 0; i < slot.count; i++) {
+            const current = selected[i] || '';
+            rows.push(`<select data-field="${side}">
+                <option value="">${escapeHtml(teamLabel || (side === 'dom' ? 'Domicile' : 'Extérieur'))}${slot.count > 1 ? ' ' + (i + 1) : ''}…</option>
+                ${ids.map(id => `<option value="${id}" ${id === current ? 'selected' : ''}>${escapeHtml(shortPlayerName(allPlayers[id]))}</option>`).join('')}
+            </select>`);
+        }
+        return `<div class="mdr-players" data-side="${side}">${rows.join('')}</div>`;
+    }
+
+    function openRencontreView(key, match) {
         if (!match) return;
-        currentRencontre = match;
+        currentRencontre = { key, ...match };
 
         const [dom, ext] = String(match.teams || '').split(' — ');
+        const homeIds = getRoster(dom || '');
+        const awayIds = getRoster(ext || '');
         document.getElementById('rencontre-view-title').innerText = `🆚 ${match.teams || 'Rencontre'}`;
         document.getElementById('rencontre-view-sub').innerText = `${dateLabel(match.date)} · Poule ${match.pool || '-'} — saisissez le détail des 8 matchs`;
 
-        const saved = readRencontres()[rencontreKey(match)] || {};
+        const saved = interclubFeuilles[key] || {};
 
         document.getElementById('rencontre-slots').innerHTML = MATCH_SLOTS.map(slot => {
             const d = saved[slot.code] || {};
             return `<div class="mdr" data-code="${slot.code}">
                 <span class="mdr-code" title="${escapeHtml(slot.label)}">${slot.code}</span>
-                <input type="text" data-field="joueursDom" value="${escapeHtml(d.joueursDom || '')}" placeholder="${escapeHtml(dom || 'Domicile')}">
-                <input type="text" data-field="joueursExt" value="${escapeHtml(d.joueursExt || '')}" placeholder="${escapeHtml(ext || 'Extérieur')}">
+                ${slotSideHtml('dom', slot, homeIds, dom, d.domIds)}
+                ${slotSideHtml('ext', slot, awayIds, ext, d.extIds)}
                 <input type="text" data-field="score" value="${escapeHtml(d.score || '')}" placeholder="21-15 / 21-18">
                 <select data-field="vainqueur">
                     <option value="">Vainqueur…</option>
@@ -1365,20 +1447,21 @@
         if (!currentRencontre) return;
         const feuille = {};
         document.querySelectorAll('#rencontre-slots .mdr').forEach(row => {
+            const domIds = Array.from(row.querySelectorAll('[data-side="dom"] select')).map(s => s.value).filter(Boolean);
+            const extIds = Array.from(row.querySelectorAll('[data-side="ext"] select')).map(s => s.value).filter(Boolean);
             feuille[row.dataset.code] = {
-                joueursDom: row.querySelector('[data-field="joueursDom"]').value.trim(),
-                joueursExt: row.querySelector('[data-field="joueursExt"]').value.trim(),
+                domIds,
+                extIds,
                 score: row.querySelector('[data-field="score"]').value.trim(),
                 vainqueur: row.querySelector('[data-field="vainqueur"]').value
             };
         });
-        const all = readRencontres();
-        all[rencontreKey(currentRencontre)] = feuille;
-        writeRencontres(all);
-        updateRencontreScore();
-        renderPoolMatches();
-        renderStandings();
-        alert("✅ Feuille de match enregistrée !");
+        set(ref(db, `interclubs/feuilles/${currentRencontre.key}`), feuille).then(() => {
+            updateRencontreScore();
+            alert("✅ Feuille de match enregistrée !");
+        }).catch(error => {
+            alert("❌ Impossible d'enregistrer la feuille de match.\n\nErreur Firebase : " + error.message + "\n\nCela vient probablement des règles de sécurité de la base de données qui n'autorisent pas encore l'écriture du nœud « interclubs ».");
+        });
     });
 
     onValue(ref(db, 'clubs'), snapshot => { allClubs = snapshot.val() || {}; });
