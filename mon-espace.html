@@ -486,15 +486,7 @@
             </div>
             <div class="card">
                 <h2>🛡️ Prochains Interclubs</h2>
-                <form id="form-interclub">
-                    <input type="text" id="interclub-club" placeholder="Club adverse" required>
-                    <div class="grid-2">
-                        <input type="date" id="interclub-date" required>
-                        <input type="time" id="interclub-heure">
-                    </div>
-                    <input type="text" id="interclub-lieu" placeholder="Lieu (optionnel, ex: Domicile / Extérieur)">
-                    <button type="submit" class="btn-save">➕ Ajouter un interclub</button>
-                </form>
+                <p style="color: var(--sub); font-size: 0.85rem; margin-bottom: 10px;">Les 2 prochaines rencontres de votre club, créées dans l'onglet Interclubs.</p>
                 <ul id="list-interclubs"><li>Aucun interclub prévu</li></ul>
             </div>
         </div>
@@ -579,22 +571,25 @@
 
     <!-- VUE PRINCIPALE -->
     <div id="view-interclub-main" class="subview active">
-        <div class="tab-hero"><h2>🛡️ Interclubs</h2><p>Préparez vos rencontres de club et retrouvez votre calendrier.</p></div>
-        <div class="card">
-            <h2>🏁 Mes deux poules & Classement</h2>
-            <p style="color: var(--sub); font-size: .85rem; margin-bottom: 14px;">Saisissez jusqu’à 6 équipes par poule : le classement de chaque poule s’affiche juste en dessous et se met à jour automatiquement. Vos équipes sont enregistrées en ligne et visibles sur tous vos appareils.</p>
-            <div class="pool-grid" id="interclub-pools"></div>
-            <button class="btn-save" type="button" id="btn-save-pools">Enregistrer les poules</button>
+        <div class="tab-hero"><h2>🛡️ Interclubs</h2><p>Retrouvez les poules, le classement et les rencontres de la série de votre club.</p></div>
+        <div class="card" id="serie-select-wrap" style="display:none;">
+            <label for="serie-select" style="display:block; font-size:.8rem; color:var(--sub); margin-bottom:6px;">Série interclub</label>
+            <select id="serie-select"></select>
         </div>
-        <div class="card">
-            <h2>➕ Programmer une rencontre</h2>
-            <form id="form-pool-match" class="calendar-form">
-                <div><label for="pool-match-date">Date</label><input id="pool-match-date" type="date" required></div>
-                <div><label for="pool-match-pool">Poule</label><select id="pool-match-pool"><option value="A">Poule A</option><option value="B">Poule B</option></select></div>
-                <div><label for="pool-match-teams">Rencontre</label><select id="pool-match-teams" required><option value="">Renseignez les équipes ci-dessus</option></select></div>
-                <button class="btn-save" type="submit">Ajouter</button>
-            </form>
-            <ul id="list-pool-matchs" style="margin-top: 16px;"></ul>
+        <div class="card" id="serie-empty">
+            <h2>🏁 Aucune série pour votre club</h2>
+            <p style="color: var(--sub); font-size: .9rem;">Votre club n'est inscrit dans aucune série interclub pour le moment. Dès que l'administrateur l'ajoutera à une série, les poules, le classement et les rencontres apparaîtront ici.</p>
+        </div>
+        <div id="serie-content" style="display:none;">
+            <div class="card">
+                <h2 id="serie-title">🏁 Poules & Classement</h2>
+                <p style="color: var(--sub); font-size: .85rem; margin-bottom: 14px;">Le classement de chaque poule se met à jour automatiquement avec les feuilles de match. Cliquez sur une équipe pour voir son effectif.</p>
+                <div class="pool-grid" id="interclub-pools"></div>
+            </div>
+            <div class="card">
+                <h2>📆 Rencontres de la série</h2>
+                <ul id="list-pool-matchs"></ul>
+            </div>
         </div>
         <div class="card">
             <h2>📅 Rencontres à venir</h2>
@@ -711,33 +706,65 @@
     renderPersonalCalendar('nutrition', 'list-nutrition', e => e.type);
     renderPersonalCalendar('musculation', 'list-musculation', e => e.details);
 
-    // --- Interclubs (poules, rencontres, effectifs, feuilles de match) ---
-    // Ces données sont désormais stockées dans Firebase (nœud "interclubs") et
-    // partagées par tout le club : elles s'affichent donc sur tous les appareils,
-    // et non plus seulement sur celui où elles ont été saisies.
+    // --- Séries Interclub (créées par l'admin dans le nœud "seriesInterclub") ---
+    // Chaque série contient : pools, teamClubs, effectifs, matches, feuilles.
+    // Le joueur ne voit que les séries dans lesquelles joue son club.
     function teamKey(name) {
         return String(name || '').trim().replace(/[.#$[\]/]/g, '_');
     }
-    function padPool(arr) {
-        const out = Array(6).fill('');
-        if (Array.isArray(arr)) {
-            arr.forEach((v, i) => { if (i < 6) out[i] = v || ''; });
-        } else if (arr && typeof arr === 'object') {
-            Object.keys(arr).forEach(k => { const i = Number(k); if (i >= 0 && i < 6) out[i] = arr[k] || ''; });
-        }
-        return out;
+    function normPool(arr) {
+        let out = [];
+        if (Array.isArray(arr)) out = arr.slice();
+        else if (arr && typeof arr === 'object') Object.keys(arr).forEach(k => { out[Number(k)] = arr[k]; });
+        return Array.from(out, v => v || '');
     }
 
-    let interclubPools = { A: Array(6).fill(''), B: Array(6).fill('') };
+    let allSeries = {};
+    let currentSerieId = null;
+    let interclubPools = {};
     let interclubMatches = {};
     let interclubEffectifs = {};
     let interclubFeuilles = {};
+    let userClub = { id: null, nom: '' };
+
+    function serieBase() { return `seriesInterclub/${currentSerieId}`; }
 
     function matchesArray() {
         return Object.keys(interclubMatches).map(key => ({ key, ...interclubMatches[key] }));
     }
-
     function readPools() { return interclubPools; }
+
+    // Effectif d'une équipe d'une série (ids des joueurs)
+    function rosterIdsOf(serie, teamName) {
+        const st = (serie.effectifs || {})[teamKey(teamName)];
+        return Array.isArray(st) ? st : (st && typeof st === 'object' ? Object.values(st) : []);
+    }
+    // Le joueur figure-t-il dans l'effectif d'au moins une équipe de n'importe quelle série ?
+    let userHasRoster = false;
+    function computeUserHasRoster() {
+        userHasRoster = Object.values(allSeries).some(serie =>
+            Object.values(serie.pools || {}).some(p => normPool(p).some(t => t && rosterIdsOf(serie, t).includes(userId))));
+    }
+
+    // Une équipe est « la mienne » si je figure dans son effectif.
+    // Tant que l'admin ne m'a mis dans aucune équipe, on se rabat sur mon club.
+    function teamIsMine(serie, teamName) {
+        if (!teamName) return false;
+        if (userHasRoster) return rosterIdsOf(serie, teamName).includes(userId);
+        if (!userClub.id) return false;
+        const mapped = serie && serie.teamClubs && serie.teamClubs[teamKey(teamName)];
+        if (mapped) return mapped === userClub.id;
+        const mine = normalizeText(userClub.nom);
+        return !!mine && normalizeText(teamName) === mine;
+    }
+    function serieHasMyClub(serie) {
+        return Object.values(serie.pools || {}).some(p => normPool(p).some(t => teamIsMine(serie, t)));
+    }
+    function mySerieIds() {
+        return Object.keys(allSeries)
+            .filter(id => serieHasMyClub(allSeries[id]))
+            .sort((a, b) => String(allSeries[a].nom || '').localeCompare(String(allSeries[b].nom || '')));
+    }
 
     function computeStandingsRows(pool, pools, matches) {
         const rows = (pools[pool] || []).filter(Boolean).map(team => ({ team, played: 0, wins: 0, draws: 0, losses: 0, diff: 0, points: 0 }));
@@ -749,20 +776,24 @@
             if (!byTeam[home] || !byTeam[away]) return;
             const a = scoreA, b = scoreB;
             byTeam[home].played++; byTeam[away].played++; byTeam[home].diff += a - b; byTeam[away].diff += b - a;
-            if (a > b) { byTeam[home].wins++; byTeam[home].points += 3; byTeam[away].losses++; }
-            else if (b > a) { byTeam[away].wins++; byTeam[away].points += 3; byTeam[home].losses++; }
-            else { byTeam[home].draws++; byTeam[away].draws++; byTeam[home].points += 1; byTeam[away].points += 1; }
+            // Points = nombre de matchs gagnés dans la rencontre (6-2 : 6 pts pour le vainqueur, 2 pts pour le perdant)
+            byTeam[home].points += a; byTeam[away].points += b;
+            if (a > b) { byTeam[home].wins++; byTeam[away].losses++; }
+            else if (b > a) { byTeam[away].wins++; byTeam[home].losses++; }
+            else { byTeam[home].draws++; byTeam[away].draws++; }
         });
         rows.sort((a, b) => b.points - a.points || b.diff - a.diff || a.team.localeCompare(b.team));
         return rows;
     }
+
     function teamCardHtml(pool, index, team, rank, stats) {
         const s = stats || { played: 0, wins: 0, draws: 0, losses: 0, diff: 0, points: 0 };
+        const mine = teamIsMine(allSeries[currentSerieId], team);
         return `<div class="team-row">
             <button type="button" class="team-card" data-team="${escapeHtml(team)}">
                 <span class="team-card-top">
                     <span class="team-rank ${rank === 1 ? 'team-rank-1' : ''}">${rank || '-'}</span>
-                    <span class="team-name">${escapeHtml(team)}</span>
+                    <span class="team-name">${escapeHtml(team)}${mine ? ' ⭐' : ''}</span>
                 </span>
                 <span class="team-card-meta">${rosterCountLabel(team)} · cliquez pour ouvrir la fiche</span>
                 <span class="team-stats">
@@ -774,10 +805,6 @@
                     <span class="team-stat team-stat-pts"><b>${s.points}</b> pts</span>
                 </span>
             </button>
-            <span class="team-tools">
-                <button type="button" class="btn-rename-team" data-pool="${pool}" data-index="${index}" title="Renommer cette équipe">✏️</button>
-                <button type="button" class="btn-remove-team" data-pool="${pool}" data-index="${index}" title="Retirer cette équipe">🗑️</button>
-            </span>
         </div>`;
     }
 
@@ -785,84 +812,38 @@
         const pools = readPools();
         const matches = matchesArray();
         const target = document.getElementById('interclub-pools');
+        const names = Object.keys(pools).sort();
 
-        target.innerHTML = ['A', 'B'].map(pool => {
-            // Classement calculé, puis appliqué directement sur les cartes
+        target.innerHTML = names.length ? names.map(pool => {
             const rows = computeStandingsRows(pool, pools, matches);
             const rankByTeam = {}, statsByTeam = {};
             rows.forEach((row, i) => { rankByTeam[row.team] = i + 1; statsByTeam[row.team] = row; });
-
             const slots = pools[pool].map((team, index) => ({ team, index }));
             const remplis = slots.filter(slot => slot.team.trim())
                 .sort((a, b) => (rankByTeam[a.team] || 99) - (rankByTeam[b.team] || 99));
-            const vides = slots.filter(slot => !slot.team.trim());
-
+            const libres = slots.length - remplis.length;
             return `<section class="pool-card">
-                <h3>🛡️ Poule ${pool}</h3>
+                <h3>🛡️ Poule ${escapeHtml(pool)}</h3>
                 ${remplis.map(slot => teamCardHtml(pool, slot.index, slot.team, rankByTeam[slot.team], statsByTeam[slot.team])).join('')}
-                ${vides.map(slot => `<input type="text" data-pool="${pool}" data-index="${slot.index}" value="" placeholder="Ajouter une équipe…">`).join('')}
+                ${libres ? `<p style="color: var(--sub); font-size: .8rem;">${libres} place${libres > 1 ? 's' : ''} non encore attribuée${libres > 1 ? 's' : ''}</p>` : ''}
             </section>`;
-        }).join('');
+        }).join('') : '<p style="color: var(--sub);">Cette série n\'a pas encore de poule.</p>';
 
-        // Au clic sur la carte d'un club : page dédiée du club
         target.querySelectorAll('.team-card').forEach(btn => {
             btn.addEventListener('click', () => openClubView(btn.dataset.team));
         });
-        // Renommer une équipe
-        target.querySelectorAll('.btn-rename-team').forEach(btn => btn.addEventListener('click', () => {
-            const pools = readPools();
-            const ancien = pools[btn.dataset.pool][Number(btn.dataset.index)];
-            const nouveau = prompt("Nom de l'équipe :", ancien);
-            if (nouveau === null) return;
-            const updated = { A: pools.A.slice(), B: pools.B.slice() };
-            updated[btn.dataset.pool][Number(btn.dataset.index)] = nouveau.trim();
-            set(ref(db, 'interclubs/pools'), updated).catch(error => {
-                alert("❌ Impossible de renommer cette équipe.\n\nErreur Firebase : " + error.message);
-            });
-            renameRoster(ancien, nouveau.trim());
-        }));
-        // Retirer une équipe
-        target.querySelectorAll('.btn-remove-team').forEach(btn => btn.addEventListener('click', () => {
-            const pools = readPools();
-            if (!confirm(`Retirer « ${pools[btn.dataset.pool][Number(btn.dataset.index)]} » de la poule ?`)) return;
-            const updated = { A: pools.A.slice(), B: pools.B.slice() };
-            updated[btn.dataset.pool][Number(btn.dataset.index)] = '';
-            set(ref(db, 'interclubs/pools'), updated).catch(error => {
-                alert("❌ Impossible de retirer cette équipe.\n\nErreur Firebase : " + error.message);
-            });
-        }));
-        updatePoolMatchOptions();
     }
-    function savePools() {
-        // On repart des équipes déjà enregistrées, et on complète avec les cases vides saisies
-        const current = readPools();
-        const pools = { A: current.A.slice(), B: current.B.slice() };
-        document.querySelectorAll('#interclub-pools input[data-pool]').forEach(input => {
-            pools[input.dataset.pool][Number(input.dataset.index)] = input.value.trim();
-        });
-        set(ref(db, 'interclubs/pools'), pools).catch(error => {
-            alert("❌ Impossible d'enregistrer les poules.\n\nErreur Firebase : " + error.message + "\n\nCela vient probablement des règles de sécurité de la base de données qui n'autorisent pas encore l'écriture du nœud « interclubs ».");
-        });
-    }
-    function updatePoolMatchOptions() {
-        const pool = document.getElementById('pool-match-pool').value;
-        const teams = (readPools()[pool] || []).filter(Boolean);
-        const select = document.getElementById('pool-match-teams');
-        const options = [];
-        teams.forEach((home, i) => teams.slice(i + 1).forEach(away => options.push(`${home} — ${away}`)));
-        select.innerHTML = '<option value="">Sélectionner les équipes…</option>' + options.map(match => `<option value="${escapeHtml(match)}">${escapeHtml(match)}</option>`).join('');
-    }
+
     function renderPoolMatches() {
         const list = document.getElementById('list-pool-matchs');
         const matches = matchesArray().sort((a, b) => String(a.date).localeCompare(String(b.date)));
         list.innerHTML = matches.length ? matches.map(match => {
             const [dom, ext] = String(match.teams || '').split(' — ');
             const { scoreA, scoreB, aResultat } = computeRencontreScore(match);
-            // Le score s'affiche directement entre les deux équipes, ex: "Juvibad 4 — 4 Toulouse..."
-            // Il est calculé à partir de la feuille de match détaillée (SH1, SH2, ...), pas saisi ici.
             const titre = aResultat
                 ? `${escapeHtml(dom || match.teams)} <span class="team-score">${scoreA}</span> — <span class="team-score">${scoreB}</span> ${escapeHtml(ext || '')}`
                 : `${escapeHtml(dom || match.teams)} — ${escapeHtml(ext || '')}`;
+            const extra = `${match.heure ? ' à ' + escapeHtml(match.heure) : ''}${match.lieu ? ' · 📍 ' + escapeHtml(match.lieu) : ''}`;
             return `<li class="rencontre-item">
                 <div class="team-row">
                     <button type="button" class="team-card rencontre-tag" data-open-rencontre="${match.key}">
@@ -870,71 +851,80 @@
                             <span class="team-rank">📅</span>
                             <span class="team-name">${titre}</span>
                         </span>
-                        <span class="team-card-meta">${escapeHtml(dateLabel(match.date))} · Poule ${escapeHtml(match.pool)} · cliquez pour la feuille de match</span>
+                        <span class="team-card-meta">${escapeHtml(dateLabel(match.date))}${extra} · Poule ${escapeHtml(match.pool)} · cliquez pour la feuille de match</span>
                         ${!aResultat ? '<span class="team-stats"><span class="team-stat">Résultat à saisir</span></span>' : ''}
                     </button>
-                    <span class="team-tools">
-                        <button type="button" class="btn-delete-event" data-key="${match.key}" aria-label="Supprimer">🗑️</button>
-                    </span>
                 </div>
             </li>`;
-        }).join('') : '<li>Aucune rencontre de poule programmée.</li>';
-        list.querySelectorAll('.btn-delete-event').forEach(button => button.addEventListener('click', () => {
-            if (!confirm('Supprimer cette rencontre et sa feuille de match ?')) return;
-            remove(ref(db, `interclubs/matches/${button.dataset.key}`));
-            remove(ref(db, `interclubs/feuilles/${button.dataset.key}`));
-        }));
-        // Au clic sur la carte d'une rencontre : ouverture de la feuille de match
+        }).join('') : '<li>Aucune rencontre programmée dans cette série.</li>';
         list.querySelectorAll('[data-open-rencontre]').forEach(btn => btn.addEventListener('click', () => {
             const match = interclubMatches[btn.dataset.openRencontre];
             if (match) openRencontreView(btn.dataset.openRencontre, match);
         }));
     }
-    function renderStandings() {
-        // Le classement est désormais intégré directement dans chaque carte de poule (voir renderPools).
-        renderPools();
-    }
-    document.getElementById('btn-save-pools').addEventListener('click', () => savePools());
-    document.getElementById('pool-match-pool').addEventListener('change', updatePoolMatchOptions);
-    document.getElementById('form-pool-match').addEventListener('submit', event => {
-        event.preventDefault();
-        const teams = document.getElementById('pool-match-teams').value;
-        if (!teams) return;
-        push(ref(db, 'interclubs/matches'), {
-            date: document.getElementById('pool-match-date').value,
-            pool: document.getElementById('pool-match-pool').value,
-            teams,
-            timestamp: Date.now()
-        }).then(() => {
-            event.target.reset();
-            updatePoolMatchOptions();
-        }).catch(error => {
-            alert("❌ Impossible d'ajouter cette rencontre.\n\nErreur Firebase : " + error.message);
-        });
-    });
+    function renderStandings() { renderPools(); }
 
-    // Écoute en temps réel du nœud partagé "interclubs" : ces données sont communes
-    // à tout le club et se mettent à jour instantanément sur tous les appareils.
-    onValue(ref(db, 'interclubs/pools'), snapshot => {
-        const val = snapshot.val();
-        interclubPools = (val && (val.A || val.B)) ? { A: padPool(val.A), B: padPool(val.B) } : { A: Array(6).fill(''), B: Array(6).fill('') };
+    // "Prochains Interclubs" (tableau de bord) : les 2 prochaines rencontres du club du joueur,
+    // toutes séries confondues. Une rencontre dont la date est passée disparaît de la liste.
+    function renderProchainsInterclubs() {
+        const list = document.getElementById('list-interclubs');
+        if (!list) return;
+        const d = new Date();
+        const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const all = [];
+        mySerieIds().forEach(sid => {
+            const serie = allSeries[sid];
+            Object.keys(serie.matches || {}).forEach(key => {
+                const m = serie.matches[key];
+                if (!m || !m.date || String(m.date) < today) return;
+                if (String(m.teams || '').split(' — ').some(t => teamIsMine(serie, t))) all.push({ ...m, serieNom: serie.nom || '' });
+            });
+        });
+        const next = all.sort((a, b) => `${a.date} ${a.heure || ''}`.localeCompare(`${b.date} ${b.heure || ''}`)).slice(0, 2);
+        list.innerHTML = next.length ? next.map(m => {
+            const [dom, ext] = String(m.teams || '').split(' — ');
+            const heure = m.heure ? ` à ${escapeHtml(m.heure)}` : '';
+            const lieu = m.lieu ? ` · 📍 ${escapeHtml(m.lieu)}` : '';
+            return `<li class="li-flex li-interclub">
+                <span><b>🆚 ${escapeHtml(dom || '')} — ${escapeHtml(ext || '')}</b><br><small>📅 ${escapeHtml(dateLabel(m.date))}${heure}${lieu} · ${escapeHtml(m.serieNom)} · Poule ${escapeHtml(m.pool || '')}</small></span>
+            </li>`;
+        }).join('') : '<li>Aucun interclub prévu pour votre club</li>';
+    }
+
+    // Applique la série sélectionnée (parmi celles de mon club) et rafraîchit tout l'onglet
+    function applyCurrentSerie() {
+        const ids = mySerieIds();
+        if (!ids.includes(currentSerieId)) currentSerieId = ids[0] || null;
+        const serie = currentSerieId ? allSeries[currentSerieId] : null;
+
+        interclubPools = {};
+        if (serie && serie.pools) Object.keys(serie.pools).sort().forEach(k => { interclubPools[k] = normPool(serie.pools[k]); });
+        interclubMatches = (serie && serie.matches) || {};
+        interclubEffectifs = (serie && serie.effectifs) || {};
+        interclubFeuilles = (serie && serie.feuilles) || {};
+
+        document.getElementById('serie-select').innerHTML = ids
+            .map(id => `<option value="${id}" ${id === currentSerieId ? 'selected' : ''}>${escapeHtml(allSeries[id].nom || 'Série')}</option>`).join('');
+        document.getElementById('serie-select-wrap').style.display = ids.length > 1 ? '' : 'none';
+        document.getElementById('serie-empty').style.display = ids.length ? 'none' : '';
+        document.getElementById('serie-content').style.display = ids.length ? '' : 'none';
+        document.getElementById('serie-title').innerText = serie ? `🏁 ${serie.nom || 'Série'} — Poules & Classement` : '';
+
         renderPools();
-    });
-    onValue(ref(db, 'interclubs/matches'), snapshot => {
-        interclubMatches = snapshot.val() || {};
         renderPoolMatches();
-        renderStandings();
-    });
-    onValue(ref(db, 'interclubs/effectifs'), snapshot => {
-        interclubEffectifs = snapshot.val() || {};
-        renderPools();
+        renderProchainsInterclubs();
         if (currentClubTeam) renderClubView();
+    }
+    document.getElementById('serie-select').addEventListener('change', e => {
+        currentSerieId = e.target.value;
+        currentClubTeam = null;
+        showInterclubView('view-interclub-main');
+        applyCurrentSerie();
     });
-    onValue(ref(db, 'interclubs/feuilles'), snapshot => {
-        interclubFeuilles = snapshot.val() || {};
-        renderPoolMatches();
-        renderStandings();
-        if (currentClubTeam) renderClubView();
+    onValue(ref(db, 'seriesInterclub'), snapshot => {
+        allSeries = snapshot.val() || {};
+        computeUserHasRoster();
+        applyCurrentSerie();
     });
 
     // --- Onglets principaux (Tableau de bord / Tournois / Interclubs / ...) ---
@@ -1229,31 +1219,14 @@
         return found ? { id: found, ...allClubs[found] } : null;
     }
 
-    // --- Effectif d'une équipe : joueurs (créés dans l'admin) ajoutés à la main ---
-    // Stocké dans Firebase (interclubs/effectifs), partagé par tout le club.
+    // --- Effectif d'une équipe : composé par l'admin (seriesInterclub/<série>/effectifs) ---
     function getRoster(teamName) {
-        const key = teamKey(teamName);
-        if (Array.isArray(interclubEffectifs[key])) return interclubEffectifs[key].filter(id => allPlayers[id]);
-        // Première ouverture : si le club existe en base, on pré-remplit avec ses licenciés
-        const club = findClubByName(teamName);
-        const auto = club ? Object.keys(allPlayers).filter(id => allPlayers[id].clubId === club.id) : [];
-        set(ref(db, `interclubs/effectifs/${key}`), auto).catch(() => {});
-        return auto;
-    }
-    function setRoster(teamName, ids) {
-        set(ref(db, `interclubs/effectifs/${teamKey(teamName)}`), ids).catch(error => {
-            alert("❌ Impossible de mettre à jour l'effectif de cette équipe.\n\nErreur Firebase : " + error.message);
-        });
-    }
-    function renameRoster(ancien, nouveau) {
-        if (!ancien || !nouveau || ancien === nouveau) return;
-        const ancienKey = teamKey(ancien), nouveauKey = teamKey(nouveau);
-        const ids = interclubEffectifs[ancienKey];
-        if (ids) update(ref(db, 'interclubs/effectifs'), { [nouveauKey]: ids, [ancienKey]: null });
+        const stored = interclubEffectifs[teamKey(teamName)];
+        const ids = Array.isArray(stored) ? stored : (stored && typeof stored === 'object' ? Object.values(stored) : []);
+        return ids.filter(id => allPlayers[id]);
     }
     function rosterCountLabel(teamName) {
-        const ids = interclubEffectifs[teamKey(teamName)];
-        const n = Array.isArray(ids) ? ids.length : 0;
+        const n = getRoster(teamName).length;
         return n ? `${n} joueur${n > 1 ? 's' : ''} dans l'équipe` : 'Effectif à compléter';
     }
 
@@ -1288,7 +1261,6 @@
             <div style="display:flex; align-items:center; gap:10px;">
                 <div class="winrate-bar"><span style="width: ${stats.pct}%;"></span></div>
                 <span class="winrate ${cls}">${stats.pct}%</span>
-                <button type="button" class="btn-remove-player" data-id="${id}" title="Retirer de l'équipe">✕</button>
             </div>
         </li>`;
     }
@@ -1298,12 +1270,14 @@
 
     function openClubView(teamName) {
         currentClubTeam = teamName;
-        const club = findClubByName(teamName);
+        const serie = allSeries[currentSerieId] || {};
+        const mappedId = (serie.teamClubs || {})[teamKey(teamName)];
+        const club = (mappedId && allClubs[mappedId]) ? { id: mappedId, ...allClubs[mappedId] } : findClubByName(teamName);
 
         document.getElementById('club-view-title').innerText = `🛡️ ${teamName}`;
         document.getElementById('club-view-sub').innerText = club
             ? `${club.nom}${club.ville ? ' — ' + club.ville : ''} · Composition de l'équipe et taux de victoire en rencontre`
-            : "Composez l'équipe avec les joueurs créés dans l'espace administrateur.";
+            : "Composition de l'équipe et taux de victoire en rencontre";
 
         renderClubView();
         showInterclubView('view-club');
@@ -1325,37 +1299,10 @@
                 ? ids.slice().sort((a, b) => winRateForPlayer(b).pct - winRateForPlayer(a).pct).map(id => playerRowHtml(id, allPlayers[id])).join('')
                 : '<li>Aucun joueur dans cette section.</li>'}</ul>`;
 
-        // Liste déroulante des joueurs disponibles (créés côté admin) non encore dans l'équipe
-        const dispo = Object.keys(allPlayers)
-            .filter(id => !roster.includes(id))
-            .sort((a, b) => normalizeText(`${allPlayers[a].nom} ${allPlayers[a].prenom}`).localeCompare(normalizeText(`${allPlayers[b].nom} ${allPlayers[b].prenom}`)));
-
         content.innerHTML = `
-            <div class="roster-form">
-                <div>
-                    <label for="club-add-player" style="display:block; font-size:.8rem; color:var(--sub); margin-bottom:6px;">➕ Ajouter un joueur à cette équipe</label>
-                    <select id="club-add-player">
-                        <option value="">${dispo.length ? 'Sélectionner un joueur…' : 'Tous les joueurs sont déjà dans l’équipe'}</option>
-                        ${dispo.map(id => `<option value="${id}">${escapeHtml(shortPlayerName(allPlayers[id]))}${allPlayers[id].genre ? ` (${allPlayers[id].genre})` : ''}</option>`).join('')}
-                    </select>
-                </div>
-                <button class="btn-save" type="button" id="btn-add-player-club">Ajouter</button>
-            </div>
             ${section('👨 Hommes', hommes)}
             ${section('👩 Femmes', femmes)}
             ${autres.length ? section('❔ Genre non renseigné', autres) : ''}`;
-
-        document.getElementById('btn-add-player-club').addEventListener('click', () => {
-            const id = document.getElementById('club-add-player').value;
-            if (!id) return;
-            const current = getRoster(teamName);
-            if (current.includes(id)) return;
-            setRoster(teamName, [...current, id]);
-        });
-
-        content.querySelectorAll('.btn-remove-player').forEach(btn => btn.addEventListener('click', () => {
-            setRoster(teamName, getRoster(teamName).filter(id => id !== btn.dataset.id));
-        }));
     }
 
     // --- Feuille de match d'une rencontre ---
@@ -1438,13 +1385,22 @@
             </div>`;
         }).join('');
 
+        // Seuls les joueurs du club concerné peuvent saisir la feuille ; les autres la consultent.
+        const serie = allSeries[currentSerieId];
+        const canEdit = teamIsMine(serie, dom) || teamIsMine(serie, ext);
+        document.getElementById('btn-save-rencontre').style.display = canEdit ? '' : 'none';
+        if (!canEdit) {
+            document.querySelectorAll('#rencontre-slots select, #rencontre-slots input').forEach(el => { el.disabled = true; });
+            document.getElementById('rencontre-view-sub').innerText = `${dateLabel(match.date)} · Poule ${match.pool || '-'} — consultation`;
+        }
+
         document.querySelectorAll('#rencontre-slots select[data-field="vainqueur"]').forEach(sel => sel.addEventListener('change', updateRencontreScore));
         updateRencontreScore();
         showInterclubView('view-rencontre');
     }
 
     document.getElementById('btn-save-rencontre').addEventListener('click', () => {
-        if (!currentRencontre) return;
+        if (!currentRencontre || !currentSerieId) return;
         const feuille = {};
         document.querySelectorAll('#rencontre-slots .mdr').forEach(row => {
             const domIds = Array.from(row.querySelectorAll('[data-side="dom"] select')).map(s => s.value).filter(Boolean);
@@ -1456,15 +1412,15 @@
                 vainqueur: row.querySelector('[data-field="vainqueur"]').value
             };
         });
-        set(ref(db, `interclubs/feuilles/${currentRencontre.key}`), feuille).then(() => {
+        set(ref(db, `${serieBase()}/feuilles/${currentRencontre.key}`), feuille).then(() => {
             updateRencontreScore();
             alert("✅ Feuille de match enregistrée !");
         }).catch(error => {
-            alert("❌ Impossible d'enregistrer la feuille de match.\n\nErreur Firebase : " + error.message + "\n\nCela vient probablement des règles de sécurité de la base de données qui n'autorisent pas encore l'écriture du nœud « interclubs ».");
+            alert("❌ Impossible d'enregistrer la feuille de match.\n\nErreur Firebase : " + error.message + "\n\nCela vient probablement des règles de sécurité de la base de données qui n'autorisent pas encore l'écriture du nœud « seriesInterclub ».");
         });
     });
 
-    onValue(ref(db, 'clubs'), snapshot => { allClubs = snapshot.val() || {}; });
+    onValue(ref(db, 'clubs'), snapshot => { allClubs = snapshot.val() || {}; applyCurrentSerie(); });
 
     // ============================================================
 
@@ -1708,10 +1664,13 @@
                 badgeStatut.innerText = 'Amateur / Club';
             }
 
+            userClub.id = user.clubId || null;
+            if (!user.clubId) userClub.nom = '';
+            applyCurrentSerie();
             if (user.clubId) {
                 onValue(ref(db, `clubs/${user.clubId}`), (clubSnap) => {
                     const club = clubSnap.val();
-                    if (club) document.getElementById('user-club').innerText = `Club : ${club.nom} (${club.ville})`;
+                    if (club) { userClub.nom = club.nom || ''; applyCurrentSerie(); document.getElementById('user-club').innerText = `Club : ${club.nom} (${club.ville})`; }
                 });
             }
         });
@@ -1856,11 +1815,9 @@
         onValue(ref(db, 'evenements'), (snapshot) => {
             const evs = snapshot.val() || {};
             const listEntr = document.getElementById('list-entrainements');
-            const listInter = document.getElementById('list-interclubs');
             const listInterFull = document.getElementById('list-interclubs-full');
             
             listEntr.innerHTML = '';
-            listInter.innerHTML = '';
             listInterFull.innerHTML = '';
             let countEntr = 0, countInter = 0;
 
@@ -1875,6 +1832,8 @@
             sortedIds.forEach(id => {
                 const ev = evs[id];
                 const isMine = ev.createdBy === userId;
+                // Chaque joueur ne voit que ses propres événements (et ceux programmés par l'admin)
+                if (!isMine && ev.createdBy !== 'admin') return;
 
                 if (ev.type === 'entrainement') {
                     listEntr.innerHTML += `
@@ -1892,7 +1851,6 @@
                             <span><b>🆚 ${escapeHtml(ev.titre)}</b><br><small>📅 ${escapeHtml(ev.date)}${heureLabel}${lieuLabel}</small></span>
                             ${isMine ? `<button type="button" class="btn-delete-event" data-id="${id}" title="Supprimer">🗑️</button>` : ''}
                         </li>`;
-                    listInter.innerHTML += interclubHtml;
                     listInterFull.innerHTML += interclubHtml;
                     countInter++;
                 }
@@ -1900,11 +1858,10 @@
 
             if (countEntr === 0) listEntr.innerHTML = '<li>Aucun entraînement prévu</li>';
             if (countInter === 0) {
-                listInter.innerHTML = '<li>Aucun interclub prévu</li>';
                 listInterFull.innerHTML = '<li>Aucun interclub prévu</li>';
             }
 
-            [...listEntr.querySelectorAll('.btn-delete-event'), ...listInter.querySelectorAll('.btn-delete-event'), ...listInterFull.querySelectorAll('.btn-delete-event')].forEach(btn => {
+            [...listEntr.querySelectorAll('.btn-delete-event'), ...listInterFull.querySelectorAll('.btn-delete-event')].forEach(btn => {
                 btn.addEventListener('click', (e) => deleteEvenement(e.target.dataset.id));
             });
         });
@@ -1947,29 +1904,6 @@
         }).catch((error) => {
             console.error("Erreur ajout entraînement :", error);
             alert("❌ Impossible d'ajouter cet entraînement.\n\nErreur Firebase : " + error.message + "\n\nCela vient probablement des règles de sécurité de la base de données qui n'autorisent pas encore l'écriture du nœud « evenements ».");
-        });
-    });
-
-    // --- Ajout d'un interclub par le joueur ---
-    document.getElementById('form-interclub').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const club = document.getElementById('interclub-club').value.trim();
-        const date = document.getElementById('interclub-date').value;
-        const heure = document.getElementById('interclub-heure').value;
-        const lieu = document.getElementById('interclub-lieu').value.trim();
-
-        push(ref(db, 'evenements'), {
-            type: 'interclub',
-            titre: club,
-            date: date,
-            heure: heure,
-            lieu: lieu,
-            createdBy: userId
-        }).then(() => {
-            e.target.reset();
-        }).catch((error) => {
-            console.error("Erreur ajout interclub :", error);
-            alert("❌ Impossible d'ajouter cet interclub.\n\nErreur Firebase : " + error.message + "\n\nCela vient probablement des règles de sécurité de la base de données qui n'autorisent pas encore l'écriture du nœud « evenements ».");
         });
     });
 

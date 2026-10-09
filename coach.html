@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BADSMASH Coach : analysez vos matchs de badminton, annotez vos vidéos et suivez votre progression.">
+    <meta name="theme-color" content="#0a1120">
+    <title>BADSMASH - Coach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a1120; --card: #141e32; --green: #22c55e;
+            --text: #f3f7fa; --sub: #9aa9c4; --border: #263455; --accent: #4f8fd1;
+            --danger: #ef3d4e; --gold: #f6b93b; --violet: #8b5cf6;
+            --fort: #22c55e; --faible: #ef3d4e; --neutre: #4f8fd1;
+            --stage: #05080f;
+        }
+        :root[data-theme="light"] {
+            --bg: #eef2f9; --card: #ffffff; --green: #16a34a;
+            --text: #101828; --sub: #52607a; --border: #dbe2ee;
+            --fort: #16a34a; --stage: #0b1220;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; transition: background-color .4s, color .4s; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        a { color: var(--accent); }
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        .theme-toggle {
+            position: fixed; top: 16px; right: 16px; z-index: 50; width: 40px; height: 40px; border-radius: 50%;
+            background: var(--card); border: 1px solid var(--border); color: var(--text); cursor: pointer; font-size: 1.1rem;
+            display: flex; align-items: center; justify-content: center; transition: all .3s;
+        }
+        .theme-toggle:hover { border-color: var(--violet); transform: rotate(20deg); }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; padding-right: 50px; }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .logo-mini { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: .03em; color: var(--text); text-decoration: none; }
+        .logo-mini span { color: var(--green); }
+        h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.1rem; font-weight: 400; letter-spacing: .03em; color: var(--green); line-height: 1; }
+        .who { color: var(--sub); font-size: .9rem; margin-top: 2px; }
+        .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; text-decoration: none; font-size: .9rem; display: inline-block; }
+        .btn-ghost:hover { border-color: var(--green); color: var(--green); }
+
+        .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .nav-tabs button { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: .92rem; }
+        .nav-tabs button:hover { border-color: var(--green); }
+        .nav-tabs button.active { background: var(--green); color: #07140c; border-color: var(--green); }
+
+        .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
+        h2 { color: var(--accent); margin-bottom: 14px; font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+        h3 { font-size: 1rem; margin-bottom: 8px; }
+        p.lead { color: var(--sub); line-height: 1.55; max-width: 70ch; }
+        .muted { color: var(--sub); font-size: .85rem; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .stat-box { background: var(--bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+        .stat-box .title { font-size: .8rem; color: var(--sub); }
+        .stat-box .val { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: bold; color: var(--green); margin-top: 4px; font-variant-numeric: tabular-nums; }
+        .stat-box .val.sm { font-size: 1rem; }
+
+        label { display: block; font-size: .85rem; margin-bottom: 5px; color: var(--sub); font-weight: 500; }
+        input[type=text], input[type=date], select, textarea {
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: .95rem; outline: none;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+        textarea { resize: vertical; min-height: 64px; }
+        .form-group { margin-bottom: 12px; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-main { background: var(--green); color: #07140c; border: none; padding: 11px 20px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: .95rem; }
+        .btn-main:hover { filter: brightness(1.08); }
+        .btn-main:disabled { opacity: .45; cursor: not-allowed; }
+        .btn-small { background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: .82rem; font-weight: 600; }
+        .btn-small:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-small.danger:hover { border-color: var(--danger); color: var(--danger); }
+        .btn-small.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        .notice { background: rgba(79,143,209,.1); border: 1px solid var(--accent); border-radius: 8px; padding: 10px 14px; font-size: .86rem; color: var(--text); margin-bottom: 14px; line-height: 1.5; }
+        .notice.warn { background: rgba(246,185,59,.1); border-color: var(--gold); }
+        .notice.err { background: rgba(239,61,78,.1); border-color: var(--danger); color: var(--danger); }
+        .hidden { display: none !important; }
+        .empty { text-align: center; color: var(--sub); padding: 28px 12px; line-height: 1.6; }
+
+        /* ---- Hero tableau de bord */
+        .hero { background: linear-gradient(135deg, rgba(34,197,94,.14), rgba(79,143,209,.1)); border: 1px solid var(--border); border-radius: 14px; padding: 26px; margin-bottom: 20px; }
+        .hero h2 { border: 0; padding: 0; color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; font-weight: 400; letter-spacing: .03em; margin-bottom: 8px; }
+        .hero .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+        /* ---- Dropzone */
+        .dropzone { border: 2px dashed var(--border); border-radius: 12px; padding: 30px 16px; text-align: center; cursor: pointer; background: var(--bg); transition: border-color .2s, background .2s; }
+        .dropzone:hover, .dropzone.over { border-color: var(--green); background: rgba(34,197,94,.06); }
+        .dropzone strong { display: block; margin-bottom: 4px; }
+        .file-chip { margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--green); word-break: break-all; }
+
+        /* ---- Espace de travail */
+        .workspace { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr); gap: 18px; align-items: start; }
+        @media (max-width: 900px) { .workspace { grid-template-columns: 1fr; } }
+        .stage-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .stage { position: relative; background: var(--stage); aspect-ratio: 16 / 9; width: 100%; }
+        .stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: var(--stage); }
+        .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+        .stage canvas.drawing { cursor: crosshair; }
+        .stage-msg { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; color: #cfd8ea; padding: 20px; background: rgba(5,8,15,.88); z-index: 3; }
+        .controls { padding: 12px 14px 14px; }
+        .timecode { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; font-size: .95rem; color: var(--green); }
+        .ctrl-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+        .ctrl-row .spacer { flex: 1; }
+        input[type=range] { width: 100%; accent-color: var(--green); }
+        .timeline { position: relative; height: 26px; margin-top: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
+        .timeline .mk { position: absolute; top: 3px; bottom: 3px; width: 6px; margin-left: -3px; border-radius: 3px; border: 0; padding: 0; cursor: pointer; }
+        .timeline .mk.fort { background: var(--fort); } .timeline .mk.faible { background: var(--faible); } .timeline .mk.neutre { background: var(--neutre); }
+        .timeline .mk.p1 { box-shadow: 0 0 0 2px var(--gold); }
+        .timeline .mk.sel { outline: 2px solid var(--text); }
+        .timeline .head { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--text); pointer-events: none; }
+        .legend { display: flex; gap: 14px; font-size: .75rem; color: var(--sub); margin-top: 6px; flex-wrap: wrap; }
+        .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+
+        .side .card { margin-bottom: 14px; }
+        .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+        .chip-radio { position: relative; }
+        .chip-radio input { position: absolute; opacity: 0; }
+        .chip-radio span { display: inline-block; padding: 7px 12px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg); font-size: .85rem; font-weight: 600; cursor: pointer; color: var(--text); }
+        .chip-radio input:checked + span.k-fort { background: var(--fort); color: #07140c; border-color: var(--fort); }
+        .chip-radio input:checked + span.k-faible { background: var(--faible); color: #fff; border-color: var(--faible); }
+        .chip-radio input:checked + span.k-neutre { background: var(--neutre); color: #fff; border-color: var(--neutre); }
+        .chip-radio input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        .ann-list { max-height: 440px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
+        .ann { background: var(--bg); border: 1px solid var(--border); border-left: 4px solid var(--neutre); border-radius: 8px; padding: 10px 12px; font-size: .88rem; }
+        .ann.fort { border-left-color: var(--fort); } .ann.faible { border-left-color: var(--faible); }
+        .ann.sel { border-color: var(--accent); }
+        .ann .top { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
+        .ann .tc { font-family: 'JetBrains Mono', monospace; color: var(--green); cursor: pointer; background: none; border: 0; font-size: .85rem; font-weight: 700; }
+        .ann .tc:hover { text-decoration: underline; }
+        .tag { font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--sub); }
+        .tag.p1 { background: var(--gold); color: #1a1202; border-color: var(--gold); }
+        .ann .txt { color: var(--text); line-height: 1.45; }
+        .ann .fix { color: var(--sub); margin-top: 4px; line-height: 1.45; }
+        .ann .acts { margin-top: 6px; display: flex; gap: 6px; }
+
+        /* ---- Rapport / plan / débriefing */
+        .pill-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+        .report-block { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+        .report-block h3 { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .report-block ul { list-style: none; margin-top: 8px; }
+        .report-block li { background: var(--card); padding: 8px 10px; border-radius: 7px; border: 1px solid var(--border); margin-bottom: 6px; font-size: .86rem; line-height: 1.45; }
+        .report-block li .tcb { font-family: 'JetBrains Mono', monospace; color: var(--green); cursor: pointer; background: none; border: 0; font-weight: 700; }
+        .prio { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: start; }
+        .prio .n { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); line-height: 1; }
+        .ex { border: 1px solid var(--border); border-radius: 10px; background: var(--bg); margin-bottom: 10px; }
+        .ex summary { cursor: pointer; padding: 11px 14px; font-weight: 700; font-size: .92rem; list-style: none; display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .ex summary::-webkit-details-marker { display: none; }
+        .ex .body { padding: 0 14px 14px; font-size: .86rem; line-height: 1.55; color: var(--sub); }
+        .ex .body b { color: var(--text); }
+        .ex .body ol, .ex .body ul { margin: 4px 0 8px 20px; }
+        .day { display: grid; grid-template-columns: 70px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .88rem; }
+        .day .d { font-family: 'JetBrains Mono', monospace; color: var(--green); font-weight: 700; }
+        .day:last-child { border: 0; }
+
+        .debrief { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 18px; align-items: start; }
+        @media (max-width: 900px) { .debrief { grid-template-columns: 1fr; } }
+        .debrief .stage { border-radius: 12px 12px 0 0; }
+        .db-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+        .progressbar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin: 8px 0; }
+        .progressbar > i { display: block; height: 100%; background: var(--green); width: 0; }
+
+        table.cmp { width: 100%; border-collapse: collapse; font-size: .85rem; }
+        table.cmp th, table.cmp td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: center; }
+        table.cmp th:first-child, table.cmp td:first-child { text-align: left; }
+        .hist-item { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+        .hist-item .t { font-weight: 700; }
+        .goal { display: flex; gap: 10px; align-items: center; padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; font-size: .9rem; }
+        .goal.done span { text-decoration: line-through; color: var(--sub); }
+        .goal span { flex: 1; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--green); padding: 10px 18px; border-radius: 10px; z-index: 100; font-size: .9rem; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .theme-toggle, header .btn-ghost, .nav-tabs, .no-print, .view:not(#view-rapport) { display: none !important; }
+            #view-rapport { display: block !important; }
+            .card, .report-block, .report-block li, .ex { background: #fff !important; color: #000 !important; border-color: #bbb !important; }
+            h2, h3 { color: #000 !important; }
+        }
+        @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" aria-label="Changer de thème">🌙</button>
+
+<div class="container">
+    <header>
+        <div class="header-left">
+            <a href="index.html" class="logo-mini">BAD<span>SMASH</span></a>
+            <div>
+                <h1>Coach</h1>
+                <div class="who" id="who">Chargement…</div>
+            </div>
+        </div>
+        <a href="mon-espace.html" class="btn-ghost">← Mon espace</a>
+    </header>
+
+    <nav class="nav-tabs" id="tabs" aria-label="Sections Coach">
+        <button data-view="dashboard" class="active">Tableau de bord</button>
+        <button data-view="analyse">Analyser</button>
+        <button data-view="rapport">Rapport</button>
+        <button data-view="plan">Entraînement</button>
+        <button data-view="debrief">Débriefing</button>
+        <button data-view="historique">Historique</button>
+    </nav>
+
+    <!-- ===== TABLEAU DE BORD ===== -->
+    <section class="view" id="view-dashboard">
+        <div class="hero">
+            <h2>Votre coach vidéo personnel</h2>
+            <p class="lead">Importez la vidéo d'un de vos matchs, repérez vos points forts et vos points faibles à l'instant exact où ils se produisent, puis obtenez un rapport, un débriefing interactif et un plan d'entraînement construit à partir de vos propres observations.</p>
+            <div class="actions">
+                <button class="btn-main" id="btn-new">Analyser un match</button>
+                <button class="btn-ghost" id="btn-resume">Reprendre la dernière analyse</button>
+            </div>
+        </div>
+        <div class="grid-3" id="dash-stats" style="margin-bottom:20px"></div>
+        <div class="grid-2">
+            <div class="card">
+                <h2>Mes objectifs</h2>
+                <div id="goals-list"></div>
+                <div class="row" style="grid-template-columns:1fr auto; margin-top:10px">
+                    <input type="text" id="goal-input" maxlength="120" placeholder="ex : plus de clears profonds" aria-label="Nouvel objectif">
+                    <button class="btn-small" id="goal-add">Ajouter</button>
+                </div>
+                <p class="muted" style="margin-top:8px">Les objectifs restent sur cet appareil, comme vos autres planificateurs.</p>
+            </div>
+            <div class="card">
+                <h2>Ce que fait Coach aujourd'hui</h2>
+                <p class="lead" style="font-size:.88rem">Coach est un outil d'analyse <b>manuelle assistée</b> : c'est vous qui repérez les moments importants, Coach les organise, les relie à la vidéo et en tire un rapport et un plan. Il ne reconnaît <b>pas</b> automatiquement les coups ni le volant : aucune statistique n'est affichée sans observation réelle de votre part. L'analyse automatique (Python, FFmpeg, OpenCV) viendra dans une étape ultérieure.</p>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Dernières analyses</h2>
+            <div id="dash-recent"></div>
+        </div>
+    </section>
+
+    <!-- ===== ANALYSER ===== -->
+    <section class="view hidden" id="view-analyse">
+        <div id="setup" class="card">
+            <h2>Nouvelle analyse</h2>
+            <div id="setup-error" class="notice err hidden" role="alert"></div>
+            <div class="grid-2">
+                <div>
+                    <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Importer une vidéo">
+                        <strong>Glissez la vidéo de votre match ici</strong>
+                        <span class="muted">ou cliquez pour choisir un fichier (MP4, WebM, MOV)</span>
+                        <div class="file-chip" id="file-info"></div>
+                    </div>
+                    <input type="file" id="file-input" accept="video/*,.mp4,.m4v,.mov,.webm,.ogv" class="hidden">
+                    <p class="muted" style="margin-top:8px">La vidéo n'est jamais envoyée sur internet : elle reste sur votre ordinateur. Seules vos annotations sont enregistrées dans le navigateur.</p>
+                </div>
+                <div>
+                    <div class="form-group"><label for="f-title">Titre du match</label><input type="text" id="f-title" maxlength="80" placeholder="ex : Interclubs J3 contre Millau"></div>
+                    <div class="row">
+                        <div class="form-group"><label for="f-date">Date</label><input type="date" id="f-date"></div>
+                        <div class="form-group"><label for="f-format">Format</label>
+                            <select id="f-format"><option value="simple">Simple</option><option value="double">Double</option></select></div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group"><label for="f-level">Votre niveau</label>
+                            <select id="f-level"><option value="debutant">Débutant</option><option value="intermediaire" selected>Intermédiaire</option><option value="confirme">Confirmé</option></select></div>
+                        <div class="form-group"><label for="f-opp">Adversaire(s) (facultatif)</label><input type="text" id="f-opp" maxlength="80"></div>
+                    </div>
+                    <div class="form-group"><label for="f-objectives">Vos objectifs pour ce match</label><textarea id="f-objectives" maxlength="400" placeholder="ex : relancer plus haut, mieux me replacer"></textarea></div>
+                    <div class="form-group"><label for="f-notes">Contexte (facultatif)</label><textarea id="f-notes" maxlength="400" placeholder="score, fatigue, surface, enjeu…"></textarea></div>
+                    <button class="btn-main" id="btn-create" disabled>Commencer l'analyse</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="workspace" class="hidden">
+            <div class="card" style="padding:12px 16px; display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap">
+                <div><b id="ws-title"></b> <span class="muted" id="ws-meta"></span></div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap">
+                    <button class="btn-small" id="btn-close-analysis">Fermer l'analyse</button>
+                </div>
+            </div>
+            <div class="workspace">
+                <div>
+                    <div class="stage-wrap">
+                        <div class="stage" id="stage">
+                            <video id="video" playsinline preload="metadata"></video>
+                            <canvas id="overlay"></canvas>
+                            <div class="stage-msg hidden" id="stage-msg"></div>
+                        </div>
+                        <div class="controls">
+                            <input type="range" id="scrub" min="0" max="1000" value="0" step="1" aria-label="Position dans la vidéo">
+                            <div class="timeline" id="timeline" aria-label="Timeline des observations"></div>
+                            <div class="legend">
+                                <span><i class="dot" style="background:var(--fort)"></i>Point fort</span>
+                                <span><i class="dot" style="background:var(--faible)"></i>Point faible</span>
+                                <span><i class="dot" style="background:var(--neutre)"></i>Neutre</span>
+                                <span><i class="dot" style="background:var(--gold)"></i>Contour doré = priorité 1</span>
+                            </div>
+                            <div class="ctrl-row" style="margin-top:12px">
+                                <button class="btn-small" id="c-back" title="Reculer de 5 s (Maj + ←)">−5 s</button>
+                                <button class="btn-small" id="c-prev" title="Image précédente (←)">◀ image</button>
+                                <button class="btn-main" id="c-play" style="padding:7px 18px" title="Lecture / pause (Espace)">▶ Lecture</button>
+                                <button class="btn-small" id="c-next" title="Image suivante (→)">image ▶</button>
+                                <button class="btn-small" id="c-fwd" title="Avancer de 5 s (Maj + →)">+5 s</button>
+                                <span class="spacer"></span>
+                                <span class="timecode" id="tc">00:00.00 / 00:00.00</span>
+                            </div>
+                            <div class="ctrl-row">
+                                <label for="speed" style="margin:0">Vitesse</label>
+                                <select id="speed" style="width:auto"><option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="1.5">1,5×</option><option value="2">2×</option></select>
+                                <span class="muted" id="fps-info"></span>
+                                <span class="spacer"></span>
+                                <span class="muted">Dessiner :</span>
+                                <button class="btn-small" data-tool="arrow">Flèche</button>
+                                <button class="btn-small" data-tool="circle">Cercle</button>
+                                <button class="btn-small" data-tool="zone">Zone</button>
+                                <button class="btn-small danger" id="btn-clear-shapes">Effacer</button>
+                            </div>
+                            <p class="muted">Raccourcis : Espace = lecture · ← → = image par image · Maj + ← → = 5 s · A = nouvelle observation.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="side">
+                    <div class="card">
+                        <h2 id="form-title">Nouvelle observation</h2>
+                        <div id="a-err" class="notice err hidden" role="alert"></div>
+                        <div class="row">
+                            <div class="form-group"><label for="a-time">Moment (mm:ss.cc)</label>
+                                <div style="display:flex; gap:6px"><input type="text" id="a-time" value="00:00.00" style="font-family:'JetBrains Mono',monospace"><button class="btn-small" id="a-now" title="Prendre l'instant affiché">Ici</button></div></div>
+                            <div class="form-group"><label for="a-cat">Type</label><select id="a-cat"></select></div>
+                        </div>
+                        <div class="form-group"><label>Nature</label>
+                            <div class="chips" role="radiogroup">
+                                <label class="chip-radio"><input type="radio" name="a-kind" value="faible" checked><span class="k-faible">Point faible</span></label>
+                                <label class="chip-radio"><input type="radio" name="a-kind" value="fort"><span class="k-fort">Point fort</span></label>
+                                <label class="chip-radio"><input type="radio" name="a-kind" value="neutre"><span class="k-neutre">Neutre</span></label>
+                            </div>
+                        </div>
+                        <div class="form-group"><label for="a-shot">Coup ou situation concernés</label><input type="text" id="a-shot" maxlength="80" placeholder="ex : clear de revers sous pression"></div>
+                        <div class="form-group"><label for="a-comment">Ce que je constate</label><textarea id="a-comment" maxlength="500"></textarea></div>
+                        <div class="form-group"><label for="a-fix">Correction ou conseil</label><textarea id="a-fix" maxlength="500" placeholder="ce que je dois changer"></textarea></div>
+                        <div class="form-group"><label for="a-prio">Priorité de travail</label>
+                            <select id="a-prio"><option value="1">1 · À travailler en premier</option><option value="2" selected>2 · Important</option><option value="3">3 · Secondaire</option></select></div>
+                        <p class="muted" id="a-shapes-info" style="margin-bottom:10px"></p>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap">
+                            <button class="btn-main" id="a-save">Enregistrer l'observation</button>
+                            <button class="btn-small hidden" id="a-cancel">Annuler la modification</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h2>Observations <span class="muted" id="ann-count"></span></h2>
+                        <div class="row" style="margin-bottom:10px">
+                            <select id="flt-kind" aria-label="Filtrer par nature"><option value="">Toutes natures</option><option value="faible">Points faibles</option><option value="fort">Points forts</option><option value="neutre">Neutres</option></select>
+                            <select id="flt-cat" aria-label="Filtrer par type"></select>
+                        </div>
+                        <div class="ann-list" id="ann-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== RAPPORT ===== -->
+    <section class="view hidden" id="view-rapport">
+        <div class="card" id="report-card">
+            <h2><span>Rapport de progression</span>
+                <span class="no-print" style="display:flex; gap:6px">
+                    <button class="btn-small" id="btn-print">Imprimer / PDF</button>
+                    <button class="btn-small" id="btn-export">Exporter l'analyse (JSON)</button>
+                </span></h2>
+            <div id="report-body"></div>
+        </div>
+    </section>
+
+    <!-- ===== PLAN ===== -->
+    <section class="view hidden" id="view-plan">
+        <div class="card">
+            <h2>Programme d'entraînement</h2>
+            <div class="pill-tabs" id="plan-tabs">
+                <button class="btn-small on" data-plan="session">Prochaine séance</button>
+                <button class="btn-small" data-plan="7">7 jours</button>
+                <button class="btn-small" data-plan="30">30 jours</button>
+            </div>
+            <div id="plan-body"></div>
+        </div>
+    </section>
+
+    <!-- ===== DEBRIEFING ===== -->
+    <section class="view hidden" id="view-debrief">
+        <div id="debrief-wrap"></div>
+    </section>
+
+    <!-- ===== HISTORIQUE ===== -->
+    <section class="view hidden" id="view-historique">
+        <div class="card"><h2>Mes analyses</h2><div id="history-body"></div></div>
+        <div class="card"><h2>Comparer deux matchs</h2><div id="compare-body"></div></div>
+    </section>
+</div>
+
+<script src="coach-exercises.js"></script>
+<script src="coach.js"></script>
+</body>
+</html>

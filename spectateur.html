@@ -143,6 +143,18 @@
         padding: 22px;
     }
 
+    /* ===== ONGLETS PRINCIPAUX ===== */
+    .spec-tabs { display: flex; gap: 8px; margin: 26px 0 8px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+    .spec-tab {
+        background: var(--court-navy-deep); color: var(--chalk-dim); border: 1px solid var(--line);
+        padding: 10px 18px; border-radius: 22px; cursor: pointer; font-size: 0.88rem; font-weight: 700;
+        letter-spacing: 0.03em; transition: all 0.18s; font-family: 'Inter', system-ui, sans-serif;
+    }
+    .spec-tab:hover:not(.active) { color: var(--chalk); border-color: var(--chalk-dim); }
+    .spec-tab.active { background: var(--gold); color: #211200; border-color: var(--gold); }
+    .spec-panel { display: none; }
+    .spec-panel.active { display: block; }
+
     /* ===== RANKING TABS ===== */
     .bwf-tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
     .bwf-tab {
@@ -230,6 +242,150 @@
         h1.wordmark { font-size: 1.7rem; }
         table { display: block; overflow-x: auto; white-space: nowrap; }
     }
+    /* ===== INTERCLUBS : tableaux alignés ===== */
+    .st-pool-title { margin: 18px 0 8px; color: var(--chalk-dim); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
+    .st-wrap { overflow-x: auto; border: 1px solid var(--line-soft); border-radius: 12px; }
+    .st-wrap.st-inner { border: none; border-radius: 0; }
+    table.st { display: table; width: 100%; min-width: 520px; table-layout: fixed; border-collapse: collapse; white-space: normal; }
+    table.st.st-matches { min-width: 700px; }
+    table.st.st-mini, table.st.st-players { min-width: 0; }
+    .st th, .st td { text-align: center; vertical-align: middle; padding: 11px 8px; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; }
+    .st th.l, .st td.l { text-align: left; }
+    .st th.r, .st td.r { text-align: right; }
+    .st thead th { background: var(--card-raised); }
+    .st .st-rank { font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; color: var(--chalk-dim); letter-spacing: .03em; }
+    .st .st-pts { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--court-green); }
+    .st-team-row { cursor: pointer; }
+    .st-team-row:hover { background: rgba(34, 197, 94, .06) !important; }
+    .st-team-row.open { background: rgba(34, 197, 94, .08); }
+    .st-team-row td.l { white-space: nowrap; }
+    .st-team-name { font-weight: 700; color: var(--chalk); }
+    .st-team-link { color: inherit; text-decoration: none; }
+    .st-team-row:hover .st-team-name { color: var(--court-green); }
+    .st-go { color: var(--chalk-dim); font-size: 1.3rem; line-height: 1; transition: transform .2s, color .2s; }
+    .st-team-row:hover .st-go { color: var(--court-green); transform: translateX(3px); }
+    .st-caret { display: inline-block; width: 18px; color: var(--chalk-dim); transition: transform .2s; }
+    .st-team-row.open .st-caret { transform: rotate(90deg); color: var(--court-green); }
+    .st tbody tr.st-detail, .st tbody tr.st-detail:hover { background: none; }
+    .st-detail > td { padding: 0 !important; text-align: left; overflow: visible; }
+    .st-panel { padding: 14px; background: var(--card-raised); border-bottom: 1px solid var(--line-soft); }
+    .st-panel h4 { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--chalk-dim); margin: 0 0 8px; }
+    .st-panel .st-wrap { background: var(--card); }
+    .st-loc { display: inline-block; min-width: 34px; margin-right: 8px; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--line);
+        font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--chalk-dim); text-align: center; }
+    .st-sc { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+    .st-badge { display: inline-block; min-width: 54px; padding: 2px 8px; border-radius: 99px; font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .st-badge.v { background: rgba(34, 197, 94, .15); color: var(--court-green); }
+    .st-badge.d { background: rgba(239, 61, 78, .15); color: var(--live-red); }
+    .st-badge.n { background: rgba(246, 185, 59, .15); color: var(--gold); }
+    .st-badge.x { background: var(--card-raised); color: var(--chalk-dim); border: 1px solid var(--line); }
+    .st-btn { margin-top: 14px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--court-green); background: transparent;
+        color: var(--court-green); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .15s, color .15s; }
+    .st-btn:hover, .st-btn[aria-expanded="true"] { background: var(--court-green); color: #04130a; }
+    .st-rate { display: flex; align-items: center; gap: 8px; }
+    .st-rate-bar { flex: 1; height: 6px; border-radius: 4px; background: var(--line); overflow: hidden; }
+    .st-rate-bar span { display: block; height: 100%; background: var(--court-green); }
+    .st-rate-bar.low span { background: var(--live-red); }
+    .st-rate b { width: 42px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: .8rem; }
+    .st-small { display: block; font-size: .72rem; color: var(--chalk-dim); font-weight: 500; }
+    .st-win { font-weight: 800; color: var(--chalk); }
+    @media (max-width: 560px) { table.st { display: table; } }
+</style>
+
+<style>
+    /* ===== HERO ===== */
+    .hero-spec { margin-top: 26px; padding: 26px; border-radius: 18px; border: 1px solid var(--line); position: relative; overflow: hidden;
+        background: radial-gradient(600px 240px at 0% 0%, rgba(34,197,94,.18), transparent 65%), radial-gradient(500px 240px at 100% 100%, rgba(139,92,246,.16), transparent 60%), var(--card); }
+    .hero-spec h2 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 2.4rem; letter-spacing: .03em; line-height: 1; color: var(--chalk); }
+    .hero-spec h2 span { color: var(--court-green); }
+    .hero-spec p { color: var(--chalk-dim); margin-top: 6px; font-size: .92rem; max-width: 52ch; }
+    .hero-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+    .hero-stat { flex: 1 1 120px; padding: 12px 16px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid var(--line); backdrop-filter: blur(4px); }
+    :root[data-theme="light"] .hero-stat { background: rgba(255,255,255,.7); }
+    .hero-stat b { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .03em; color: var(--chalk); line-height: 1.05; }
+    .hero-stat span { font-size: .68rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: var(--chalk-dim); }
+
+    /* ===== ONGLETS & SECTIONS ===== */
+    .spec-tabs { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--court-navy) 88%, transparent); backdrop-filter: blur(10px); padding-top: 12px; margin-top: 18px; }
+    .spec-tab.active { box-shadow: 0 6px 18px -6px rgba(246,185,59,.55); }
+    .spec-tab { transition: all .2s cubic-bezier(.16,1,.3,1); }
+    .spec-tab:hover:not(.active) { transform: translateY(-1px); }
+    .spec-panel.active { animation: panelIn .45s cubic-bezier(.16,1,.3,1); }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    h2.section-title::before { content: ''; width: 5px; height: 1.1em; border-radius: 3px; background: linear-gradient(var(--court-green), var(--violet)); }
+    .card { box-shadow: 0 14px 34px -18px rgba(0,0,0,.55); }
+
+    /* ===== FILTRES CLASSEMENT ===== */
+    .bwf-tab { padding: 9px 16px; }
+    .bwf-tab.active { box-shadow: 0 6px 16px -6px rgba(246,185,59,.55); }
+    .rk-filters { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .rk-search { position: relative; }
+    .rk-search span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: .6; pointer-events: none; }
+    .rk-filters input, .rk-filters select { width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--court-navy-deep); color: var(--chalk); font: inherit; font-size: .88rem; outline: none; transition: border-color .2s, box-shadow .2s; }
+    .rk-search input { padding-left: 36px; }
+    .rk-filters input:focus, .rk-filters select:focus { border-color: var(--court-green); box-shadow: 0 0 0 3px rgba(34,197,94,.15); }
+    .rk-info { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-size: .8rem; color: var(--chalk-dim); margin-bottom: 16px; }
+    .rk-info b { color: var(--chalk); }
+    .rk-limit { display: inline-block; padding: 3px 10px; border-radius: 99px; background: rgba(246,185,59,.12); color: var(--gold); font-weight: 700; font-size: .72rem; letter-spacing: .04em; }
+    .rk-reset { background: transparent; color: var(--court-green); border: 1px solid var(--line); padding: 5px 12px; border-radius: 99px; cursor: pointer; font: inherit; font-size: .75rem; font-weight: 700; }
+    .rk-reset:hover { border-color: var(--court-green); }
+    @media (max-width: 760px) { .rk-filters { grid-template-columns: 1fr 1fr; } .rk-search { grid-column: 1 / -1; } }
+
+    /* ===== PODIUM ===== */
+    .podium { display: grid; grid-template-columns: 1fr 1.12fr 1fr; gap: 12px; align-items: end; margin: 6px 0 22px; }
+    .pod { position: relative; text-align: center; padding: 18px 12px 16px; border-radius: 16px; border: 1px solid var(--line); background: var(--card-raised); overflow: hidden; transition: transform .25s cubic-bezier(.16,1,.3,1); }
+    .pod:hover { transform: translateY(-4px); }
+    .pod::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--pc); }
+    .pod::after { content: ''; position: absolute; inset: 0; background: radial-gradient(220px 120px at 50% 0%, color-mix(in srgb, var(--pc) 22%, transparent), transparent 70%); pointer-events: none; }
+    .pod.p1 { --pc: var(--gold); padding-top: 26px; padding-bottom: 22px; } .pod.p2 { --pc: var(--silver); } .pod.p3 { --pc: var(--bronze); }
+    .pod .medal-big { font-size: 1.8rem; line-height: 1; position: relative; z-index: 1; }
+    .pod.p1 .medal-big { font-size: 2.3rem; }
+    .pod .avatar { width: 52px; height: 52px; margin: 10px auto 8px; font-size: 1.15rem; position: relative; z-index: 1; border: 2px solid var(--pc); }
+    .pod .pn { font-weight: 800; color: var(--chalk); line-height: 1.2; position: relative; z-index: 1; word-break: break-word; }
+    .pod .pc { font-size: .76rem; color: var(--chalk-dim); margin-top: 2px; position: relative; z-index: 1; }
+    .pod .pp { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.05rem; color: var(--pc); margin-top: 8px; position: relative; z-index: 1; }
+    @media (max-width: 640px) { .podium { grid-template-columns: 1fr; } .pod.p1 { order: -1; } }
+
+    /* ===== LIGNES DE CLASSEMENT ===== */
+    .avatar { width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: .78rem; color: #fff; background: var(--av, #4f8fd1); letter-spacing: .02em; }
+    table.rk td { vertical-align: middle; }
+    table.rk .rk-player { display: flex; align-items: center; gap: 12px; }
+    table.rk .rk-club { font-size: .76rem; color: var(--chalk-dim); display: flex; gap: 6px; flex-wrap: wrap; margin-top: 3px; }
+    .loc-chip { font-size: .66rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: rgba(139,92,246,.12); color: var(--violet); }
+    .rk-bar { height: 4px; border-radius: 3px; background: var(--line-soft); margin-top: 6px; overflow: hidden; }
+    .rk-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--court-green), var(--gold)); border-radius: 3px; }
+    table.rk tbody tr:hover { background: rgba(34,197,94,.05); }
+    @media (max-width: 560px) { table.rk { display: table; } table.rk .loc-chip { display: none; } }
+
+    /* ===== TOURNOIS ===== */
+    .tournoi-card { position: relative; overflow: hidden; padding: 20px 20px 18px; box-shadow: 0 14px 34px -20px rgba(0,0,0,.6); }
+    .tournoi-card::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--violet); }
+    .tournoi-card.live::before { background: var(--live-red); box-shadow: 0 0 14px var(--live-red); }
+    .tournoi-card.done::before { background: var(--line); }
+    .tournoi-card::after { content: '🏸'; position: absolute; right: -6px; bottom: -14px; font-size: 4.2rem; opacity: .06; transform: rotate(-20deg); pointer-events: none; }
+    .tournoi-card.live .tournoi-badge { animation: livePulse 1.8s ease-in-out infinite; }
+    @keyframes livePulse { 50% { box-shadow: 0 0 0 5px rgba(239,61,78,.15); } }
+    .tournoi-meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* ===== TABLEAUX / BRACKET ===== */
+    .spec-bracket-match { box-shadow: 0 6px 16px -10px rgba(0,0,0,.6); transition: border-color .2s, transform .2s; }
+    .spec-bracket-match:hover { border-color: var(--court-green); transform: translateY(-1px); }
+    .spec-bracket-round-title { padding: 5px 10px; border-radius: 99px; background: var(--card-raised); border: 1px solid var(--line); }
+    .bracket-selector select { border-radius: 10px; }
+    .bracket-selector select:focus { box-shadow: 0 0 0 3px rgba(34,197,94,.15); }
+
+    /* ===== INTERCLUBS ===== */
+    .st-pool-title { display: flex; align-items: center; gap: 10px; color: var(--chalk); font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; letter-spacing: .05em; text-transform: none; }
+    .st-pool-title::before { content: ''; width: 4px; height: 1.1em; border-radius: 3px; background: var(--court-green); }
+    .st-wrap { box-shadow: 0 10px 26px -18px rgba(0,0,0,.6); }
+    .st thead th { background: linear-gradient(var(--card-raised), var(--court-navy-deep)); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--chalk-dim); }
+    .st-standings tbody tr:nth-child(1) td.st-rank { color: var(--gold); }
+    .st-standings tbody tr:nth-child(1) td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
+    .st-standings tbody tr:nth-child(2) td.st-rank { color: var(--silver); }
+    .st-standings tbody tr:nth-child(3) td.st-rank { color: var(--bronze); }
+    .st-team-row { transition: background .15s, transform .15s; }
+    .bracket-selector select, #spec-serie-select { cursor: pointer; }
+    footer { padding-top: 20px; border-top: 1px dashed var(--line); }
 </style>
 </head>
 <body>
@@ -288,6 +444,64 @@
 
 <div class="wrap">
 
+    <div class="hero-spec">
+        <h2>Le jeu en <span>direct</span>, la saison en <span>chiffres</span></h2>
+        <p>Classements FFBaD, tournois, tableaux et interclubs : tout le badminton de vos clubs au même endroit.</p>
+        <div class="hero-stats">
+            <div class="hero-stat"><b id="hs-joueurs">–</b><span>Joueurs classés</span></div>
+            <div class="hero-stat"><b id="hs-clubs">–</b><span>Clubs</span></div>
+            <div class="hero-stat"><b id="hs-tournois">–</b><span>Tournois</span></div>
+            <div class="hero-stat"><b id="hs-series">–</b><span>Séries interclub</span></div>
+        </div>
+    </div>
+
+    <nav class="spec-tabs" role="tablist" aria-label="Sections">
+        <button type="button" class="spec-tab active" role="tab" data-panel="panel-classements">🏆 Classements</button>
+        <button type="button" class="spec-tab" role="tab" data-panel="panel-tournois">📅 Tournois</button>
+        <button type="button" class="spec-tab" role="tab" data-panel="panel-interclubs">🛡️ Interclubs</button>
+    </nav>
+
+    <div class="spec-panel active" id="panel-classements">
+    <!-- Classements -->
+    <section>
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">Ranking</div>
+                <h2 class="section-title" id="ranking-title">Classements</h2>
+            </div>
+        </div>
+
+        <div class="card">
+            <div id="bwf-tabs-container" class="bwf-tabs">
+                <button class="bwf-tab active" data-cat="SH">Simple Hommes</button>
+                <button class="bwf-tab" data-cat="SD">Simple Dames</button>
+                <button class="bwf-tab" data-cat="DH">Double Hommes</button>
+                <button class="bwf-tab" data-cat="DD">Double Dames</button>
+                <button class="bwf-tab" data-cat="MX">Double Mixte</button>
+            </div>
+
+            <div class="rk-filters">
+                <div class="rk-search"><span>🔎</span><input type="search" id="rk-q" placeholder="Rechercher un joueur…" aria-label="Rechercher un joueur" autocomplete="off"></div>
+                <select id="rk-region" aria-label="Filtrer par région"><option value="">Toutes les régions</option></select>
+                <select id="rk-dept" aria-label="Filtrer par département"><option value="">Tous les départements</option></select>
+                <select id="rk-club" aria-label="Filtrer par club"><option value="">Tous les clubs</option></select>
+            </div>
+            <div class="rk-info"><span id="rk-info"></span><button type="button" class="rk-reset" id="rk-reset" style="display:none;">✕ Réinitialiser</button></div>
+            <div id="rk-podium"></div>
+
+            <div style="overflow-x: auto;">
+                <table class="rk">
+                    <thead id="ranking-head"></thead>
+                    <tbody id="ranking-body">
+                        <tr><td colspan="3" class="empty-state">Chargement du classement…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <div class="spec-panel" id="panel-tournois">
     <!-- Tournois -->
     <section>
         <div class="section-head">
@@ -331,37 +545,32 @@
             </div>
         </div>
     </section>
+    </div>
 
-    <div class="net-divider"><span class="net-pole"></span><span class="net-mesh"></span><span class="net-pole"></span></div>
-
-    <!-- Classements -->
+    <div class="spec-panel" id="panel-interclubs">
+    <!-- Interclubs -->
     <section>
         <div class="section-head">
             <div>
-                <div class="eyebrow">Ranking</div>
-                <h2 class="section-title" id="ranking-title">Classements</h2>
+                <div class="eyebrow">Interclubs</div>
+                <h2 class="section-title">Séries &amp; poules</h2>
             </div>
         </div>
-
         <div class="card">
-            <div id="bwf-tabs-container" class="bwf-tabs">
-                <button class="bwf-tab active" data-cat="SH">Simple Hommes</button>
-                <button class="bwf-tab" data-cat="SD">Simple Dames</button>
-                <button class="bwf-tab" data-cat="DH">Double Hommes</button>
-                <button class="bwf-tab" data-cat="DD">Double Dames</button>
-                <button class="bwf-tab" data-cat="MX">Double Mixte</button>
+            <div class="bracket-selector">
+                <div>
+                    <label for="spec-serie-select">Série</label>
+                    <select id="spec-serie-select">
+                        <option value="">Sélectionner une série...</option>
+                    </select>
+                </div>
             </div>
-
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead id="ranking-head"></thead>
-                    <tbody id="ranking-body">
-                        <tr><td colspan="4" class="empty-state">Chargement du classement…</td></tr>
-                    </tbody>
-                </table>
+            <div id="spec-serie-display">
+                <div class="empty-state">Aucune série interclub pour le moment.</div>
             </div>
         </div>
     </section>
+    </div>
 
     <footer>BADSMASH · <strong>FFBaD</strong> Amateur, un seul filet 🏸</footer>
 </div>
@@ -407,7 +616,120 @@
     onValue(ref(db, 'joueurs'), (snap) => { dbJoueurs = snap.val() || {}; renderAll(); });
     onValue(ref(db, 'tournois'), (snap) => { dbTournois = snap.val() || {}; renderAll(); });
 
+    // ============================================================
+    //        INTERCLUBS : TOUTES LES SÉRIES DE TOUS LES CLUBS
+    // ============================================================
+    let dbSeries = {};
+    let specSerieId = '';
+    try { specSerieId = new URLSearchParams(location.search).get('serie') || sessionStorage.getItem('badsmash_spec_serie') || ''; } catch (e) {}
+    onValue(ref(db, 'seriesInterclub'), (snap) => { dbSeries = snap.val() || {}; renderSeriesSpec(); updateHeroStats(); });
+
+    function specPool(arr) {
+        let out = [];
+        if (Array.isArray(arr)) out = arr.slice();
+        else if (arr && typeof arr === 'object') Object.keys(arr).forEach(k => { out[Number(k)] = arr[k]; });
+        return Array.from(out, v => v || '').filter(Boolean);
+    }
+    function specScore(feuille) {
+        let a = 0, b = 0, ok = false;
+        Object.values(feuille || {}).forEach(slot => {
+            if (slot && slot.vainqueur === 'dom') { a++; ok = true; }
+            else if (slot && slot.vainqueur === 'ext') { b++; ok = true; }
+        });
+        return { a, b, ok };
+    }
+    function specStandings(serie, pool) {
+        const rows = specPool(serie.pools[pool]).map(team => ({ team, j: 0, v: 0, n: 0, d: 0, diff: 0, pts: 0 }));
+        const by = Object.fromEntries(rows.map(r => [r.team, r]));
+        Object.keys(serie.matches || {}).forEach(id => {
+            const m = serie.matches[id];
+            if (m.pool !== pool) return;
+            const sc = specScore((serie.feuilles || {})[id]);
+            if (!sc.ok) return;
+            const [home, away] = String(m.teams || '').split(' — ');
+            if (!by[home] || !by[away]) return;
+            by[home].j++; by[away].j++;
+            by[home].diff += sc.a - sc.b; by[away].diff += sc.b - sc.a;
+            // Points = matchs gagnés dans la rencontre (6-2 : 6 pts pour le vainqueur, 2 pts pour le perdant)
+            by[home].pts += sc.a; by[away].pts += sc.b;
+            if (sc.a > sc.b) { by[home].v++; by[away].d++; }
+            else if (sc.b > sc.a) { by[away].v++; by[home].d++; }
+            else { by[home].n++; by[away].n++; }
+        });
+        rows.sort((x, y) => y.pts - x.pts || y.diff - x.diff || x.team.localeCompare(y.team));
+        return rows;
+    }
+
+    function renderSeriesSpec() {
+        const select = document.getElementById('spec-serie-select');
+        const display = document.getElementById('spec-serie-display');
+        if (!select || !display) return;
+        const ids = Object.keys(dbSeries).sort((a, b) => String(dbSeries[a].nom || '').localeCompare(String(dbSeries[b].nom || '')));
+        if (!dbSeries[specSerieId]) specSerieId = ids[0] || '';
+        select.innerHTML = ids.length
+            ? ids.map(id => `<option value="${id}" ${id === specSerieId ? 'selected' : ''}>${escapeHtml(dbSeries[id].nom || 'Série')}</option>`).join('')
+            : '<option value="">Aucune série</option>';
+        const serie = dbSeries[specSerieId];
+        if (!serie) { display.innerHTML = '<div class="empty-state">Aucune série interclub pour le moment.</div>'; return; }
+
+        const pools = Object.keys(serie.pools || {}).sort();
+        const poolsHtml = pools.map(pool => {
+            const rows = specStandings(serie, pool);
+            const body = rows.length ? rows.map((r, i) => {
+                const href = `equipe.html?serie=${encodeURIComponent(specSerieId)}&pool=${encodeURIComponent(pool)}&team=${encodeURIComponent(r.team)}`;
+                return `<tr class="st-team-row" data-href="${href}" tabindex="0" role="link" title="Voir l'équipe : rencontres, joueurs et résultats">
+                    <td class="st-rank">${i + 1}</td>
+                    <td class="l"><a class="st-team-link" href="${href}"><span class="st-team-name">${escapeHtml(r.team)}</span></a></td>
+                    <td>${r.j}</td><td>${r.v}</td><td>${r.n}</td><td>${r.d}</td>
+                    <td>${r.diff > 0 ? '+' : ''}${r.diff}</td>
+                    <td class="st-pts">${r.pts}</td>
+                    <td class="st-go" aria-hidden="true">›</td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="9" class="empty-state">Aucune équipe pour le moment.</td></tr>';
+            return `<h3 class="st-pool-title">Poule ${escapeHtml(pool)}</h3>
+            <div class="st-wrap"><table class="st st-standings">
+                <colgroup><col style="width:48px"><col><col style="width:48px"><col style="width:48px"><col style="width:48px"><col style="width:48px"><col style="width:64px"><col style="width:64px"><col style="width:36px"></colgroup>
+                <thead><tr><th>#</th><th class="l">Équipe</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Diff.</th><th>Pts</th><th></th></tr></thead>
+                <tbody>${body}</tbody>
+            </table></div>`;
+        }).join('');
+
+        display.innerHTML = poolsHtml;
+    }
+    document.getElementById('spec-serie-select').addEventListener('change', e => { specSerieId = e.target.value; try { sessionStorage.setItem('badsmash_spec_serie', specSerieId); } catch (err) {} renderSeriesSpec(); });
+
+    // --- Clic sur une équipe : ouvre la page dédiée (equipe.html) ---
+    (function bindSpecTeamClicks() {
+        const display = document.getElementById('spec-serie-display');
+        display.addEventListener('click', e => {
+            if (e.target.closest('a')) return; // le lien gère lui-même la navigation
+            const row = e.target.closest('[data-href]');
+            if (row) window.location.href = row.dataset.href;
+        });
+        display.addEventListener('keydown', e => {
+            const row = e.target.closest && e.target.closest('[data-href]');
+            if (row && e.target === row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); window.location.href = row.dataset.href; }
+        });
+    })();
+
+    // Utilitaire de date (gardé pour d'éventuels usages ultérieurs)
+    function specFmtDate(d) {
+        return d ? new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : 'À définir';
+    }
+
+    // --- Onglets principaux : Classements / Tournois / Interclubs ---
+    function showSpecPanel(panelId) {
+        if (!document.getElementById(panelId)) panelId = 'panel-classements';
+        document.querySelectorAll('.spec-panel').forEach(p => p.classList.toggle('active', p.id === panelId));
+        document.querySelectorAll('.spec-tab').forEach(t => t.classList.toggle('active', t.dataset.panel === panelId));
+        try { history.replaceState(null, '', '#' + panelId.replace('panel-', '')); } catch (e) {}
+    }
+    document.querySelectorAll('.spec-tab').forEach(t => t.addEventListener('click', () => showSpecPanel(t.dataset.panel)));
+    if (location.hash) showSpecPanel('panel-' + location.hash.slice(1));
+
     function renderAll() {
+        updateHeroStats();
+        populateRankFilters();
         renderTournoisList();
         populateSpecSelectors();
         renderRanking();
@@ -446,7 +768,7 @@
             const dates = (!t.dateFin || t.date === t.dateFin) ? fmt(t.date) : `${fmt(t.date)} → ${fmt(t.dateFin)}`;
 
             return `
-                <div class="tournoi-card">
+                <div class="tournoi-card ${badge.cls}">
                     <span class="tournoi-badge ${badge.cls}">${badge.label}</span>
                     <h3>${escapeHtml(t.nom || 'Tournoi')}</h3>
                     <div class="tournoi-meta">
@@ -558,20 +880,64 @@
     //                  FIN TABLEAUX (BRACKETS)
     // ============================================================
 
+    // ============================================================
+    //        CLASSEMENT : filtres + 50 premiers par discipline
+    // ============================================================
+    const RK_LIMIT = 50;
+    const rkF = { q: '', region: '', dept: '', club: '' };
+    const rkNorm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const avColor = s => { let h = 0; for (const c of String(s || '')) h = (h * 31 + c.charCodeAt(0)) % 360; return `hsl(${h}, 52%, 42%)`; };
+    const initials = j => `${(j.prenom || '?')[0] || ''}${(j.nom || '')[0] || ''}`.toUpperCase();
+    const isPro = j => j.isPro === true || j.isPro === 'true' || j.circuit === 'bwf';
+    const clubOf = j => dbClubs[j.clubId] || null;
+
+    function updateHeroStats() {
+        const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        const classes = Object.values(dbJoueurs).filter(j => !isPro(j) && (Number(j.ptsSimple || j.pointsSimple || 0) > 0 || Number(j.ptsDouble || j.pointsDouble || 0) > 0 || Number(j.ptsMixte || j.pointsMixte || 0) > 0)).length;
+        set('hs-joueurs', classes.toLocaleString('fr-FR'));
+        set('hs-clubs', Object.keys(dbClubs).length.toLocaleString('fr-FR'));
+        set('hs-tournois', Object.values(dbTournois).filter(t => t.visible !== false).length.toLocaleString('fr-FR'));
+        set('hs-series', Object.keys(dbSeries).length.toLocaleString('fr-FR'));
+    }
+
+    // Menus de filtre (en cascade région → département → club), sélection conservée
+    function populateRankFilters() {
+        const selR = document.getElementById('rk-region'), selD = document.getElementById('rk-dept'), selC = document.getElementById('rk-club');
+        if (!selR) return;
+        const clubs = Object.keys(dbClubs).map(id => ({ id, ...dbClubs[id] }));
+        const regions = [...new Set(clubs.map(c => c.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+        if (rkF.region && !regions.includes(rkF.region)) rkF.region = '';
+        selR.innerHTML = '<option value="">Toutes les régions</option>' + regions.map(r => `<option value="${escapeHtml(r)}" ${r === rkF.region ? 'selected' : ''}>${escapeHtml(r)}</option>`).join('');
+
+        const inRegion = clubs.filter(c => !rkF.region || c.region === rkF.region);
+        const depts = {};
+        inRegion.forEach(c => { if (c.departement) depts[c.departement] = c.departementNom || ''; });
+        if (rkF.dept && !(rkF.dept in depts)) rkF.dept = '';
+        selD.innerHTML = '<option value="">Tous les départements</option>' + Object.keys(depts).sort().map(code => `<option value="${escapeHtml(code)}" ${code === rkF.dept ? 'selected' : ''}>${escapeHtml(depts[code] ? code + ' – ' + depts[code] : code)}</option>`).join('');
+
+        const inDept = inRegion.filter(c => !rkF.dept || c.departement === rkF.dept).sort((a, b) => String(a.nom).localeCompare(String(b.nom), 'fr'));
+        if (rkF.club && !inDept.some(c => c.id === rkF.club)) rkF.club = '';
+        selC.innerHTML = '<option value="">Tous les clubs</option>' + inDept.map(c => `<option value="${escapeHtml(c.id)}" ${c.id === rkF.club ? 'selected' : ''}>${escapeHtml(c.nom)}${c.ville ? ' (' + escapeHtml(c.ville) + ')' : ''}</option>`).join('');
+    }
+    (function bindRankFilters() {
+        const $ = id => document.getElementById(id);
+        $('rk-q').addEventListener('input', e => { rkF.q = e.target.value; renderRanking(); });
+        $('rk-region').addEventListener('change', e => { rkF.region = e.target.value; rkF.dept = ''; rkF.club = ''; populateRankFilters(); renderRanking(); });
+        $('rk-dept').addEventListener('change', e => { rkF.dept = e.target.value; rkF.club = ''; populateRankFilters(); renderRanking(); });
+        $('rk-club').addEventListener('change', e => { rkF.club = e.target.value; renderRanking(); });
+        $('rk-reset').addEventListener('click', () => { rkF.q = rkF.region = rkF.dept = rkF.club = ''; $('rk-q').value = ''; populateRankFilters(); renderRanking(); });
+    })();
+
     function renderRanking() {
         const title = document.getElementById('ranking-title');
         const thead = document.getElementById('ranking-head');
         const tbody = document.getElementById('ranking-body');
+        const podiumEl = document.getElementById('rk-podium');
+        const infoEl = document.getElementById('rk-info');
+        const resetEl = document.getElementById('rk-reset');
 
-        let list = Object.keys(dbJoueurs).map(id => ({ id, ...dbJoueurs[id] }));
+        const CAT_LABEL = { SH: 'Simple Hommes', SD: 'Simple Dames', DH: 'Double Hommes', DD: 'Double Dames', MX: 'Double Mixte' };
 
-        // 1. FILTRAGE : SEULS LES JOUEURS AMATEURS / CLUB (FFBAD) SONT AFFICHÉS
-        list = list.filter(j => {
-            const isJoueurPro = j.isPro === true || j.isPro === 'true' || j.circuit === 'bwf';
-            return !isJoueurPro;
-        });
-
-        // 2. EXTRACTION DES POINTS SELON LA CATÉGORIE ACTIVE
         const getPoints = (j) => {
             let pts = 0;
             if (currentCat === 'SH' || currentCat === 'SD') pts = j.ptsSimple || j.pointsSimple || j.points_simple || 0;
@@ -579,62 +945,80 @@
             else if (currentCat === 'MX') pts = j.ptsMixte || j.pointsMixte || j.points_mixte || 0;
             return Number(pts);
         };
+        const sexOf = j => String(j.sexe || j.genre || '').trim().toUpperCase();
+        const isHomme = j => ['H', 'HOMME', 'M', 'MALE'].includes(sexOf(j));
+        const isFemme = j => ['F', 'FEMME', 'D', 'DAME', 'FEMALE'].includes(sexOf(j));
 
-        // 3. RÈGLE 1 : SEULEMENT LES JOUEURS AYANT DES POINTS (> 0)
-        list = list.filter(j => getPoints(j) > 0);
-
-        // 4. RÈGLE 2 : FILTRAGE PAR SEXE D'ABORD
-        const isHomme = (j) => {
-            if (!j.sexe && !j.genre) return false;
-            const s = String(j.sexe || j.genre).trim().toUpperCase();
-            return s === 'H' || s === 'HOMME' || s === 'M' || s === 'MALE';
-        };
-        const isFemme = (j) => {
-            if (!j.sexe && !j.genre) return false;
-            const s = String(j.sexe || j.genre).trim().toUpperCase();
-            return s === 'F' || s === 'FEMME' || s === 'D' || s === 'DAME' || s === 'FEMALE';
-        };
-
-        if (currentCat === 'SH' || currentCat === 'DH') list = list.filter(j => isHomme(j));
-        else if (currentCat === 'SD' || currentCat === 'DD') list = list.filter(j => isFemme(j));
-        // En MX : hommes et femmes sont autorisés
-
-        // 5. TRI PAR POINTS DÉCROISSANTS
+        // 1) Base : amateurs FFBaD, points > 0, sexe de la discipline, tri décroissant
+        let list = Object.keys(dbJoueurs).map(id => ({ id, ...dbJoueurs[id] })).filter(j => !isPro(j) && getPoints(j) > 0);
+        if (currentCat === 'SH' || currentCat === 'DH') list = list.filter(isHomme);
+        else if (currentCat === 'SD' || currentCat === 'DD') list = list.filter(isFemme);
         list.sort((a, b) => getPoints(b) - getPoints(a));
+        const totalDiscipline = list.length;
+        // Rang officiel dans la discipline (conservé même quand on filtre)
+        list.forEach((j, i) => { j._rank = i + 1; });
+        const leaderPts = list.length ? getPoints(list[0]) : 1;
 
-        // 6. EN-TÊTE DE TABLEAU
-        title.innerHTML = 'Classement <span style="color:var(--court-green);">FFBaD</span> <span style="color:var(--chalk-dim); font-size:1rem;">— Amateurs / Clubs</span>';
-        thead.innerHTML = `
-            <tr>
-                <th class="rank">#</th>
-                <th>Joueur</th>
-                <th>Club</th>
-                <th style="text-align: right;">Points FFBaD</th>
-            </tr>
-        `;
+        // 2) Filtres
+        const q = rkNorm(rkF.q);
+        const filtered = list.filter(j => {
+            const c = clubOf(j);
+            if (rkF.club && j.clubId !== rkF.club) return false;
+            if (rkF.region && !(c && c.region === rkF.region)) return false;
+            if (rkF.dept && !(c && c.departement === rkF.dept)) return false;
+            if (q && !rkNorm(`${j.prenom} ${j.nom} ${j.nom} ${j.prenom}`).includes(q)) return false;
+            return true;
+        });
+        const hasFilter = !!(q || rkF.region || rkF.dept || rkF.club);
 
-        if (list.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Aucun joueur classé trouvé pour ce tableau (${escapeHtml(currentCat)}).</td></tr>`;
+        // 3) 50 premiers seulement
+        const shown = filtered.slice(0, RK_LIMIT);
+
+        title.innerHTML = 'Classement <span style="color:var(--court-green);">FFBaD</span> <span style="color:var(--chalk-dim); font-size:1rem;">— ' + CAT_LABEL[currentCat] + '</span>';
+        resetEl.style.display = hasFilter ? '' : 'none';
+        infoEl.innerHTML = filtered.length
+            ? `<span>${filtered.length > RK_LIMIT ? `<span class="rk-limit">Top ${RK_LIMIT}</span> sur <b>${filtered.length.toLocaleString('fr-FR')}</b> joueurs` : `<b>${filtered.length.toLocaleString('fr-FR')}</b> joueur${filtered.length > 1 ? 's' : ''}`}${hasFilter ? ` (filtré, sur ${totalDiscipline.toLocaleString('fr-FR')} classés)` : ' classés'}</span>`
+            : '<span>Aucun résultat</span>';
+
+        const locOf = j => { const c = clubOf(j); return c && c.region ? `<span class="loc-chip">${escapeHtml(c.departement || '')}${c.departement ? ' · ' : ''}${escapeHtml(c.region)}</span>` : ''; };
+        const clubName = j => clubOf(j) ? clubOf(j).nom : (j.club || 'Sans club');
+        const avatar = j => `<span class="avatar" style="--av:${avColor((j.nom || '') + (j.prenom || ''))}">${escapeHtml(initials(j))}</span>`;
+
+        thead.innerHTML = '<tr><th class="rank">#</th><th>Joueur</th><th style="text-align:right;">Points FFBaD</th></tr>';
+
+        if (!shown.length) {
+            podiumEl.innerHTML = '';
+            tbody.innerHTML = `<tr><td colspan="3" class="empty-state">${hasFilter ? 'Aucun joueur ne correspond à vos filtres.' : `Aucun joueur classé trouvé pour ce tableau (${escapeHtml(currentCat)}).`}</td></tr>`;
             return;
         }
 
+        // 4) Podium (3 premiers du résultat) + tableau pour le reste
         const medals = ['🥇', '🥈', '🥉'];
+        const podiumPlayers = shown.length >= 3 ? shown.slice(0, 3) : [];
+        const rest = podiumPlayers.length ? shown.slice(3) : shown;
+        if (podiumPlayers.length) {
+            const pod = (j, i) => `<div class="pod p${i + 1}">
+                <div class="medal-big">${medals[i]}</div>
+                <div class="avatar" style="--av:${avColor((j.nom || '') + (j.prenom || ''))}">${escapeHtml(initials(j))}</div>
+                <div class="pn">${escapeHtml(j.prenom || '')} ${escapeHtml((j.nom || '').toUpperCase())}</div>
+                <div class="pc">${escapeHtml(clubName(j))}${hasFilter ? ` · n°${j._rank}` : ''}</div>
+                <div class="pp">${getPoints(j).toLocaleString('fr-FR')} pts</div></div>`;
+            podiumEl.innerHTML = `<div class="podium">${pod(podiumPlayers[1], 1)}${pod(podiumPlayers[0], 0)}${pod(podiumPlayers[2], 2)}</div>`;
+        } else podiumEl.innerHTML = '';
 
-        // 7. RENDU DE LA LISTE DES JOUEURS
-        tbody.innerHTML = list.map((j, idx) => {
-            const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
-            const medal = idx < 3 ? `<span class="medal">${medals[idx]}</span>` : '';
+        tbody.innerHTML = rest.length ? rest.map(j => {
+            const r = j._rank;
+            const rankClass = r === 1 ? 'rank-1' : r === 2 ? 'rank-2' : r === 3 ? 'rank-3' : '';
             const pts = getPoints(j);
-            const clubNom = dbClubs[j.clubId] ? dbClubs[j.clubId].nom : (j.club || 'Sans club');
-            return `
-                <tr>
-                    <td class="rank ${rankClass}">${medal}#${idx + 1}</td>
-                    <td class="player-name"><strong>${escapeHtml((j.nom || '').toUpperCase())}</strong> ${escapeHtml(j.prenom || '')}</td>
-                    <td>${escapeHtml(clubNom)}</td>
-                    <td style="text-align: right;" class="pts">${pts.toLocaleString('fr-FR')} pts</td>
-                </tr>
-            `;
-        }).join('');
+            return `<tr>
+                <td class="rank ${rankClass}">#${r}</td>
+                <td class="player-name"><div class="rk-player">${avatar(j)}<div>
+                    <div><strong>${escapeHtml((j.nom || '').toUpperCase())}</strong> ${escapeHtml(j.prenom || '')}</div>
+                    <div class="rk-club"><span>${escapeHtml(clubName(j))}</span>${locOf(j)}</div></div></div></td>
+                <td style="text-align:right; min-width:120px;"><span class="pts">${pts.toLocaleString('fr-FR')} pts</span>
+                    <div class="rk-bar"><span style="width:${Math.max(3, Math.round(pts / leaderPts * 100))}%"></span></div></td>
+            </tr>`;
+        }).join('') : '';
     }
 </script>
 

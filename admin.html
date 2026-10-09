@@ -389,6 +389,151 @@
             font-weight: 800;
         }
         .btn-horaires:hover { background: #d97706; }
+
+        /* ===== SÉRIES INTERCLUB ===== */
+        .si-hero { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap;
+            padding: 18px 20px; border-radius: 14px; border: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(139,92,246,0.10)); margin: 6px 0 22px; }
+        .si-hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .04em; line-height: 1.1; color: var(--text); }
+        .si-stats { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .si-stat { background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 3px 12px; font-size: .78rem; color: var(--sub); }
+        .si-stat b { color: var(--text); }
+        .si-btn { width: auto; margin: 0; padding: 9px 16px; font-size: .85rem; white-space: nowrap; }
+        .si-btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+        .si-btn.secondary:hover { background: rgba(79,143,209,0.12); }
+        .si-btn.danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+        .si-btn.danger:hover { background: var(--danger); color: #fff; }
+
+        .si-step { margin-top: 28px; }
+        .si-step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+        .si-step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--green); color: #04130a; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .si-step-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+        .si-step-hint { color: var(--sub); font-size: .85rem; margin: 0 0 14px 42px; }
+
+        .si-pools { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+        .si-pool { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+        .si-pool-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .si-pool-badge { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--violet), var(--accent));
+            color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .si-pool-badge.small { width: 24px; height: 24px; border-radius: 7px; font-size: .75rem; }
+        .si-pool-title { font-weight: 700; flex: 1; }
+        .si-pill { background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; font-size: .75rem; color: var(--sub); }
+        .si-pill.ok { color: var(--green); border-color: var(--green); }
+
+        .si-slot { display: flex; gap: 10px; align-items: flex-start; padding: 8px; margin-bottom: 8px; border-radius: 10px;
+            background: var(--card); border: 1px dashed var(--border); border-left: 3px solid transparent; }
+        .si-slot.filled { border-style: solid; border-left-color: var(--green); }
+        .si-slot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border);
+            color: var(--sub); font-size: .75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 8px; }
+        .si-slot.filled .si-slot-num { background: var(--green); color: #04130a; border-color: var(--green); }
+        .si-slot-fields { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+        .si-slot-fields select, .si-slot-fields input { padding: 8px 10px; font-size: .88rem; }
+        .si-slot-fields input { font-weight: 700; color: var(--green); }
+
+        .si-team { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+        .si-team summary { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; list-style: none; }
+        .si-team summary::-webkit-details-marker { display: none; }
+        .si-team summary::after { content: '▾'; margin-left: auto; color: var(--sub); transition: transform .2s; }
+        .si-team[open] summary::after { transform: rotate(180deg); }
+        .si-team-name { font-weight: 700; }
+        .si-team-body { padding: 4px 14px 14px; border-top: 1px solid var(--border); }
+        .si-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+        .si-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border);
+            border-radius: 999px; padding: 4px 6px 4px 12px; font-size: .85rem; }
+        .si-chip-x { width: 22px; height: 22px; padding: 0; margin: 0; border-radius: 50%; background: transparent; color: var(--sub);
+            font-size: .8rem; line-height: 1; }
+        .si-chip-x:hover { background: var(--danger); color: #fff; }
+        .si-add-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .si-add-row select { flex: 1; min-width: 180px; }
+
+        .si-box { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+        .si-date-group { margin: 18px 0 8px; font-size: .78rem; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: .06em; }
+        .si-match { display: flex; align-items: center; gap: 14px; padding: 10px 12px; margin-bottom: 8px; background: var(--bg);
+            border: 1px solid var(--border); border-radius: 12px; }
+        .si-match-date { width: 46px; text-align: center; flex-shrink: 0; border-radius: 10px; background: var(--card); border: 1px solid var(--border); padding: 4px 0; }
+        .si-match-day { font-size: 1.15rem; font-weight: 800; line-height: 1.1; }
+        .si-match-month { font-size: .65rem; text-transform: uppercase; color: var(--sub); letter-spacing: .06em; }
+        .si-match-body { flex: 1; min-width: 0; }
+        .si-vs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .92rem; }
+        .si-vs i { font-style: normal; color: var(--sub); font-size: .72rem; text-transform: uppercase; }
+        .si-icon-btn { width: 34px; height: 34px; padding: 0; margin: 0; background: transparent; border: 1px solid var(--border); font-size: .95rem; }
+        .si-icon-btn:hover { background: var(--danger); border-color: var(--danger); }
+        /* ===== Feuille de match (saisie du résultat d'une rencontre) ===== */
+        .si-match-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        .si-btn-result { width: auto; margin: 0; padding: 7px 12px; font-size: .8rem; font-weight: 700; white-space: nowrap;
+            background: transparent; color: var(--green); border: 1px solid var(--green); box-shadow: none; }
+        .si-btn-result:hover { background: var(--green); color: #04130a; }
+        .si-score { font-weight: 800; color: var(--green); padding: 2px 12px; border-radius: 8px; background: var(--card);
+            border: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+        .si-modal { position: fixed; inset: 0; z-index: 1000; background: rgba(4, 8, 16, .75); display: flex;
+            align-items: flex-start; justify-content: center; padding: 24px 14px; overflow-y: auto; }
+        .si-fm-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 940px;
+            padding: 20px; box-shadow: 0 30px 80px rgba(0, 0, 0, .5); }
+        .si-fm-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+        .si-fm-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: .04em; line-height: 1.1; }
+        .si-fm-sub { color: var(--sub); font-size: .85rem; margin-top: 2px; }
+        .si-fm-total { font-size: 2rem; font-weight: 800; color: var(--green); text-align: center; margin: 12px 0 14px; font-variant-numeric: tabular-nums; }
+        .si-fm-warn { background: rgba(246, 185, 59, .1); border: 1px solid #f6b93b; color: #f6b93b; border-radius: 10px;
+            padding: 8px 12px; font-size: .82rem; margin-bottom: 12px; }
+        .si-fm-cols, .si-fm-row { display: grid; grid-template-columns: 64px 1fr 1fr 170px 150px; gap: 8px; align-items: center; }
+        .si-fm-cols { color: var(--sub); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; padding: 0 10px; margin-bottom: 6px; }
+        .si-fm-row { padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); margin-bottom: 8px; }
+        .si-fm-code { font-weight: 800; color: var(--green); font-size: .85rem; }
+        .si-fm-players { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        .si-fm-row select, .si-fm-row input { width: 100%; margin: 0; padding: 8px; font-size: .85rem; }
+        .si-fm-foot { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; margin-top: 16px; }
+        @media (max-width: 760px) { .si-fm-cols { display: none; } .si-fm-row { grid-template-columns: 1fr; } .si-match { flex-wrap: wrap; } }
+        .si-empty { text-align: center; color: var(--sub); font-size: .9rem; padding: 18px; border: 1px dashed var(--border); border-radius: 12px; }
+    </style>
+
+    <style>
+        /* ===== CLUBS : annuaire ===== */
+        .cl-hero { display:flex; justify-content:space-between; align-items:flex-end; gap:18px; flex-wrap:wrap; margin-bottom:22px; padding:22px; border-radius:14px; border:1px solid var(--border);
+            background: radial-gradient(500px 200px at 0% 0%, rgba(34,197,94,.16), transparent 65%), radial-gradient(400px 200px at 100% 100%, rgba(139,92,246,.14), transparent 60%), var(--bg); }
+        .cl-eyebrow { font-size:.7rem; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--green); margin-bottom:4px; }
+        .cl-hero h2 { border:none; padding:0; margin:0; font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:2rem; letter-spacing:.03em; color:var(--text); }
+        .cl-hero p { color:var(--sub); font-size:.88rem; margin-top:4px; max-width:46ch; }
+        .cl-stats { display:flex; gap:10px; flex-wrap:wrap; }
+        .cl-stat { min-width:92px; padding:10px 14px; border-radius:12px; background:var(--card); border:1px solid var(--border); text-align:center; }
+        .cl-stat b { display:block; font-family:'Bebas Neue',sans-serif; font-size:1.7rem; line-height:1.05; color:var(--text); letter-spacing:.03em; }
+        .cl-stat span { font-size:.62rem; text-transform:uppercase; letter-spacing:.1em; font-weight:700; color:var(--sub); }
+        .cl-stat.warn b { color:var(--gold); }
+        .cl-panel { background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:18px; transition:border-color .25s, box-shadow .25s; }
+        .cl-panel.editing { border-color:var(--gold); box-shadow:0 0 0 3px rgba(246,185,59,.15); }
+        .cl-panel h3 { margin:0 0 14px; color:var(--text); font-size:1rem; text-transform:none; letter-spacing:0; display:flex; align-items:center; gap:8px; }
+        .cl-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+        .cl-actions button { width:auto; flex:1 1 180px; margin-top:0; }
+        .cl-btn-ghost { background:transparent !important; color:var(--text) !important; border:1px solid var(--border) !important; }
+        .cl-btn-ghost:hover { border-color:var(--sub) !important; }
+        .cl-toolbar { display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap:10px; margin-bottom:12px; }
+        @media (max-width:760px){ .cl-toolbar{ grid-template-columns:1fr 1fr; } .cl-search{ grid-column:1/-1; } }
+        .cl-search { position:relative; }
+        .cl-search span { position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:.6; pointer-events:none; }
+        .cl-search input { padding-left:36px; }
+        .cl-count { font-size:.8rem; color:var(--sub); margin:2px 0 14px; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
+        .cl-count button { width:auto; margin:0; padding:5px 12px; font-size:.75rem; background:transparent; color:var(--accent); border:1px solid var(--border); }
+        .cl-count button:hover { background:transparent; border-color:var(--accent); }
+        .cl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:12px; }
+        .cl-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:12px; position:relative; overflow:hidden; transition:transform .2s, border-color .2s, box-shadow .2s; }
+        .cl-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--cl-color, var(--green)); }
+        .cl-card:hover { transform:translateY(-2px); border-color:var(--cl-color, var(--green)); box-shadow:0 10px 24px -12px rgba(0,0,0,.5); }
+        .cl-card.is-editing { border-color:var(--gold); }
+        .cl-card-top { display:flex; align-items:center; gap:12px; }
+        .cl-avatar { width:44px; height:44px; flex-shrink:0; border-radius:12px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:1.25rem; letter-spacing:.04em; color:#fff; background:var(--cl-color, var(--green)); }
+        .cl-name { font-weight:800; color:var(--text); line-height:1.2; word-break:break-word; }
+        .cl-city { font-size:.82rem; color:var(--sub); }
+        .cl-chips { display:flex; gap:6px; flex-wrap:wrap; }
+        .cl-chip { font-size:.7rem; font-weight:700; padding:3px 9px; border-radius:99px; background:rgba(79,143,209,.12); color:var(--accent); border:1px solid rgba(79,143,209,.25); }
+        .cl-chip.dept { background:rgba(139,92,246,.12); color:var(--violet); border-color:rgba(139,92,246,.25); }
+        .cl-chip.warn { background:rgba(246,185,59,.12); color:var(--gold); border-color:rgba(246,185,59,.3); }
+        .cl-chip.players { background:rgba(34,197,94,.12); color:var(--green); border-color:rgba(34,197,94,.25); }
+        .cl-card-actions { display:flex; gap:8px; margin-top:auto; }
+        .cl-card-actions button { width:auto; flex:1; margin:0; padding:8px 10px; font-size:.8rem; }
+        .cl-btn-edit { background:rgba(79,143,209,.14); color:var(--accent); border:1px solid rgba(79,143,209,.35); }
+        .cl-btn-edit:hover { background:var(--accent); color:#fff; }
+        .cl-btn-del { background:rgba(239,61,78,.1); color:var(--danger); border:1px solid rgba(239,61,78,.35); }
+        .cl-btn-del:hover { background:var(--danger); color:#fff; }
     </style>
 </head>
 <body>
@@ -457,22 +602,60 @@
             <button type="button" class="btn-tab" data-tab="tab-draws">Tableaux</button>
             <button type="button" class="btn-tab" data-tab="tab-matchs">Matchs</button>
             <button type="button" class="btn-tab" data-tab="tab-interclubs">Interclubs</button>
+            <button type="button" class="btn-tab" data-tab="tab-series-interclub">Séries Interclub</button>
         </div>
 
         <!-- ONGLET CLUBS -->
         <div id="tab-clubs" class="tab-content card active">
-            <h2>🏢 Ajouter un Club</h2>
-            <form id="form-club">
-                <div class="form-group">
-                    <label for="club-nom">Nom du Club</label>
-                    <input type="text" id="club-nom" required placeholder="ex: BC Toulouse">
+            <div class="cl-hero">
+                <div>
+                    <div class="cl-eyebrow">Annuaire</div>
+                    <h2>🏢 Gestion des clubs</h2>
+                    <p>Ajoutez, recherchez, modifiez ou supprimez les clubs, avec leur région et leur département.</p>
                 </div>
-                <div class="form-group">
-                    <label for="club-ville">Ville</label>
-                    <input type="text" id="club-ville" required placeholder="ex: Toulouse">
+                <div class="cl-stats" id="cl-stats"></div>
+            </div>
+
+            <div class="cl-panel" id="cl-form-panel">
+                <h3 id="cl-form-title">➕ Ajouter un club</h3>
+                <form id="form-club">
+                    <input type="hidden" id="club-edit-id" value="">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="club-nom">Nom du club</label>
+                            <input type="text" id="club-nom" required placeholder="ex: BC Toulouse">
+                        </div>
+                        <div class="form-group">
+                            <label for="club-ville">Ville</label>
+                            <input type="text" id="club-ville" required placeholder="ex: Toulouse">
+                        </div>
+                        <div class="form-group">
+                            <label for="club-region">Région</label>
+                            <select id="club-region" required><option value="">Choisir une région…</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="club-dept">Département</label>
+                            <select id="club-dept" required disabled><option value="">Choisissez d'abord une région…</option></select>
+                        </div>
+                    </div>
+                    <div class="cl-actions">
+                        <button type="submit" id="club-submit">💾 Enregistrer le club</button>
+                        <button type="button" id="club-cancel" class="cl-btn-ghost" style="display:none;">Annuler la modification</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="cl-panel">
+                <h3>📋 Clubs enregistrés</h3>
+                <div class="cl-toolbar">
+                    <div class="cl-search"><span>🔎</span><input type="search" id="cl-q" placeholder="Rechercher un club ou une ville…" aria-label="Rechercher un club"></div>
+                    <select id="cl-f-region" aria-label="Filtrer par région"><option value="">Toutes les régions</option></select>
+                    <select id="cl-f-dept" aria-label="Filtrer par département"><option value="">Tous les départements</option></select>
+                    <select id="cl-sort" aria-label="Trier"><option value="nom">Tri : nom A→Z</option><option value="ville">Tri : ville A→Z</option><option value="region">Tri : région</option><option value="joueurs">Tri : nb. de joueurs</option></select>
                 </div>
-                <button type="submit">Enregistrer le Club</button>
-            </form>
+                <div class="cl-count"><span id="cl-count"></span><button type="button" id="cl-reset" style="display:none;">✕ Réinitialiser les filtres</button></div>
+                <div id="cl-list" class="cl-grid"></div>
+            </div>
         </div>
 
         <!-- ONGLET JOUEURS -->
@@ -920,6 +1103,34 @@
             <h3 style="margin-top: 30px;">📋 Interclubs programmés</h3>
             <div id="liste-interclubs"></div>
         </div>
+
+        <!-- ONGLET SÉRIES INTERCLUB -->
+        <div id="tab-series-interclub" class="tab-content card">
+            <h2>🏁 Créer une série interclub</h2>
+            <form id="form-serie-interclub">
+                <div class="form-group">
+                    <label for="si-nom">Nom de la série</label>
+                    <input type="text" id="si-nom" required placeholder="ex: D2, R3, Départementale 1...">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="si-nb-poules">Nombre de poules (groupes)</label>
+                        <input type="number" id="si-nb-poules" min="1" max="12" value="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="si-nb-equipes">Nombre d'équipes par poule</label>
+                        <input type="number" id="si-nb-equipes" min="2" max="16" value="6" required>
+                    </div>
+                </div>
+                <button type="submit">➕ Créer la série</button>
+            </form>
+
+            <h3 style="margin-top: 30px;">📋 Séries créées</h3>
+            <div class="form-group">
+                <select id="si-select"><option value="">Sélectionner une série...</option></select>
+            </div>
+            <div id="si-detail"></div>
+        </div>
     </div>
 </div>
 
@@ -1090,17 +1301,21 @@
             });
 
             renderInterclubsList(); // les noms de clubs affichés peuvent avoir changé
+            if (typeof renderClubsAdmin === 'function') renderClubsAdmin();
+            if (typeof renderSerieDetail === 'function') renderSerieDetail();
         });
 
         // Joueurs
         onValue(ref(db, 'joueurs'), (snapshot) => {
             cacheJoueurs = snapshot.val() || {};
+            if (typeof renderClubsAdmin === 'function') renderClubsAdmin();
             renderTournoiJoueursList();
             renderJoueursEditList();
             updateMatchJoueursList();
             renderDrawJoueursList();
             renderBracket(); // les labels des joueurs peuvent avoir changé
             renderMatchsList(); // idem pour l'historique des matchs
+            if (typeof renderSerieDetail === 'function') renderSerieDetail();
         });
 
         // Tournois
@@ -1146,10 +1361,546 @@
             renderMatchsList();
         });
 
+        loadSeriesInterclub();
+
         // Événements (entraînements + interclubs, créés par les joueurs ou l'admin)
         onValue(ref(db, 'evenements'), (snapshot) => {
             cacheEvenements = snapshot.val() || {};
             renderInterclubsList();
+        });
+    }
+
+
+    // ============================================================
+    //                    SÉRIES INTERCLUB
+    // ============================================================
+    // Structure Firebase : seriesInterclub/<id> = {
+    //   nom, nbPoules, nbEquipes,
+    //   pools:      { A: [nomEquipe, ...], B: [...] },
+    //   teamClubs:  { <cléÉquipe>: idClub },
+    //   effectifs:  { <cléÉquipe>: [idJoueur, ...] },
+    //   matches:    { <id>: { date, heure, lieu, pool, teams: "Dom — Ext" } },
+    //   feuilles:   { <idMatch>: {...} }   // saisies par les joueurs
+    // }
+    let cacheSeriesInterclub = {};
+    let currentSerieInterclubId = '';
+
+    function siEsc(str) {
+        return String(str == null ? '' : str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function siTeamKey(name) {
+        return String(name || '').trim().replace(/[.#$[\]/]/g, '_');
+    }
+    function siPool(arr) {
+        let out = [];
+        if (Array.isArray(arr)) out = arr.slice();
+        else if (arr && typeof arr === 'object') Object.keys(arr).forEach(k => { out[Number(k)] = arr[k]; });
+        return Array.from(out, v => v || '');
+    }
+    function siList(v) {
+        return Array.isArray(v) ? v : (v && typeof v === 'object' ? Object.values(v) : []);
+    }
+    function siPlayerLabel(id) {
+        const j = cacheJoueurs[id];
+        return j ? `${j.prenom || ''} ${j.nom || ''}`.trim() + (j.genre ? ` (${j.genre})` : '') : '(joueur supprimé)';
+    }
+    function siWrite(updates, errMsg) {
+        return update(ref(db), updates).catch(error => {
+            console.error(errMsg, error);
+            alert('❌ ' + errMsg + '\n\nErreur Firebase : ' + error.message + '\n\nVérifiez les règles de sécurité de la base de données pour le nœud « seriesInterclub ».');
+        });
+    }
+
+    function renderSeriesSelect() {
+        const select = document.getElementById('si-select');
+        const ids = Object.keys(cacheSeriesInterclub).sort((a, b) => String(cacheSeriesInterclub[a].nom || '').localeCompare(String(cacheSeriesInterclub[b].nom || '')));
+        if (currentSerieInterclubId && !cacheSeriesInterclub[currentSerieInterclubId]) currentSerieInterclubId = '';
+        select.innerHTML = '<option value="">Sélectionner une série...</option>' +
+            ids.map(id => `<option value="${id}" ${id === currentSerieInterclubId ? 'selected' : ''}>${siEsc(cacheSeriesInterclub[id].nom)}</option>`).join('');
+    }
+
+    function renderSerieDetail() {
+        const box = document.getElementById('si-detail');
+        const id = currentSerieInterclubId;
+        const serie = id ? cacheSeriesInterclub[id] : null;
+        if (!serie) {
+            box.innerHTML = '<p class="empty-state">Créez une série ci-dessus, puis sélectionnez-la pour ajouter les clubs, les joueurs et les rencontres.</p>';
+            return;
+        }
+        // On conserve les menus déroulés ouverts entre deux rafraîchissements
+        const openTeams = new Set(Array.from(box.querySelectorAll('details[open]')).map(d => d.dataset.team));
+
+        const poolNames = Object.keys(serie.pools || {}).sort();
+        const teamClubs = serie.teamClubs || {};
+        const usedClubIds = new Set(Object.values(teamClubs));
+        const clubIds = Object.keys(cacheClubs).sort((a, b) => String(cacheClubs[a].nom).localeCompare(String(cacheClubs[b].nom)));
+        const matches = serie.matches || {};
+        const usedInMatches = new Set();
+        Object.values(matches).forEach(m => String(m.teams || '').split(' — ').forEach(t => usedInMatches.add(t)));
+
+        // ---- 1) Poules : un club par place ----
+        const poolsHtml = poolNames.map(pool => {
+            const teams = siPool(serie.pools[pool]);
+            const filled = teams.filter(Boolean).length;
+            const rows = teams.map((team, i) => {
+                const currentClubId = team ? teamClubs[siTeamKey(team)] : '';
+                const options = clubIds
+                    .map(cid => `<option value="${cid}" ${cid === currentClubId ? 'selected' : ''}>${siEsc(cacheClubs[cid].nom)} (${siEsc(cacheClubs[cid].ville || '')})</option>`).join('');
+                return `<div class="si-slot ${team ? 'filled' : ''}">
+                    <span class="si-slot-num">${i + 1}</span>
+                    <div class="si-slot-fields">
+                        <select data-si-slot data-pool="${pool}" data-index="${i}">
+                            <option value="">Choisir un club…</option>${options}
+                        </select>
+                        ${team ? `<input type="text" data-si-rename data-pool="${pool}" data-index="${i}" value="${siEsc(team)}" title="Nom de l'équipe (modifiable)" aria-label="Nom de l'équipe">` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            return `<div class="si-pool">
+                <div class="si-pool-head">
+                    <span class="si-pool-badge">${siEsc(pool)}</span>
+                    <span class="si-pool-title">Poule ${siEsc(pool)}</span>
+                    <span class="si-pill ${filled === teams.length ? 'ok' : ''}">${filled}/${teams.length} équipes</span>
+                </div>${rows}</div>`;
+        }).join('');
+
+        // ---- 2) Effectifs ----
+        const teamsAll = [];
+        poolNames.forEach(pool => siPool(serie.pools[pool]).forEach(t => { if (t) teamsAll.push({ pool, team: t }); }));
+        const joueurIds = Object.keys(cacheJoueurs).sort((a, b) => `${cacheJoueurs[a].nom} ${cacheJoueurs[a].prenom}`.localeCompare(`${cacheJoueurs[b].nom} ${cacheJoueurs[b].prenom}`));
+        let totalPlayers = 0;
+        const effectifsHtml = teamsAll.length ? teamsAll.map(({ pool, team }) => {
+            const key = siTeamKey(team);
+            const roster = siList((serie.effectifs || {})[key]);
+            totalPlayers += roster.length;
+            const dispo = joueurIds.filter(j => !roster.includes(j));
+            return `<details class="si-team" data-team="${siEsc(key)}" ${openTeams.has(key) ? 'open' : ''}>
+                <summary>
+                    <span class="si-pool-badge small">${siEsc(pool)}</span>
+                    <span class="si-team-name">${siEsc(team)}</span>
+                    <span class="si-pill ${roster.length ? 'ok' : ''}">${roster.length} joueur${roster.length > 1 ? 's' : ''}</span>
+                </summary>
+                <div class="si-team-body">
+                    <div class="si-chips">${roster.length
+                        ? roster.map(j => `<span class="si-chip">${siEsc(siPlayerLabel(j))}<button type="button" class="si-chip-x" title="Retirer" aria-label="Retirer" data-si-remove-player="${j}" data-team="${siEsc(team)}">✕</button></span>`).join('')
+                        : '<span style="color:var(--sub); font-size:.85rem;">Aucun joueur dans cette équipe pour le moment.</span>'}</div>
+                    <div class="si-add-row">
+                        <select data-si-add-select="${siEsc(key)}"><option value="">${dispo.length ? 'Ajouter un joueur…' : 'Aucun joueur disponible'}</option>${dispo.map(j => `<option value="${j}">${siEsc(siPlayerLabel(j))}</option>`).join('')}</select>
+                        <button type="button" class="si-btn" data-si-add-player data-team="${siEsc(team)}">➕ Ajouter</button>
+                        <button type="button" class="si-btn secondary" data-si-import-club data-team="${siEsc(team)}" title="Ajoute tous les licenciés du club">👥 Importer le club</button>
+                    </div>
+                </div>
+            </details>`;
+        }).join('') : '<div class="si-empty">Attribuez d\'abord des clubs aux poules ci-dessus.</div>';
+
+        // ---- 3) Rencontres (groupées par date) ----
+        const matchIds = Object.keys(matches).sort((a, b) => `${matches[a].date || ''} ${matches[a].heure || ''}`.localeCompare(`${matches[b].date || ''} ${matches[b].heure || ''}`));
+        const MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+        let lastDate = null;
+        const matchesHtml = matchIds.length ? matchIds.map(mid => {
+            const m = matches[mid];
+            const [dom, ext] = String(m.teams || '').split(' — ');
+            const d = m.date ? new Date(m.date + 'T12:00:00') : null;
+            const sc = siScore((serie.feuilles || {})[mid]);
+            let group = '';
+            if (m.date !== lastDate) {
+                lastDate = m.date;
+                group = `<div class="si-date-group">${d ? d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : 'Date à définir'}</div>`;
+            }
+            return `${group}<div class="si-match">
+                <div class="si-match-date"><div class="si-match-day">${d ? d.getDate() : '–'}</div><div class="si-match-month">${d ? MOIS[d.getMonth()] : ''}</div></div>
+                <div class="si-match-body">
+                    <div class="si-vs"><b>${siEsc(dom)}</b>${sc.ok ? `<span class="si-score">${sc.a} — ${sc.b}</span>` : '<i>vs</i>'}<b>${siEsc(ext || '')}</b></div>
+                    <div class="match-item-meta">
+                        <span class="match-item-tag">Poule ${siEsc(m.pool || '')}</span>
+                        ${m.heure ? `<span class="match-item-tag">🕐 ${siEsc(m.heure)}</span>` : ''}
+                        ${m.lieu ? `<span class="match-item-tag">📍 ${siEsc(m.lieu)}</span>` : ''}
+                        ${sc.ok ? '<span class="match-item-tag">✅ Résultat saisi</span>' : ''}
+                    </div>
+                </div>
+                <div class="si-match-actions">
+                    <button type="button" class="si-btn-result" data-si-open-feuille="${mid}">${sc.ok ? '✏️ Modifier le résultat' : '📝 Saisir le résultat'}</button>
+                    <button type="button" class="si-icon-btn" title="Supprimer cette rencontre" aria-label="Supprimer" data-si-delete-match="${mid}">🗑️</button>
+                </div>
+            </div>`;
+        }).join('') : '<div class="si-empty">Aucune rencontre programmée pour le moment.</div>';
+
+        const totalSlots = poolNames.reduce((n, p) => n + siPool(serie.pools[p]).length, 0);
+
+        box.innerHTML = `
+            <div class="si-hero">
+                <div>
+                    <div class="si-hero-title">🏁 ${siEsc(serie.nom)}</div>
+                    <div class="si-stats">
+                        <span class="si-stat"><b>${poolNames.length}</b> poule${poolNames.length > 1 ? 's' : ''}</span>
+                        <span class="si-stat"><b>${teamsAll.length}/${totalSlots}</b> équipes placées</span>
+                        <span class="si-stat"><b>${totalPlayers}</b> joueur${totalPlayers > 1 ? 's' : ''} inscrit${totalPlayers > 1 ? 's' : ''}</span>
+                        <span class="si-stat"><b>${matchIds.length}</b> rencontre${matchIds.length > 1 ? 's' : ''}</span>
+                    </div>
+                </div>
+                <button type="button" class="si-btn danger" id="si-delete-serie">🗑️ Supprimer la série</button>
+            </div>
+
+            <div class="si-step">
+                <div class="si-step-head"><span class="si-step-num">1</span><span class="si-step-title">Clubs de chaque poule</span></div>
+                <p class="si-step-hint">Un même club peut avoir plusieurs équipes : elles sont numérotées automatiquement (« Club », « Club 2 »…) et le nom reste modifiable.</p>
+                <div class="si-pools">${poolsHtml}</div>
+            </div>
+
+            <div class="si-step">
+                <div class="si-step-head"><span class="si-step-num">2</span><span class="si-step-title">Joueurs de chaque équipe</span></div>
+                <p class="si-step-hint">Les joueurs verront la série de leur équipe dans leur onglet Interclubs.</p>
+                ${effectifsHtml}
+            </div>
+
+            <div class="si-step">
+                <div class="si-step-head"><span class="si-step-num">3</span><span class="si-step-title">Rencontres</span></div>
+                <p class="si-step-hint">Choisissez la poule puis la rencontre (domicile — extérieur). Une fois la rencontre jouée, cliquez sur « Saisir le résultat » pour remplir la feuille de match.</p>
+                <form id="si-form-match" class="si-box">
+                    <div class="grid-2">
+                        <div class="form-group"><label>Poule</label>
+                            <select id="si-match-pool">${poolNames.map(p => `<option value="${p}">Poule ${siEsc(p)}</option>`).join('')}</select></div>
+                        <div class="form-group"><label>Équipes</label>
+                            <select id="si-match-teams" required></select></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>Date</label><input type="date" id="si-match-date" required></div>
+                        <div class="form-group"><label>Heure (optionnel)</label><input type="time" id="si-match-heure"></div>
+                        <div class="form-group"><label>Lieu (optionnel)</label><input type="text" id="si-match-lieu" placeholder="ex: Gymnase du club recevant"></div>
+                    </div>
+                    <button type="submit" class="si-btn">➕ Ajouter la rencontre</button>
+                </form>
+                <div style="margin-top:8px;">${matchesHtml}</div>
+            </div>`;
+
+        // --- Options de rencontre selon la poule choisie (domicile — extérieur, toutes combinaisons) ---
+        function fillMatchTeams() {
+            const pool = document.getElementById('si-match-pool').value;
+            const teams = siPool((serie.pools || {})[pool]).filter(Boolean);
+            const opts = [];
+            teams.forEach(a => teams.forEach(b => { if (a !== b) opts.push(`${a} — ${b}`); }));
+            const existing = new Set(Object.values(matches).map(m => m.teams));
+            document.getElementById('si-match-teams').innerHTML = '<option value="">Sélectionner la rencontre…</option>' +
+                opts.map(o => `<option value="${siEsc(o)}">${siEsc(o)}${existing.has(o) ? ' (déjà programmée)' : ''}</option>`).join('');
+        }
+        document.getElementById('si-match-pool').addEventListener('change', fillMatchTeams);
+        fillMatchTeams();
+
+        // --- Noms d'équipes déjà pris dans la série (toutes poules confondues) ---
+        const allTeamNames = () => {
+            const names = [];
+            poolNames.forEach(p => siPool(serie.pools[p]).forEach(t => { if (t) names.push(t); }));
+            return names;
+        };
+        const uniqueTeamName = (base, ignore) => {
+            const taken = new Set(allTeamNames().filter(t => t !== ignore).map(siTeamKey));
+            if (!taken.has(siTeamKey(base))) return base;
+            let n = 2;
+            while (taken.has(siTeamKey(`${base} ${n}`))) n++;
+            return `${base} ${n}`;
+        };
+
+        // --- Attribution des clubs aux places de poule (plusieurs équipes par club possibles) ---
+        box.querySelectorAll('select[data-si-slot]').forEach(sel => sel.addEventListener('change', () => {
+            const pool = sel.dataset.pool, index = Number(sel.dataset.index);
+            const ancien = siPool(serie.pools[pool])[index];
+            if (ancien && usedInMatches.has(ancien)) {
+                alert(`« ${ancien} » a déjà des rencontres programmées : supprimez-les avant de changer cette équipe.`);
+                renderSerieDetail();
+                return;
+            }
+            const base = `seriesInterclub/${id}`;
+            const updates = {};
+            if (ancien) { updates[`${base}/teamClubs/${siTeamKey(ancien)}`] = null; updates[`${base}/effectifs/${siTeamKey(ancien)}`] = null; }
+            const clubId = sel.value;
+            if (clubId) {
+                const nom = uniqueTeamName(cacheClubs[clubId].nom, ancien);
+                updates[`${base}/pools/${pool}/${index}`] = nom;
+                updates[`${base}/teamClubs/${siTeamKey(nom)}`] = clubId;
+            } else {
+                updates[`${base}/pools/${pool}/${index}`] = '';
+            }
+            siWrite(updates, "Impossible d'enregistrer ce club dans la poule.");
+        }));
+
+        // --- Renommer une équipe (met aussi à jour effectif et rencontres) ---
+        box.querySelectorAll('input[data-si-rename]').forEach(inp => inp.addEventListener('change', () => {
+            const pool = inp.dataset.pool, index = Number(inp.dataset.index);
+            const ancien = siPool(serie.pools[pool])[index];
+            const nouveau = inp.value.trim();
+            if (!nouveau || nouveau === ancien) { renderSerieDetail(); return; }
+            if (nouveau.includes(' — ')) { alert('Le nom ne peut pas contenir « — ».'); renderSerieDetail(); return; }
+            const clash = allTeamNames().some(t => t !== ancien && siTeamKey(t) === siTeamKey(nouveau));
+            if (clash) { alert(`Une équipe nommée « ${nouveau} » existe déjà dans cette série.`); renderSerieDetail(); return; }
+            const base = `seriesInterclub/${id}`;
+            const oldKey = siTeamKey(ancien), newKey = siTeamKey(nouveau);
+            const updates = { [`${base}/pools/${pool}/${index}`]: nouveau };
+            if (oldKey !== newKey) {
+                const clubId = teamClubs[oldKey];
+                const roster = siList((serie.effectifs || {})[oldKey]);
+                updates[`${base}/teamClubs/${oldKey}`] = null;
+                updates[`${base}/effectifs/${oldKey}`] = null;
+                if (clubId) updates[`${base}/teamClubs/${newKey}`] = clubId;
+                if (roster.length) updates[`${base}/effectifs/${newKey}`] = roster;
+            }
+            Object.keys(matches).forEach(mid => {
+                const [d, e] = String(matches[mid].teams || '').split(' — ');
+                if (d === ancien || e === ancien) updates[`${base}/matches/${mid}/teams`] = `${d === ancien ? nouveau : d} — ${e === ancien ? nouveau : e}`;
+            });
+            siWrite(updates, "Impossible de renommer cette équipe.");
+        }));
+
+        // --- Effectifs ---
+        const setRoster = (teamName, ids) => siWrite({ [`seriesInterclub/${id}/effectifs/${siTeamKey(teamName)}`]: ids.length ? ids : null }, "Impossible de mettre à jour l'effectif.");
+        box.querySelectorAll('[data-si-add-player]').forEach(btn => btn.addEventListener('click', () => {
+            const team = btn.dataset.team, key = siTeamKey(team);
+            const sel = box.querySelector(`select[data-si-add-select="${CSS.escape(key)}"]`);
+            if (!sel || !sel.value) return;
+            const roster = siList((serie.effectifs || {})[key]);
+            if (!roster.includes(sel.value)) setRoster(team, [...roster, sel.value]);
+        }));
+        box.querySelectorAll('[data-si-remove-player]').forEach(btn => btn.addEventListener('click', () => {
+            const team = btn.dataset.team;
+            setRoster(team, siList((serie.effectifs || {})[siTeamKey(team)]).filter(j => j !== btn.dataset.siRemovePlayer));
+        }));
+        box.querySelectorAll('[data-si-import-club]').forEach(btn => btn.addEventListener('click', () => {
+            const team = btn.dataset.team;
+            const clubId = teamClubs[siTeamKey(team)];
+            if (!clubId) return alert("Ce club n'est pas relié à la base de clubs.");
+            const roster = siList((serie.effectifs || {})[siTeamKey(team)]);
+            const ajout = Object.keys(cacheJoueurs).filter(j => cacheJoueurs[j].clubId === clubId && !roster.includes(j));
+            if (!ajout.length) return alert('Aucun licencié supplémentaire dans ce club.');
+            setRoster(team, [...roster, ...ajout]);
+        }));
+
+        // --- Rencontres ---
+        document.getElementById('si-form-match').addEventListener('submit', e => {
+            e.preventDefault();
+            const teams = document.getElementById('si-match-teams').value;
+            if (!teams) return;
+            const data = {
+                date: document.getElementById('si-match-date').value,
+                pool: document.getElementById('si-match-pool').value,
+                teams,
+                timestamp: Date.now()
+            };
+            const heure = document.getElementById('si-match-heure').value;
+            const lieu = document.getElementById('si-match-lieu').value.trim();
+            if (heure) data.heure = heure;
+            if (lieu) data.lieu = lieu;
+            push(ref(db, `seriesInterclub/${id}/matches`), data).catch(error => {
+                alert('❌ Impossible d\'ajouter cette rencontre.\n\nErreur Firebase : ' + error.message);
+            });
+        });
+        box.querySelectorAll('[data-si-delete-match]').forEach(btn => btn.addEventListener('click', () => {
+            if (!confirm('Supprimer cette rencontre et sa feuille de match ?')) return;
+            const mid = btn.dataset.siDeleteMatch;
+            siWrite({ [`seriesInterclub/${id}/matches/${mid}`]: null, [`seriesInterclub/${id}/feuilles/${mid}`]: null }, 'Impossible de supprimer cette rencontre.');
+        }));
+        box.querySelectorAll('[data-si-open-feuille]').forEach(btn => btn.addEventListener('click', () => siOpenFeuille(id, btn.dataset.siOpenFeuille)));
+        document.getElementById('si-delete-serie').addEventListener('click', () => {
+            if (!confirm(`Supprimer définitivement la série « ${serie.nom} » (poules, effectifs, rencontres et feuilles) ?`)) return;
+            siWrite({ [`seriesInterclub/${id}`]: null }, 'Impossible de supprimer cette série.');
+        });
+    }
+
+    // ============================================================
+    //        FEUILLE DE MATCH D'UNE RENCONTRE (saisie admin)
+    // ============================================================
+    // Même structure que celle écrite côté joueur (mon-espace) :
+    //   feuilles/<idMatch>/<code> = { domIds: [...], extIds: [...], score: "21-15 / 21-18", vainqueur: "dom" | "ext" }
+    const SI_SLOTS = [
+        { code: 'SH1', label: 'Simple Homme 1', count: 1 },
+        { code: 'SH2', label: 'Simple Homme 2', count: 1 },
+        { code: 'SD1', label: 'Simple Dame 1', count: 1 },
+        { code: 'SD2', label: 'Simple Dame 2', count: 1 },
+        { code: 'DH', label: 'Double Hommes', count: 2 },
+        { code: 'DD', label: 'Double Dames', count: 2 },
+        { code: 'MIX1', label: 'Double Mixte 1', count: 2 },
+        { code: 'MIX2', label: 'Double Mixte 2', count: 2 }
+    ];
+
+    function siScore(feuille) {
+        let a = 0, b = 0, ok = false;
+        Object.values(feuille || {}).forEach(slot => {
+            if (slot && slot.vainqueur === 'dom') { a++; ok = true; }
+            else if (slot && slot.vainqueur === 'ext') { b++; ok = true; }
+        });
+        return { a, b, ok };
+    }
+
+    // Déduit le vainqueur d'un score du type « 21-15 / 19-21 / 21-18 » (domicile en premier)
+    function siWinnerFromScore(text) {
+        let a = 0, b = 0;
+        String(text || '').split(/[\/;,]/).forEach(set => {
+            const m = set.match(/(\d+)\s*[-–:]\s*(\d+)/);
+            if (!m) return;
+            const x = Number(m[1]), y = Number(m[2]);
+            if (x > y) a++; else if (y > x) b++;
+        });
+        return a > b ? 'dom' : (b > a ? 'ext' : '');
+    }
+
+    let siModalEl = null;
+    function siModalKey(e) { if (e.key === 'Escape') siCloseFeuille(); }
+    function siCloseFeuille() {
+        if (siModalEl) { siModalEl.remove(); siModalEl = null; }
+        document.removeEventListener('keydown', siModalKey);
+    }
+
+    function siOpenFeuille(serieId, mid) {
+        const serie = cacheSeriesInterclub[serieId];
+        const match = serie && (serie.matches || {})[mid];
+        if (!match) return;
+        siCloseFeuille();
+
+        const [dom, ext] = String(match.teams || '').split(' — ');
+        const rosterOf = team => siList((serie.effectifs || {})[siTeamKey(team)]).filter(j => cacheJoueurs[j]);
+        const homeIds = rosterOf(dom), awayIds = rosterOf(ext);
+        const saved = (serie.feuilles || {})[mid] || {};
+        const dateLabel = match.date ? new Date(match.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : 'Date à définir';
+
+        const sideHtml = (side, ids, team, count, savedIds) => {
+            const chosen = siList(savedIds).filter(j => cacheJoueurs[j]);
+            const options = Array.from(new Set([...ids, ...chosen]));
+            return `<div class="si-fm-players" data-side="${side}">` + Array.from({ length: count }, (_, i) => `
+                <select data-side-select="${side}">
+                    <option value="">${siEsc(team || (side === 'dom' ? 'Domicile' : 'Extérieur'))}${count > 1 ? ' ' + (i + 1) : ''}…</option>
+                    ${options.map(j => `<option value="${j}" ${j === chosen[i] ? 'selected' : ''}>${siEsc(siPlayerLabel(j))}</option>`).join('')}
+                </select>`).join('') + '</div>';
+        };
+
+        const warn = (!homeIds.length || !awayIds.length)
+            ? `<div class="si-fm-warn">⚠️ Effectif vide pour ${[!homeIds.length ? dom : '', !awayIds.length ? ext : ''].filter(Boolean).map(siEsc).join(' et ')} : ajoutez des joueurs à l'étape 2 pour pouvoir les sélectionner (nécessaire au calcul du taux de victoire). Vous pouvez quand même saisir le score et le vainqueur.</div>`
+            : '';
+
+        const overlay = document.createElement('div');
+        overlay.className = 'si-modal';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.innerHTML = `
+            <div class="si-fm-box">
+                <div class="si-fm-head">
+                    <div>
+                        <div class="si-fm-title">🆚 ${siEsc(dom)} — ${siEsc(ext || '')}</div>
+                        <div class="si-fm-sub">${siEsc(dateLabel)} · Poule ${siEsc(match.pool || '-')} · Saisie du résultat des 8 matchs</div>
+                    </div>
+                    <button type="button" class="si-icon-btn" id="si-fm-x" aria-label="Fermer">✕</button>
+                </div>
+                <div class="si-fm-total" id="si-fm-total">0 — 0</div>
+                ${warn}
+                <div class="si-fm-cols"><span>Match</span><span>${siEsc(dom)}</span><span>${siEsc(ext || '')}</span><span>Score (sets)</span><span>Vainqueur</span></div>
+                ${SI_SLOTS.map(slot => {
+                    const d = saved[slot.code] || {};
+                    return `<div class="si-fm-row" data-code="${slot.code}">
+                        <span class="si-fm-code" title="${siEsc(slot.label)}">${slot.code}</span>
+                        ${sideHtml('dom', homeIds, dom, slot.count, d.domIds)}
+                        ${sideHtml('ext', awayIds, ext, slot.count, d.extIds)}
+                        <input type="text" data-field="score" value="${siEsc(d.score || '')}" placeholder="21-15 / 21-18" aria-label="Score ${slot.code}">
+                        <select data-field="vainqueur" aria-label="Vainqueur ${slot.code}">
+                            <option value="">Vainqueur…</option>
+                            <option value="dom" ${d.vainqueur === 'dom' ? 'selected' : ''}>${siEsc(dom)}</option>
+                            <option value="ext" ${d.vainqueur === 'ext' ? 'selected' : ''}>${siEsc(ext || '')}</option>
+                        </select>
+                    </div>`;
+                }).join('')}
+                <p class="si-step-hint" style="margin:6px 0 0;">Astuce : en saisissant le score avec le domicile en premier (ex : 21-15 / 19-21 / 21-18), le vainqueur est proposé automatiquement. Vous pouvez le corriger à la main.</p>
+                <div class="si-fm-foot">
+                    <button type="button" class="si-btn danger" id="si-fm-clear">🗑️ Effacer la feuille</button>
+                    <button type="button" class="si-btn secondary" id="si-fm-cancel">Annuler</button>
+                    <button type="button" class="si-btn" id="si-fm-save">💾 Enregistrer le résultat</button>
+                </div>
+            </div>`;
+        document.body.appendChild(overlay);
+        siModalEl = overlay;
+        document.addEventListener('keydown', siModalKey);
+        overlay.addEventListener('mousedown', e => { if (e.target === overlay) siCloseFeuille(); });
+
+        const updateTotal = () => {
+            let a = 0, b = 0;
+            overlay.querySelectorAll('select[data-field="vainqueur"]').forEach(s => { if (s.value === 'dom') a++; else if (s.value === 'ext') b++; });
+            overlay.querySelector('#si-fm-total').textContent = `${a} — ${b}`;
+        };
+        overlay.querySelectorAll('select[data-field="vainqueur"]').forEach(s => s.addEventListener('change', updateTotal));
+        overlay.querySelectorAll('input[data-field="score"]').forEach(inp => inp.addEventListener('input', () => {
+            const w = siWinnerFromScore(inp.value);
+            if (w) { inp.closest('.si-fm-row').querySelector('select[data-field="vainqueur"]').value = w; updateTotal(); }
+        }));
+        updateTotal();
+
+        overlay.querySelector('#si-fm-x').addEventListener('click', siCloseFeuille);
+        overlay.querySelector('#si-fm-cancel').addEventListener('click', siCloseFeuille);
+
+        const write = (value, okMsg) => {
+            update(ref(db), { [`seriesInterclub/${serieId}/feuilles/${mid}`]: value })
+                .then(() => { siCloseFeuille(); if (okMsg) alert(okMsg); })
+                .catch(error => {
+                    console.error('Erreur feuille de match :', error);
+                    alert("❌ Impossible d'enregistrer la feuille de match.\n\nErreur Firebase : " + error.message + "\n\nVérifiez les règles de sécurité de la base de données pour le nœud « seriesInterclub ».");
+                });
+        };
+
+        overlay.querySelector('#si-fm-clear').addEventListener('click', () => {
+            if (!confirm('Effacer toute la feuille de match de cette rencontre ?')) return;
+            write(null);
+        });
+
+        overlay.querySelector('#si-fm-save').addEventListener('click', () => {
+            const feuille = {};
+            for (const row of overlay.querySelectorAll('.si-fm-row')) {
+                const code = row.dataset.code;
+                const pick = side => Array.from(row.querySelectorAll(`select[data-side-select="${side}"]`)).map(s => s.value).filter(Boolean);
+                const domSel = pick('dom'), extSel = pick('ext');
+                if (new Set(domSel).size !== domSel.length || new Set(extSel).size !== extSel.length) {
+                    alert(`Dans ${code}, le même joueur est sélectionné deux fois dans la même équipe.`);
+                    return;
+                }
+                const score = row.querySelector('[data-field="score"]').value.trim();
+                const vainqueur = row.querySelector('[data-field="vainqueur"]').value;
+                if (!domSel.length && !extSel.length && !score && !vainqueur) continue;
+                const slotData = {};
+                if (domSel.length) slotData.domIds = domSel;
+                if (extSel.length) slotData.extIds = extSel;
+                if (score) slotData.score = score;
+                if (vainqueur) slotData.vainqueur = vainqueur;
+                feuille[code] = slotData;
+            }
+            const filled = Object.keys(feuille).length;
+            write(filled ? feuille : null, filled ? '✅ Résultat enregistré !' : null);
+        });
+    }
+
+    document.getElementById('si-select').addEventListener('change', e => {
+        currentSerieInterclubId = e.target.value;
+        renderSerieDetail();
+    });
+
+    document.getElementById('form-serie-interclub').addEventListener('submit', e => {
+        e.preventDefault();
+        const nom = document.getElementById('si-nom').value.trim();
+        const nbPoules = Math.min(12, Math.max(1, parseInt(document.getElementById('si-nb-poules').value, 10) || 1));
+        const nbEquipes = Math.min(16, Math.max(2, parseInt(document.getElementById('si-nb-equipes').value, 10) || 2));
+        if (!nom) return;
+        const pools = {};
+        for (let i = 0; i < nbPoules; i++) pools[String.fromCharCode(65 + i)] = Array(nbEquipes).fill('');
+        const newRef = push(ref(db, 'seriesInterclub'), { nom, nbPoules, nbEquipes, pools, createdAt: Date.now() });
+        newRef.then(() => {
+            currentSerieInterclubId = newRef.key;
+            e.target.reset();
+            document.getElementById('si-nb-poules').value = 2;
+            document.getElementById('si-nb-equipes').value = 6;
+            renderSeriesSelect();
+            renderSerieDetail();
+        }).catch(error => {
+            alert('❌ Impossible de créer cette série.\n\nErreur Firebase : ' + error.message + '\n\nVérifiez les règles de sécurité pour le nœud « seriesInterclub ».');
+        });
+    });
+
+    function loadSeriesInterclub() {
+        onValue(ref(db, 'seriesInterclub'), snapshot => {
+            cacheSeriesInterclub = snapshot.val() || {};
+            renderSeriesSelect();
+            renderSerieDetail();
         });
     }
 
@@ -2502,17 +3253,173 @@
     //                FIN GESTION DES INTERCLUBS
     // ============================================================
 
-    // Club
+    // ============================================================
+    //            CLUBS : recherche, modification, suppression
+    // ============================================================
+    const CL_REGIONS = {
+        'Auvergne-Rhône-Alpes': [['01','Ain'],['03','Allier'],['07','Ardèche'],['15','Cantal'],['26','Drôme'],['38','Isère'],['42','Loire'],['43','Haute-Loire'],['63','Puy-de-Dôme'],['69','Rhône'],['73','Savoie'],['74','Haute-Savoie']],
+        'Bourgogne-Franche-Comté': [['21',"Côte-d'Or"],['25','Doubs'],['39','Jura'],['58','Nièvre'],['70','Haute-Saône'],['71','Saône-et-Loire'],['89','Yonne'],['90','Territoire de Belfort']],
+        'Bretagne': [['22',"Côtes-d'Armor"],['29','Finistère'],['35','Ille-et-Vilaine'],['56','Morbihan']],
+        'Centre-Val de Loire': [['18','Cher'],['28','Eure-et-Loir'],['36','Indre'],['37','Indre-et-Loire'],['41','Loir-et-Cher'],['45','Loiret']],
+        'Corse': [['2A','Corse-du-Sud'],['2B','Haute-Corse']],
+        'Grand Est': [['08','Ardennes'],['10','Aube'],['51','Marne'],['52','Haute-Marne'],['54','Meurthe-et-Moselle'],['55','Meuse'],['57','Moselle'],['67','Bas-Rhin'],['68','Haut-Rhin'],['88','Vosges']],
+        'Hauts-de-France': [['02','Aisne'],['59','Nord'],['60','Oise'],['62','Pas-de-Calais'],['80','Somme']],
+        'Île-de-France': [['75','Paris'],['77','Seine-et-Marne'],['78','Yvelines'],['91','Essonne'],['92','Hauts-de-Seine'],['93','Seine-Saint-Denis'],['94','Val-de-Marne'],['95',"Val-d'Oise"]],
+        'Normandie': [['14','Calvados'],['27','Eure'],['50','Manche'],['61','Orne'],['76','Seine-Maritime']],
+        'Nouvelle-Aquitaine': [['16','Charente'],['17','Charente-Maritime'],['19','Corrèze'],['23','Creuse'],['24','Dordogne'],['33','Gironde'],['40','Landes'],['47','Lot-et-Garonne'],['64','Pyrénées-Atlantiques'],['79','Deux-Sèvres'],['86','Vienne'],['87','Haute-Vienne']],
+        'Occitanie': [['09','Ariège'],['11','Aude'],['12','Aveyron'],['30','Gard'],['31','Haute-Garonne'],['32','Gers'],['34','Hérault'],['46','Lot'],['48','Lozère'],['65','Hautes-Pyrénées'],['66','Pyrénées-Orientales'],['81','Tarn'],['82','Tarn-et-Garonne']],
+        'Pays de la Loire': [['44','Loire-Atlantique'],['49','Maine-et-Loire'],['53','Mayenne'],['72','Sarthe'],['85','Vendée']],
+        "Provence-Alpes-Côte d'Azur": [['04','Alpes-de-Haute-Provence'],['05','Hautes-Alpes'],['06','Alpes-Maritimes'],['13','Bouches-du-Rhône'],['83','Var'],['84','Vaucluse']],
+        'Outre-mer': [['971','Guadeloupe'],['972','Martinique'],['973','Guyane'],['974','La Réunion'],['976','Mayotte']]
+    };
+    const clEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const clNorm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const clDeptLabel = (code, nom) => code ? `${code} – ${nom || ''}`.trim() : '';
+    const clDeptName = (region, code) => { const d = (CL_REGIONS[region] || []).find(x => x[0] === code); return d ? d[1] : ''; };
+    const clColor = name => { let h = 0; for (const c of String(name || '')) h = (h * 31 + c.charCodeAt(0)) % 360; return `hsl(${h}, 55%, 42%)`; };
+    const clInitials = name => String(name || '?').replace(/[^A-Za-zÀ-ÿ0-9 ]/g, ' ').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+
+    const clForm = {
+        id: document.getElementById('club-edit-id'), nom: document.getElementById('club-nom'), ville: document.getElementById('club-ville'),
+        region: document.getElementById('club-region'), dept: document.getElementById('club-dept'),
+        title: document.getElementById('cl-form-title'), submit: document.getElementById('club-submit'),
+        cancel: document.getElementById('club-cancel'), panel: document.getElementById('cl-form-panel')
+    };
+    const clUi = { q: document.getElementById('cl-q'), region: document.getElementById('cl-f-region'), dept: document.getElementById('cl-f-dept'),
+        sort: document.getElementById('cl-sort'), list: document.getElementById('cl-list'), count: document.getElementById('cl-count'),
+        reset: document.getElementById('cl-reset'), stats: document.getElementById('cl-stats') };
+
+    // Listes déroulantes du formulaire
+    clForm.region.innerHTML = '<option value="">Choisir une région…</option>' + Object.keys(CL_REGIONS).map(r => `<option value="${clEsc(r)}">${clEsc(r)}</option>`).join('');
+    function fillFormDepts(region, selected) {
+        const list = CL_REGIONS[region] || [];
+        clForm.dept.disabled = !list.length;
+        clForm.dept.innerHTML = (list.length ? '<option value="">Choisir un département…</option>' : '<option value="">Choisissez d\'abord une région…</option>')
+            + list.map(([code, nom]) => `<option value="${code}" ${code === selected ? 'selected' : ''}>${clEsc(clDeptLabel(code, nom))}</option>`).join('');
+    }
+    clForm.region.addEventListener('change', () => fillFormDepts(clForm.region.value, ''));
+
+    function resetClubForm() {
+        clForm.id.value = ''; clForm.nom.value = ''; clForm.ville.value = ''; clForm.region.value = ''; fillFormDepts('', '');
+        clForm.title.textContent = '➕ Ajouter un club'; clForm.submit.textContent = '💾 Enregistrer le club';
+        clForm.cancel.style.display = 'none'; clForm.panel.classList.remove('editing');
+        renderClubsAdmin();
+    }
+    clForm.cancel.addEventListener('click', resetClubForm);
+
+    // Création / modification
     document.getElementById('form-club').addEventListener('submit', (e) => {
         e.preventDefault();
-        push(ref(db, 'clubs'), {
-            nom: document.getElementById('club-nom').value.trim(),
-            ville: document.getElementById('club-ville').value.trim()
-        }).then(() => { 
-            alert("✅ Club créé avec succès !"); 
-            e.target.reset();
-        });
+        const editId = clForm.id.value;
+        const data = {
+            nom: clForm.nom.value.trim(),
+            ville: clForm.ville.value.trim(),
+            region: clForm.region.value,
+            departement: clForm.dept.value,
+            departementNom: clDeptName(clForm.region.value, clForm.dept.value)
+        };
+        if (!data.nom || !data.ville || !data.region || !data.departement) { alert('Merci de renseigner le nom, la ville, la région et le département.'); return; }
+        const doublon = Object.keys(cacheClubs).find(id => id !== editId && clNorm(cacheClubs[id].nom) === clNorm(data.nom) && clNorm(cacheClubs[id].ville) === clNorm(data.ville));
+        if (doublon && !confirm('Un club « ' + cacheClubs[doublon].nom + ' » existe déjà dans cette ville. Continuer quand même ?')) return;
+        const op = editId ? update(ref(db, 'clubs/' + editId), data) : push(ref(db, 'clubs'), data);
+        op.then(() => {
+            alert(editId ? '✅ Club modifié avec succès !' : '✅ Club créé avec succès !');
+            resetClubForm();
+        }).catch(err => alert('❌ Impossible d\'enregistrer le club.\n\n' + err.message));
     });
+
+    function startEditClub(id) {
+        const c = cacheClubs[id]; if (!c) return;
+        clForm.id.value = id; clForm.nom.value = c.nom || ''; clForm.ville.value = c.ville || '';
+        clForm.region.value = c.region || '';
+        if (clForm.region.value !== (c.region || '')) clForm.region.value = '';
+        fillFormDepts(clForm.region.value, c.departement || '');
+        clForm.title.textContent = '✏️ Modifier le club « ' + (c.nom || '') + ' »';
+        clForm.submit.textContent = '💾 Mettre à jour le club';
+        clForm.cancel.style.display = ''; clForm.panel.classList.add('editing');
+        renderClubsAdmin();
+        clForm.panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        clForm.nom.focus({ preventScroll: true });
+    }
+
+    function deleteClub(id) {
+        const c = cacheClubs[id]; if (!c) return;
+        const joueursLies = Object.keys(cacheJoueurs).filter(j => cacheJoueurs[j].clubId === id);
+        const series = Object.values(typeof cacheSeriesInterclub === 'object' && cacheSeriesInterclub ? cacheSeriesInterclub : {})
+            .filter(s => Object.values(s.teamClubs || {}).includes(id)).length;
+        let msg = `Supprimer définitivement le club « ${c.nom} » (${c.ville}) ?`;
+        if (joueursLies.length) msg += `\n\n⚠️ ${joueursLies.length} joueur(s) sont rattachés à ce club : ils seront conservés mais passeront « sans club ».`;
+        if (series) msg += `\n\n⚠️ Ce club est utilisé dans ${series} série(s) interclub (l'équipe restera, mais ne sera plus reliée au club).`;
+        if (!confirm(msg)) return;
+        const updates = { ['clubs/' + id]: null };
+        joueursLies.forEach(j => { updates[`joueurs/${j}/clubId`] = null; });
+        update(ref(db), updates).then(() => { if (clForm.id.value === id) resetClubForm(); })
+            .catch(err => alert('❌ Suppression impossible.\n\n' + err.message));
+    }
+
+    // Filtres + rendu
+    function renderClubsAdmin() {
+        if (!clUi.list) return;
+        const ids = Object.keys(cacheClubs);
+        const count = {}; Object.values(cacheJoueurs).forEach(j => { if (j.clubId) count[j.clubId] = (count[j.clubId] || 0) + 1; });
+
+        // Statistiques
+        const regions = new Set(ids.map(i => cacheClubs[i].region).filter(Boolean));
+        const depts = new Set(ids.map(i => cacheClubs[i].departement).filter(Boolean));
+        const sansLoc = ids.filter(i => !cacheClubs[i].region || !cacheClubs[i].departement).length;
+        clUi.stats.innerHTML = `<div class="cl-stat"><b>${ids.length}</b><span>Clubs</span></div><div class="cl-stat"><b>${regions.size}</b><span>Régions</span></div><div class="cl-stat"><b>${depts.size}</b><span>Départements</span></div>`
+            + (sansLoc ? `<div class="cl-stat warn" title="Clubs sans région ou département : à compléter via « Modifier »"><b>${sansLoc}</b><span>À compléter</span></div>` : '');
+
+        // Filtres (les menus ne proposent que ce qui existe)
+        const keepR = clUi.region.value, keepD = clUi.dept.value;
+        const regOpts = [...regions].sort((a, b) => a.localeCompare(b, 'fr'));
+        clUi.region.innerHTML = '<option value="">Toutes les régions</option>' + regOpts.map(r => `<option value="${clEsc(r)}" ${r === keepR ? 'selected' : ''}>${clEsc(r)}</option>`).join('')
+            + (sansLoc ? `<option value="__none" ${keepR === '__none' ? 'selected' : ''}>⚠ Sans localisation</option>` : '');
+        const deptMap = {};
+        ids.forEach(i => { const c = cacheClubs[i]; if (c.departement && (!clUi.region.value || clUi.region.value === c.region)) deptMap[c.departement] = c.departementNom || clDeptName(c.region, c.departement); });
+        clUi.dept.innerHTML = '<option value="">Tous les départements</option>' + Object.keys(deptMap).sort().map(code => `<option value="${code}" ${code === keepD ? 'selected' : ''}>${clEsc(clDeptLabel(code, deptMap[code]))}</option>`).join('');
+        if (clUi.dept.value !== keepD && !deptMap[keepD]) clUi.dept.value = '';
+
+        const q = clNorm(clUi.q.value), fr = clUi.region.value, fd = clUi.dept.value;
+        let rows = ids.map(id => ({ id, ...cacheClubs[id], n: count[id] || 0 })).filter(c => {
+            if (fr === '__none') { if (c.region && c.departement) return false; }
+            else if (fr && c.region !== fr) return false;
+            if (fd && c.departement !== fd) return false;
+            if (q && !clNorm(`${c.nom} ${c.ville} ${c.region} ${c.departement} ${c.departementNom}`).includes(q)) return false;
+            return true;
+        });
+        const by = clUi.sort.value;
+        rows.sort((a, b) => by === 'ville' ? String(a.ville).localeCompare(String(b.ville), 'fr')
+            : by === 'region' ? String(a.region || 'ÿ').localeCompare(String(b.region || 'ÿ'), 'fr') || String(a.nom).localeCompare(String(b.nom), 'fr')
+            : by === 'joueurs' ? b.n - a.n || String(a.nom).localeCompare(String(b.nom), 'fr')
+            : String(a.nom).localeCompare(String(b.nom), 'fr'));
+
+        const filtered = !!(q || fr || fd);
+        clUi.count.textContent = rows.length === ids.length ? `${ids.length} club${ids.length > 1 ? 's' : ''}` : `${rows.length} résultat${rows.length > 1 ? 's' : ''} sur ${ids.length} clubs`;
+        clUi.reset.style.display = filtered ? '' : 'none';
+
+        if (!rows.length) { clUi.list.innerHTML = `<p class="empty-state" style="grid-column:1/-1;">${ids.length ? 'Aucun club ne correspond à votre recherche.' : 'Aucun club enregistré pour le moment. Ajoutez-en un ci-dessus.'}</p>`; return; }
+        clUi.list.innerHTML = rows.map(c => {
+            const loc = c.region && c.departement
+                ? `<span class="cl-chip">📍 ${clEsc(c.region)}</span><span class="cl-chip dept">${clEsc(clDeptLabel(c.departement, c.departementNom || clDeptName(c.region, c.departement)))}</span>`
+                : '<span class="cl-chip warn">⚠ Région / département à renseigner</span>';
+            return `<div class="cl-card ${clForm.id.value === c.id ? 'is-editing' : ''}" style="--cl-color:${clColor(c.nom)}">
+                <div class="cl-card-top"><div class="cl-avatar">${clEsc(clInitials(c.nom))}</div>
+                    <div><div class="cl-name">${clEsc(c.nom)}</div><div class="cl-city">${clEsc(c.ville || '')}</div></div></div>
+                <div class="cl-chips">${loc}<span class="cl-chip players">👥 ${c.n} joueur${c.n > 1 ? 's' : ''}</span></div>
+                <div class="cl-card-actions">
+                    <button type="button" class="cl-btn-edit" data-cl-edit="${c.id}">✏️ Modifier</button>
+                    <button type="button" class="cl-btn-del" data-cl-del="${c.id}">🗑 Supprimer</button>
+                </div></div>`;
+        }).join('');
+    }
+    clUi.list.addEventListener('click', e => {
+        const ed = e.target.closest('[data-cl-edit]'), del = e.target.closest('[data-cl-del]');
+        if (ed) startEditClub(ed.dataset.clEdit); else if (del) deleteClub(del.dataset.clDel);
+    });
+    [clUi.q, clUi.region, clUi.dept, clUi.sort].forEach(el => el.addEventListener(el === clUi.q ? 'input' : 'change', renderClubsAdmin));
+    clUi.region.addEventListener('change', () => { clUi.dept.value = ''; renderClubsAdmin(); });
+    clUi.reset.addEventListener('click', () => { clUi.q.value = ''; clUi.region.value = ''; clUi.dept.value = ''; renderClubsAdmin(); });
 
     // Joueur (Création OU Modification)
     document.getElementById('form-joueur').addEventListener('submit', (e) => {

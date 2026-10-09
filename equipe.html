@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BADSMASH : tableaux et classements de badminton FFBaD.">
+    <meta name="theme-color" content="#101b18">
+<title>BADSMASH — Équipe interclub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :focus-visible { outline: 3px solid #86efac; outline-offset: 4px; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+        }
+    :root {
+        --court-navy: #0a1120;
+        --court-navy-deep: #071019;
+        --card: #141e32;
+        --card-raised: #1a2740;
+        --line: #263455;
+        --line-soft: #1a2743;
+        --chalk: #f3f7fa;
+        --chalk-dim: #9aa9c4;
+        --court-green: #22c55e;
+        --court-green-deep: #16a34a;
+        --net-white: #e7edf3;
+        --live-red: #ef3d4e;
+        --gold: #f6b93b;
+        --silver: #c9d3dd;
+        --bronze: #d08a4a;
+        --shuttle: #ffd166;
+        --violet: #8b5cf6;
+    }
+    :root[data-theme="light"] {
+        --court-navy: #eef2f9;
+        --court-navy-deep: #e3e9f5;
+        --card: #ffffff;
+        --card-raised: #f4f7fc;
+        --line: #dbe2ee;
+        --line-soft: #e6ebf4;
+        --chalk: #101828;
+        --chalk-dim: #52607a;
+        --court-green: #16a34a;
+        --court-green-deep: #15803d;
+    }
+    body { transition: background-color .4s cubic-bezier(0.16,1,0.3,1), color .4s; }
+    .theme-toggle {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid var(--line);
+        color: var(--chalk);
+        width: 38px; height: 38px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 1.05rem;
+        transition: all .3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .theme-toggle:hover { border-color: var(--violet); color: var(--violet); transform: rotate(20deg); }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+        background:
+            radial-gradient(1200px 500px at 15% -10%, rgba(47,174,110,0.10), transparent 60%),
+            radial-gradient(900px 400px at 100% 0%, rgba(246,185,59,0.06), transparent 55%),
+            var(--court-navy);
+        color: var(--chalk);
+        font-family: 'Inter', system-ui, sans-serif;
+        padding: 0 0 60px;
+        min-height: 100vh;
+    }
+
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+    /* ===== TOP BAR ===== */
+    .topbar {
+        background: var(--court-navy-deep);
+        border-bottom: 3px solid var(--court-green);
+        box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+    }
+    .topbar-inner {
+        max-width: 1040px; margin: 0 auto; padding: 18px 20px;
+        display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; transition: transform .25s cubic-bezier(0.16,1,0.3,1), filter .25s; }
+    .brand:hover { transform: scale(1.03); filter: brightness(1.1); }
+    .brand .mark {
+        width: 42px; height: 42px; border-radius: 10px;
+        background: linear-gradient(155deg, var(--court-green) 0%, var(--court-green-deep) 100%);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem; flex-shrink: 0;
+        box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15);
+    }
+    h1.wordmark {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.1rem; letter-spacing: 0.06em; line-height: 1;
+        color: var(--chalk);
+    }
+    h1.wordmark span { color: var(--court-green); }
+    .tagline { font-size: 0.72rem; color: var(--chalk-dim); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 2px; }
+
+    .btn-admin {
+        background: transparent; color: var(--chalk-dim); border: 1px solid var(--line);
+        padding: 9px 16px; border-radius: 7px; text-decoration: none;
+        font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+        transition: all 0.2s;
+    }
+    .btn-admin:hover { color: var(--court-navy); border-color: var(--gold); background: var(--gold); }
+
+    /* ===== SECTION SCAFFOLDING ===== */
+    section { padding-top: 34px; }
+    .eyebrow {
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--court-green); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;
+    }
+    h2.section-title {
+        font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: 0.03em;
+        color: var(--chalk); display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .section-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+
+    /* ===== NET DIVIDER (signature element) ===== */
+    .net-divider { display: flex; align-items: center; gap: 0; margin: 34px 0 0; opacity: 0.9; }
+    .net-pole { width: 7px; height: 7px; border-radius: 50%; background: var(--court-green); flex-shrink: 0; box-shadow: 0 0 0 3px rgba(47,174,110,0.15); }
+    .net-mesh {
+        flex: 1; height: 10px; margin: 0 6px;
+        background-image:
+            linear-gradient(var(--line-soft) 1px, transparent 1px),
+            linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+        background-size: 10px 10px;
+        background-position: center;
+        border-top: 1px dashed var(--line);
+        border-bottom: 1px dashed var(--line);
+        opacity: 0.7;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 22px;
+    }
+
+    /* ===== ONGLETS PRINCIPAUX ===== */
+    .spec-tabs { display: flex; gap: 8px; margin: 26px 0 8px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+    .spec-tab {
+        background: var(--court-navy-deep); color: var(--chalk-dim); border: 1px solid var(--line);
+        padding: 10px 18px; border-radius: 22px; cursor: pointer; font-size: 0.88rem; font-weight: 700;
+        letter-spacing: 0.03em; transition: all 0.18s; font-family: 'Inter', system-ui, sans-serif;
+    }
+    .spec-tab:hover:not(.active) { color: var(--chalk); border-color: var(--chalk-dim); }
+    .spec-tab.active { background: var(--gold); color: #211200; border-color: var(--gold); }
+    .spec-panel { display: none; }
+    .spec-panel.active { display: block; }
+
+    /* ===== RANKING TABS ===== */
+    .bwf-tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+    .bwf-tab {
+        background: var(--court-navy-deep); color: var(--chalk-dim); border: 1px solid var(--line);
+        padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.78rem; font-weight: 700;
+        letter-spacing: 0.03em; transition: all 0.18s;
+    }
+    .bwf-tab:hover:not(.active) { color: var(--chalk); border-color: var(--chalk-dim); }
+    .bwf-tab.active { background: var(--gold); color: #211200; border-color: var(--gold); }
+
+    /* ===== RANKING TABLE ===== */
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 12px 10px; border-bottom: 1px solid var(--line-soft); font-size: 0.88rem; }
+    th { color: var(--chalk-dim); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background 0.15s; }
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+    .rank { font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; width: 46px; color: var(--chalk-dim); letter-spacing: 0.03em; }
+    .rank-1 { color: var(--gold); }
+    .rank-2 { color: var(--silver); }
+    .rank-3 { color: var(--bronze); }
+    .medal { margin-right: 4px; }
+    .player-name strong { color: var(--chalk); }
+    .pts { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--court-green); font-variant-numeric: tabular-nums; }
+
+    .empty-state {
+        color: var(--chalk-dim); font-style: italic; font-size: 0.88rem; padding: 22px 10px; text-align: center;
+    }
+
+    /* ===== LISTE DES TOURNOIS ===== */
+    .tournois-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .tournoi-card {
+        background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px;
+        transition: border-color .2s, transform .2s;
+    }
+    .tournoi-card:hover { border-color: var(--court-green); transform: translateY(-2px); }
+    .tournoi-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.03em; color: var(--chalk); margin: 10px 0 6px; }
+    .tournoi-meta { font-size: 0.82rem; color: var(--chalk-dim); display: flex; flex-direction: column; gap: 4px; }
+    .tournoi-badge {
+        display: inline-flex; align-items: center; gap: 6px; font-size: 0.68rem; font-weight: 700;
+        letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px;
+    }
+    .tournoi-badge.upcoming { background: rgba(139,92,246,0.12); color: var(--violet); }
+    .tournoi-badge.live { background: rgba(239,61,78,0.12); color: var(--live-red); }
+    .tournoi-badge.done { background: rgba(154,169,196,0.12); color: var(--chalk-dim); }
+
+    footer { text-align: center; margin-top: 44px; font-size: 0.72rem; color: var(--chalk-dim); letter-spacing: 0.06em; }
+    footer strong { color: var(--court-green); }
+
+    /* ===== BRACKET SELECTOR & VIEWER ===== */
+    .bracket-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .bracket-selector label {
+        display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--chalk-dim); margin-bottom: 6px;
+    }
+    .bracket-selector select {
+        width: 100%; padding: 11px 12px; border-radius: 8px; border: 1px solid var(--line);
+        background: var(--court-navy-deep); color: var(--chalk); font-size: 0.9rem; outline: none;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    .bracket-selector select:focus { border-color: var(--court-green); }
+
+    .spec-bracket-wrap { overflow-x: auto; padding: 6px 0 10px; }
+    .spec-bracket { display: flex; gap: 22px; min-width: max-content; }
+    .spec-bracket-round { display: flex; flex-direction: column; justify-content: space-around; min-width: 200px; gap: 16px; }
+    .spec-bracket-round-title {
+        text-align: center; color: var(--chalk-dim); font-size: 0.7rem; text-transform: uppercase;
+        letter-spacing: 0.08em; margin-bottom: 4px; font-weight: 700;
+    }
+    .spec-bracket-match {
+        background: var(--card-raised); border: 1px solid var(--line); border-radius: 9px; overflow: hidden;
+    }
+    .spec-bracket-entry {
+        padding: 9px 11px; font-size: 0.86rem; border-bottom: 1px solid var(--line); color: var(--chalk-dim);
+    }
+    .spec-bracket-entry:last-child:not(.spec-bracket-score) { border-bottom: none; }
+    .spec-bracket-entry.winner { color: var(--gold); font-weight: 700; background: rgba(246,185,59,0.08); }
+    .spec-bracket-entry.empty { font-style: italic; opacity: 0.7; }
+    .spec-bracket-score {
+        font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--court-green);
+        text-align: center; padding: 6px 8px; border-top: 1px dashed var(--line); background: var(--court-navy-deep);
+    }
+
+    @media (max-width: 560px) {
+        h1.wordmark { font-size: 1.7rem; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+    /* ===== INTERCLUBS : tableaux alignés ===== */
+    .st-pool-title { margin: 18px 0 8px; color: var(--chalk-dim); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
+    .st-wrap { overflow-x: auto; border: 1px solid var(--line-soft); border-radius: 12px; }
+    .st-wrap.st-inner { border: none; border-radius: 0; }
+    table.st { display: table; width: 100%; min-width: 520px; table-layout: fixed; border-collapse: collapse; white-space: normal; }
+    table.st.st-matches { min-width: 700px; }
+    table.st.st-mini, table.st.st-players { min-width: 0; }
+    .st th, .st td { text-align: center; vertical-align: middle; padding: 11px 8px; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; }
+    .st th.l, .st td.l { text-align: left; }
+    .st th.r, .st td.r { text-align: right; }
+    .st thead th { background: var(--card-raised); }
+    .st .st-rank { font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; color: var(--chalk-dim); letter-spacing: .03em; }
+    .st .st-pts { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--court-green); }
+    .st-team-row { cursor: pointer; }
+    .st-team-row:hover { background: rgba(34, 197, 94, .06) !important; }
+    .st-team-row.open { background: rgba(34, 197, 94, .08); }
+    .st-team-row td.l { white-space: nowrap; }
+    .st-team-name { font-weight: 700; color: var(--chalk); }
+    .st-caret { display: inline-block; width: 18px; color: var(--chalk-dim); transition: transform .2s; }
+    .st-team-row.open .st-caret { transform: rotate(90deg); color: var(--court-green); }
+    .st tbody tr.st-detail, .st tbody tr.st-detail:hover { background: none; }
+    .st-detail > td { padding: 0 !important; text-align: left; overflow: visible; }
+    .st-panel { padding: 14px; background: var(--card-raised); border-bottom: 1px solid var(--line-soft); }
+    .st-panel h4 { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--chalk-dim); margin: 0 0 8px; }
+    .st-panel .st-wrap { background: var(--card); }
+    .st-loc { display: inline-block; min-width: 34px; margin-right: 8px; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--line);
+        font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--chalk-dim); text-align: center; }
+    .st-sc { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+    .st-badge { display: inline-block; min-width: 54px; padding: 2px 8px; border-radius: 99px; font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .st-badge.v { background: rgba(34, 197, 94, .15); color: var(--court-green); }
+    .st-badge.d { background: rgba(239, 61, 78, .15); color: var(--live-red); }
+    .st-badge.n { background: rgba(246, 185, 59, .15); color: var(--gold); }
+    .st-badge.x { background: var(--card-raised); color: var(--chalk-dim); border: 1px solid var(--line); }
+    .st-btn { margin-top: 14px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--court-green); background: transparent;
+        color: var(--court-green); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .15s, color .15s; }
+    .st-btn:hover, .st-btn[aria-expanded="true"] { background: var(--court-green); color: #04130a; }
+    .st-rate { display: flex; align-items: center; gap: 8px; }
+    .st-rate-bar { flex: 1; height: 6px; border-radius: 4px; background: var(--line); overflow: hidden; }
+    .st-rate-bar span { display: block; height: 100%; background: var(--court-green); }
+    .st-rate-bar.low span { background: var(--live-red); }
+    .st-rate b { width: 42px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: .8rem; }
+    .st-small { display: block; font-size: .72rem; color: var(--chalk-dim); font-weight: 500; }
+    .st-win { font-weight: 800; color: var(--chalk); }
+    @media (max-width: 560px) { table.st { display: table; } }
+</style>
+
+<style>
+    .back-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 26px; color: var(--chalk-dim); text-decoration: none; font-size: .85rem; font-weight: 700; transition: color .2s, transform .2s; }
+    .back-link:hover { color: var(--court-green); transform: translateX(-3px); }
+    .team-hero { margin-top: 14px; }
+    .team-hero h2.section-title { font-size: 2.3rem; }
+    .team-sub { color: var(--chalk-dim); font-size: .9rem; margin-top: 4px; }
+    .team-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-top: 20px; }
+    .team-stat { background: var(--card); border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px; text-align: center; }
+    .team-stat b { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; letter-spacing: .03em; color: var(--chalk); line-height: 1.1; }
+    .team-stat span { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: var(--chalk-dim); font-weight: 700; }
+    .team-stat.pts b { color: var(--court-green); }
+    .sub-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .03em; margin: 0 0 12px; color: var(--chalk); }
+    .card + .card { margin-top: 18px; }
+    table.st.st-mini { min-width: 520px; }
+    table.st.st-players { min-width: 480px; }
+</style>
+</head>
+<body>
+<!-- ===== BADSMASH — Décor : volants flottants ===== -->
+<div class="badsmash-shuttles" aria-hidden="true">
+    <span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span>
+    <span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span><span>🏸</span>
+</div>
+<style>
+    .badsmash-shuttles { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    .badsmash-shuttles span {
+        position: absolute; bottom: -10%; display: block; opacity: .28;
+        filter: drop-shadow(0 0 6px rgba(34,197,94,.3));
+        animation: badsmashShuttleFloat linear infinite;
+        will-change: transform, opacity;
+    }
+    :root[data-theme="light"] .badsmash-shuttles span { opacity: .2; filter: drop-shadow(0 0 6px rgba(22,163,74,.22)); }
+    @keyframes badsmashShuttleFloat {
+        0%   { transform: translate(0,0) rotate(-20deg); opacity: 0; }
+        10%  { opacity: .28; }
+        50%  { transform: translate(30px,-58vh) rotate(15deg); }
+        90%  { opacity: .28; }
+        100% { transform: translate(-25px,-118vh) rotate(-15deg); opacity: 0; }
+    }
+    .badsmash-shuttles span:nth-child(1)  { left: 4%;  font-size: 20px; animation-duration: 17s; animation-delay: -2s; }
+    .badsmash-shuttles span:nth-child(2)  { left: 14%; font-size: 14px; animation-duration: 13s; animation-delay: -8s; }
+    .badsmash-shuttles span:nth-child(3)  { left: 24%; font-size: 24px; animation-duration: 21s; animation-delay: -4s; }
+    .badsmash-shuttles span:nth-child(4)  { left: 34%; font-size: 16px; animation-duration: 15s; animation-delay: -11s; }
+    .badsmash-shuttles span:nth-child(5)  { left: 44%; font-size: 22px; animation-duration: 19s; animation-delay: -6s; }
+    .badsmash-shuttles span:nth-child(6)  { left: 54%; font-size: 15px; animation-duration: 14s; animation-delay: -1s; }
+    .badsmash-shuttles span:nth-child(7)  { left: 64%; font-size: 26px; animation-duration: 23s; animation-delay: -14s; }
+    .badsmash-shuttles span:nth-child(8)  { left: 73%; font-size: 17px; animation-duration: 16s; animation-delay: -9s; }
+    .badsmash-shuttles span:nth-child(9)  { left: 82%; font-size: 21px; animation-duration: 18s; animation-delay: -3s; }
+    .badsmash-shuttles span:nth-child(10) { left: 90%; font-size: 14px; animation-duration: 12s; animation-delay: -7s; }
+    .badsmash-shuttles span:nth-child(11) { left: 9%;  font-size: 18px; animation-duration: 20s; animation-delay: -16s; }
+    .badsmash-shuttles span:nth-child(12) { left: 59%; font-size: 19px; animation-duration: 22s; animation-delay: -18s; }
+    @media (prefers-reduced-motion: reduce) { .badsmash-shuttles { display: none; } }
+</style>
+
+<div class="topbar">
+    <div class="topbar-inner">
+        <a href="index.html" class="brand">
+            <div class="mark">🏸</div>
+            <div>
+                <h1 class="wordmark">BAD<span>SMASH</span></h1>
+                <div class="tagline">Interclubs FFBaD</div>
+            </div>
+        </a>
+        <div class="topbar-actions">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Changer de thème">🌙</button>
+            <a href="admin.html" class="btn-admin">⚙ Espace admin</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrap">
+    <a class="back-link" id="back-link" href="spectateur.html#interclubs">← Retour aux interclubs</a>
+
+    <div id="team-page"><div class="empty-state">Chargement de l'équipe…</div></div>
+
+    <footer>BADSMASH · <strong>FFBaD</strong> Amateur, un seul filet 🏸</footer>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5qiseJI4b-CwIGzKi8XYA6pSPqiMRV24",
+        authDomain: "badsmash-a5580.firebaseapp.com",
+        projectId: "badsmash-a5580",
+        storageBucket: "badsmash-a5580.firebasestorage.app",
+        messagingSenderId: "9725882238",
+        appId: "1:9725882238:web:1c1cdb40da0218f2828d2f",
+        databaseURL: "https://badsmash-a5580-default-rtdb.firebaseio.com"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const params = new URLSearchParams(location.search);
+    const serieId = params.get('serie') || '';
+    const poolName = params.get('pool') || '';
+    const team = params.get('team') || '';
+    document.getElementById('back-link').href = 'spectateur.html?serie=' + encodeURIComponent(serieId) + '#interclubs';
+    document.title = team ? `BADSMASH — ${team}` : document.title;
+
+    let dbSeries = {}, dbJoueurs = {};
+    let ready = { series: false, joueurs: false };
+    onValue(ref(db, 'seriesInterclub'), s => { dbSeries = s.val() || {}; ready.series = true; render(); });
+    onValue(ref(db, 'joueurs'), s => { dbJoueurs = s.val() || {}; ready.joueurs = true; render(); });
+
+    function escapeHtml(str) {
+        return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function specPool(arr) {
+        let out = [];
+        if (Array.isArray(arr)) out = arr.slice();
+        else if (arr && typeof arr === 'object') Object.keys(arr).forEach(k => { out[Number(k)] = arr[k]; });
+        return Array.from(out, v => v || '').filter(Boolean);
+    }
+    function specScore(feuille) {
+        let a = 0, b = 0, ok = false;
+        Object.values(feuille || {}).forEach(slot => {
+            if (slot && slot.vainqueur === 'dom') { a++; ok = true; }
+            else if (slot && slot.vainqueur === 'ext') { b++; ok = true; }
+        });
+        return { a, b, ok };
+    }
+    function specTeamKey(name) { return String(name || '').trim().replace(/[.#$[\]/]/g, '_'); }
+    function specList(v) { return Array.isArray(v) ? v : (v && typeof v === 'object' ? Object.values(v) : []); }
+    function specFmtDate(d) {
+        return d ? new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : 'À définir';
+    }
+    function specPlayerName(id) {
+        const j = dbJoueurs[id];
+        return j ? `${(j.nom || '').toUpperCase()} ${j.prenom || ''}`.trim() : '';
+    }
+
+    function specTeamMatches(serie, t) {
+        const out = [];
+        Object.keys(serie.matches || {}).forEach(id => {
+            const m = serie.matches[id];
+            const [dom, ext] = String(m.teams || '').split(' — ');
+            if (dom !== t && ext !== t) return;
+            const isHome = dom === t;
+            const sc = specScore((serie.feuilles || {})[id]);
+            out.push({ id, m, isHome, opp: isHome ? ext : dom, sc, own: isHome ? sc.a : sc.b, other: isHome ? sc.b : sc.a });
+        });
+        out.sort((x, y) => `${x.m.date || '9999'} ${x.m.heure || ''}`.localeCompare(`${y.m.date || '9999'} ${y.m.heure || ''}`));
+        return out;
+    }
+
+    function specTeamPlayers(serie, t) {
+        const stats = {};
+        const ensure = id => (stats[id] = stats[id] || { id, played: 0, wins: 0 });
+        specList((serie.effectifs || {})[specTeamKey(t)]).forEach(id => { if (dbJoueurs[id]) ensure(id); });
+        specTeamMatches(serie, t).forEach(x => {
+            const side = x.isHome ? 'dom' : 'ext';
+            Object.values((serie.feuilles || {})[x.id] || {}).forEach(slot => {
+                if (!slot || !slot.vainqueur) return;
+                specList(x.isHome ? slot.domIds : slot.extIds).forEach(id => {
+                    if (!dbJoueurs[id]) return;
+                    const s = ensure(id);
+                    s.played++;
+                    if (slot.vainqueur === side) s.wins++;
+                });
+            });
+        });
+        return Object.values(stats).map(s => ({ ...s, losses: s.played - s.wins, pct: s.played ? Math.round(s.wins / s.played * 100) : null }))
+            .sort((a, b) => (b.pct ?? -1) - (a.pct ?? -1) || b.played - a.played || specPlayerName(a.id).localeCompare(specPlayerName(b.id)));
+    }
+
+    // Classement de l'équipe dans sa poule
+    function specRank(serie, pool, t) {
+        const rows = specPool((serie.pools || {})[pool]).map(n => ({ team: n, pts: 0, diff: 0 }));
+        const by = Object.fromEntries(rows.map(r => [r.team, r]));
+        Object.keys(serie.matches || {}).forEach(id => {
+            const m = serie.matches[id];
+            if (m.pool !== pool) return;
+            const sc = specScore((serie.feuilles || {})[id]);
+            if (!sc.ok) return;
+            const [h, a] = String(m.teams || '').split(' — ');
+            if (!by[h] || !by[a]) return;
+            by[h].pts += sc.a; by[a].pts += sc.b;
+            by[h].diff += sc.a - sc.b; by[a].diff += sc.b - sc.a;
+        });
+        rows.sort((x, y) => y.pts - x.pts || y.diff - x.diff || x.team.localeCompare(y.team));
+        const i = rows.findIndex(r => r.team === t);
+        return { rank: i + 1, total: rows.length, pts: i >= 0 ? rows[i].pts : 0 };
+    }
+
+    function render() {
+        const root = document.getElementById('team-page');
+        if (!ready.series || !ready.joueurs) return;
+        const serie = dbSeries[serieId];
+        if (!serie || !team) {
+            root.innerHTML = '<div class="empty-state">Équipe introuvable. <a href="spectateur.html#interclubs" style="color:var(--court-green);">Retour aux interclubs</a></div>';
+            return;
+        }
+
+        const meets = specTeamMatches(serie, team);
+        const played = meets.filter(x => x.sc.ok);
+        const v = played.filter(x => x.own > x.other).length;
+        const d = played.filter(x => x.own < x.other).length;
+        const n = played.length - v - d;
+        const r = specRank(serie, poolName, team);
+
+        const badge = x => {
+            if (!x.sc.ok) return '<span class="st-badge x">À venir</span>';
+            if (x.own > x.other) return '<span class="st-badge v">Victoire</span>';
+            if (x.own < x.other) return '<span class="st-badge d">Défaite</span>';
+            return '<span class="st-badge n">Nul</span>';
+        };
+
+        const meetsHtml = meets.length ? `<div class="st-wrap"><table class="st st-mini">
+            <colgroup><col style="width:112px"><col><col style="width:84px"><col style="width:96px"></colgroup>
+            <thead><tr><th class="l">Date</th><th class="l">Adversaire</th><th>Score</th><th>Résultat</th></tr></thead>
+            <tbody>${meets.map(x => `<tr>
+                <td class="l">${escapeHtml(specFmtDate(x.m.date))}${x.m.heure ? `<span class="st-small">${escapeHtml(x.m.heure)}</span>` : ''}</td>
+                <td class="l"><span class="st-loc">${x.isHome ? 'Dom.' : 'Ext.'}</span>${escapeHtml(x.opp || '')}${x.m.lieu ? `<span class="st-small">📍 ${escapeHtml(x.m.lieu)}</span>` : ''}</td>
+                <td class="st-sc">${x.sc.ok ? `${x.own} — ${x.other}` : '—'}</td>
+                <td>${badge(x)}</td>
+            </tr>`).join('')}</tbody>
+        </table></div>` : '<div class="empty-state">Aucune rencontre programmée pour cette équipe.</div>';
+
+        const players = specTeamPlayers(serie, team);
+        const playersHtml = players.length ? `<div class="st-wrap"><table class="st st-players">
+            <colgroup><col><col style="width:78px"><col style="width:48px"><col style="width:48px"><col style="width:170px"></colgroup>
+            <thead><tr><th class="l">Joueur</th><th>Matchs</th><th>V</th><th>D</th><th class="l">Taux de victoire</th></tr></thead>
+            <tbody>${players.map(p => `<tr>
+                <td class="l"><span class="st-team-name">${escapeHtml(specPlayerName(p.id))}</span></td>
+                <td>${p.played}</td><td>${p.wins}</td><td>${p.losses}</td>
+                <td class="l">${p.pct === null ? '<span style="color: var(--chalk-dim);">—</span>'
+                    : `<div class="st-rate"><div class="st-rate-bar ${p.pct < 50 ? 'low' : ''}"><span style="width:${p.pct}%"></span></div><b>${p.pct}%</b></div>`}</td>
+            </tr>`).join('')}</tbody>
+        </table></div>` : '<div class="empty-state">Aucun joueur dans l\'effectif de cette équipe pour le moment.</div>';
+
+        root.innerHTML = `
+            <div class="team-hero">
+                <div class="eyebrow">${escapeHtml(serie.nom || 'Série')}${poolName ? ` · Poule ${escapeHtml(poolName)}` : ''}</div>
+                <h2 class="section-title">${escapeHtml(team)}</h2>
+                <div class="team-sub">${r.rank ? `${r.rank}${r.rank === 1 ? 'er' : 'e'} sur ${r.total} de la poule` : ''}</div>
+            </div>
+            <div class="team-stats">
+                <div class="team-stat"><b>${played.length}</b><span>Joués</span></div>
+                <div class="team-stat"><b>${v}</b><span>Victoires</span></div>
+                <div class="team-stat"><b>${n}</b><span>Nuls</span></div>
+                <div class="team-stat"><b>${d}</b><span>Défaites</span></div>
+                <div class="team-stat pts"><b>${r.pts}</b><span>Points</span></div>
+            </div>
+            <section>
+                <div class="card"><h3 class="sub-title">Rencontres &amp; résultats</h3>${meetsHtml}</div>
+                <div class="card"><h3 class="sub-title">Joueurs (${players.length})</h3>${playersHtml}</div>
+            </section>`;
+    }
+</script>
+
+<script>
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        const btn = document.getElementById('themeToggle');
+        if (btn) btn.textContent = theme === 'light' ? '☀️' : '🌙';
+        localStorage.setItem('badsmash_theme', theme);
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        applyTheme(current === 'light' ? 'dark' : 'light');
+    }
+    (function initTheme() {
+        const saved = localStorage.getItem('badsmash_theme');
+        const preferLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        applyTheme(saved || (preferLight ? 'light' : 'dark'));
+    })();
+</script>
+</body>
+</html>

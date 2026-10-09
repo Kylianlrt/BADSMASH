@@ -557,7 +557,8 @@
         <div class="nav-links">
             <a href="spectateur.html" class="nav-item"><span class="nav-num">01</span> Mode Spectateur</a>
             <a href="connexion.html" class="nav-item"><span class="nav-num">02</span> Espace Joueur</a>
-            <a href="admin.html" class="nav-item"><span class="nav-num">03</span> Admin</a>
+            <a href="connexion.html?redirect=coach.html" class="nav-item" id="nav-coach" data-private-target="coach.html"><span class="nav-num">03</span> Coach</a>
+            <a href="admin.html" class="nav-item"><span class="nav-num">04</span> Admin</a>
         </div>
         <div class="drawer-footer">BADSMASH · Tableaux &amp; classements FFBaD</div>
     </aside>
@@ -641,6 +642,21 @@
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && document.getElementById('drawer').classList.contains('active')) toggleMenu();
         });
+
+        // --- Menu « Coach » : accès direct si le joueur est déjà connecté, sinon connexion puis retour sur Coach.
+        // (Simple confort de navigation côté navigateur : la présence de l'identifiant dans localStorage n'est pas une authentification sécurisée.)
+        (function initCoachLink() {
+            const link = document.getElementById('nav-coach');
+            if (!link) return;
+            function refresh() {
+                let logged = false;
+                try { logged = !!localStorage.getItem('badsmash_user_id'); } catch (e) {}
+                link.setAttribute('href', logged ? link.dataset.privateTarget : 'connexion.html?redirect=' + encodeURIComponent(link.dataset.privateTarget));
+            }
+            refresh();
+            window.addEventListener('pageshow', refresh);
+            window.addEventListener('storage', refresh);
+        })();
 
         // --- Thème clair / sombre ---
         function applyTheme(theme) {

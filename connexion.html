@@ -250,6 +250,16 @@
             .replace(/[^a-z0-9.]+/g, '');
     }
 
+    // Destinations autorisées après connexion (liste blanche de pages internes, sans chemin ni URL externe).
+    const ALLOWED_REDIRECTS = ['mon-espace.html', 'coach.html'];
+    function getSafeRedirect() {
+        const fallback = 'mon-espace.html';
+        try {
+            const raw = (new URLSearchParams(window.location.search).get('redirect') || '').trim();
+            return ALLOWED_REDIRECTS.includes(raw) ? raw : fallback;
+        } catch (e) { return fallback; }
+    }
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         errorBox.style.display = 'none';
@@ -273,7 +283,7 @@
 
             if (loggedUserKey) {
                 localStorage.setItem('badsmash_user_id', loggedUserKey);
-                window.location.href = 'mon-espace.html';
+                window.location.href = getSafeRedirect();
             } else {
                 errorBox.style.display = 'block';
             }
