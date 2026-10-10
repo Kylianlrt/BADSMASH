@@ -387,6 +387,8 @@
     .bracket-selector select, #spec-serie-select { cursor: pointer; }
     footer { padding-top: 20px; border-top: 1px dashed var(--line); }
 </style>
+<link rel="stylesheet" href="badsmash-ui.css">
+<script src="badsmash-ui.js"></script>
 </head>
 <body>
 <!-- ===== BADSMASH — Décor : volants flottants ===== -->
@@ -486,7 +488,7 @@
                 <select id="rk-dept" aria-label="Filtrer par département"><option value="">Tous les départements</option></select>
                 <select id="rk-club" aria-label="Filtrer par club"><option value="">Tous les clubs</option></select>
             </div>
-            <div class="rk-info"><span id="rk-info"></span><button type="button" class="rk-reset" id="rk-reset" style="display:none;">✕ Réinitialiser</button></div>
+            <div class="rk-info"><span id="rk-info"></span><span class="g-legend"><span class="lh"><i></i>Hommes</span><span class="lf"><i></i>Femmes</span></span><button type="button" class="rk-reset" id="rk-reset" style="display:none;">✕ Réinitialiser</button></div>
             <div id="rk-podium"></div>
 
             <div style="overflow-x: auto;">
@@ -864,8 +866,8 @@
                 const labelB = match.b ? specPlayerLabel(match.b) : (rIndex === 0 ? 'À déterminer' : '—');
 
                 html += `<div class="spec-bracket-match">
-                    <div class="spec-bracket-entry ${aWin ? 'winner' : ''} ${!match.a ? 'empty' : ''}">${escapeHtml(labelA)}</div>
-                    <div class="spec-bracket-entry ${bWin ? 'winner' : ''} ${!match.b ? 'empty' : ''}">${escapeHtml(labelB)}</div>
+                    <div class="spec-bracket-entry hl ${BS.gClass(dbJoueurs[match.a])} ${aWin ? 'winner' : ''} ${!match.a ? 'empty' : ''}">${escapeHtml(labelA)}</div>
+                    <div class="spec-bracket-entry hl ${BS.gClass(dbJoueurs[match.b])} ${bWin ? 'winner' : ''} ${!match.b ? 'empty' : ''}">${escapeHtml(labelB)}</div>
                     ${decided ? `<div class="spec-bracket-score">${scoreLabel ? escapeHtml(scoreLabel) : 'Sans score (forfait)'}</div>` : ''}
                 </div>`;
             });
@@ -982,7 +984,7 @@
 
         const locOf = j => { const c = clubOf(j); return c && c.region ? `<span class="loc-chip">${escapeHtml(c.departement || '')}${c.departement ? ' · ' : ''}${escapeHtml(c.region)}</span>` : ''; };
         const clubName = j => clubOf(j) ? clubOf(j).nom : (j.club || 'Sans club');
-        const avatar = j => `<span class="avatar" style="--av:${avColor((j.nom || '') + (j.prenom || ''))}">${escapeHtml(initials(j))}</span>`;
+        const avatar = j => `<span class="avatar ${BS.gClass(j)}" style="--av:${avColor((j.nom || '') + (j.prenom || ''))}">${escapeHtml(initials(j))}</span>`;
 
         thead.innerHTML = '<tr><th class="rank">#</th><th>Joueur</th><th style="text-align:right;">Points FFBaD</th></tr>';
 
@@ -999,8 +1001,8 @@
         if (podiumPlayers.length) {
             const pod = (j, i) => `<div class="pod p${i + 1}">
                 <div class="medal-big">${medals[i]}</div>
-                <div class="avatar" style="--av:${avColor((j.nom || '') + (j.prenom || ''))}">${escapeHtml(initials(j))}</div>
-                <div class="pn">${escapeHtml(j.prenom || '')} ${escapeHtml((j.nom || '').toUpperCase())}</div>
+                <div class="avatar ${BS.gClass(j)}" style="--av:${avColor((j.nom || '') + (j.prenom || ''))}">${escapeHtml(initials(j))}</div>
+                <div class="pn">${BS.chip(((j.prenom || '') + ' ' + (j.nom || '').toUpperCase()).trim(), j)}</div>
                 <div class="pc">${escapeHtml(clubName(j))}${hasFilter ? ` · n°${j._rank}` : ''}</div>
                 <div class="pp">${getPoints(j).toLocaleString('fr-FR')} pts</div></div>`;
             podiumEl.innerHTML = `<div class="podium">${pod(podiumPlayers[1], 1)}${pod(podiumPlayers[0], 0)}${pod(podiumPlayers[2], 2)}</div>`;
@@ -1010,7 +1012,7 @@
             const r = j._rank;
             const rankClass = r === 1 ? 'rank-1' : r === 2 ? 'rank-2' : r === 3 ? 'rank-3' : '';
             const pts = getPoints(j);
-            return `<tr>
+            return `<tr class="hl ${BS.gClass(j)}">
                 <td class="rank ${rankClass}">#${r}</td>
                 <td class="player-name"><div class="rk-player">${avatar(j)}<div>
                     <div><strong>${escapeHtml((j.nom || '').toUpperCase())}</strong> ${escapeHtml(j.prenom || '')}</div>

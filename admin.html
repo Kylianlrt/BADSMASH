@@ -476,7 +476,7 @@
         .si-fm-total { font-size: 2rem; font-weight: 800; color: var(--green); text-align: center; margin: 12px 0 14px; font-variant-numeric: tabular-nums; }
         .si-fm-warn { background: rgba(246, 185, 59, .1); border: 1px solid #f6b93b; color: #f6b93b; border-radius: 10px;
             padding: 8px 12px; font-size: .82rem; margin-bottom: 12px; }
-        .si-fm-cols, .si-fm-row { display: grid; grid-template-columns: 64px 1fr 1fr 170px 150px; gap: 8px; align-items: center; }
+        .si-fm-cols, .si-fm-row { display: grid; grid-template-columns: 64px 1fr 1fr 250px 150px; gap: 8px; align-items: center; }
         .si-fm-cols { color: var(--sub); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; padding: 0 10px; margin-bottom: 6px; }
         .si-fm-row { padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); margin-bottom: 8px; }
         .si-fm-code { font-weight: 800; color: var(--green); font-size: .85rem; }
@@ -535,6 +535,8 @@
         .cl-btn-del { background:rgba(239,61,78,.1); color:var(--danger); border:1px solid rgba(239,61,78,.35); }
         .cl-btn-del:hover { background:var(--danger); color:#fff; }
     </style>
+<link rel="stylesheet" href="badsmash-ui.css">
+<script src="badsmash-ui.js"></script>
 </head>
 <body>
 <!-- ===== BADSMASH — Décor : volants flottants ===== -->
@@ -1035,19 +1037,12 @@
                 </div>
 
                 <h3>Scores des Sets</h3>
-                <div class="grid-3">
-                    <div class="form-group">
-                        <label for="set1">Set 1</label>
-                        <input type="text" id="set1" placeholder="21-18">
-                    </div>
-                    <div class="form-group">
-                        <label for="set2">Set 2</label>
-                        <input type="text" id="set2" placeholder="19-21">
-                    </div>
-                    <div class="form-group">
-                        <label for="set3">Set 3 (Optionnel)</label>
-                        <input type="text" id="set3" placeholder="21-15">
-                    </div>
+                <p class="empty-state" style="margin:0 0 8px">Score du <strong>joueur / équipe 1</strong> en premier (ex. 21-15). Si les 2 premiers sets sont gagnés par le même camp, le 3<sup>e</sup> set n'est pas à remplir ; à un set partout il est <strong>obligatoire</strong>.</p>
+                <div class="sets-box sets-wide" id="match-sets" style="margin-bottom:14px">
+                    <label class="set-cell"><span>Set 1</span><input type="text" class="set-box" data-set="1" id="set1" placeholder="21-15" inputmode="numeric" maxlength="5" autocomplete="off"></label>
+                    <label class="set-cell"><span>Set 2</span><input type="text" class="set-box" data-set="2" id="set2" placeholder="21-18" inputmode="numeric" maxlength="5" autocomplete="off"></label>
+                    <label class="set-cell"><span>Set 3</span><input type="text" class="set-box" data-set="3" id="set3" placeholder="(si 1-1)" inputmode="numeric" maxlength="5" autocomplete="off"></label>
+                    <div class="sets-hint"></div>
                 </div>
 
                 <div class="form-group">
@@ -1482,10 +1477,10 @@
                 </summary>
                 <div class="si-team-body">
                     <div class="si-chips">${roster.length
-                        ? roster.map(j => `<span class="si-chip">${siEsc(siPlayerLabel(j))}<button type="button" class="si-chip-x" title="Retirer" aria-label="Retirer" data-si-remove-player="${j}" data-team="${siEsc(team)}">✕</button></span>`).join('')
+                        ? roster.map(j => `<span class="si-chip hl ${BS.gClass(cacheJoueurs[j])}">${siEsc(siPlayerLabel(j))}<button type="button" class="si-chip-x" title="Retirer" aria-label="Retirer" data-si-remove-player="${j}" data-team="${siEsc(team)}">✕</button></span>`).join('')
                         : '<span style="color:var(--sub); font-size:.85rem;">Aucun joueur dans cette équipe pour le moment.</span>'}</div>
                     <div class="si-add-row">
-                        <select data-si-add-select="${siEsc(key)}"><option value="">${dispo.length ? 'Ajouter un joueur…' : 'Aucun joueur disponible'}</option>${dispo.map(j => `<option value="${j}">${siEsc(siPlayerLabel(j))}</option>`).join('')}</select>
+                        <select data-si-add-select="${siEsc(key)}"><option value="">${dispo.length ? 'Ajouter un joueur…' : 'Aucun joueur disponible'}</option>${dispo.map(j => `<option value="${j}" class="${BS.gClass(cacheJoueurs[j])}">${siEsc(siPlayerLabel(j))}</option>`).join('')}</select>
                         <button type="button" class="si-btn" data-si-add-player data-team="${siEsc(team)}">➕ Ajouter</button>
                         <button type="button" class="si-btn secondary" data-si-import-club data-team="${siEsc(team)}" title="Ajoute tous les licenciés du club">👥 Importer le club</button>
                     </div>
@@ -1766,7 +1761,7 @@
             return `<div class="si-fm-players" data-side="${side}">` + Array.from({ length: count }, (_, i) => `
                 <select data-side-select="${side}">
                     <option value="">${siEsc(team || (side === 'dom' ? 'Domicile' : 'Extérieur'))}${count > 1 ? ' ' + (i + 1) : ''}…</option>
-                    ${options.map(j => `<option value="${j}" ${j === chosen[i] ? 'selected' : ''}>${siEsc(siPlayerLabel(j))}</option>`).join('')}
+                    ${options.map(j => `<option value="${j}" class="${BS.gClass(cacheJoueurs[j])}" ${j === chosen[i] ? 'selected' : ''}>${siEsc(siPlayerLabel(j))}</option>`).join('')}
                 </select>`).join('') + '</div>';
         };
 
@@ -1796,7 +1791,7 @@
                         <span class="si-fm-code" title="${siEsc(slot.label)}">${slot.code}</span>
                         ${sideHtml('dom', homeIds, dom, slot.count, d.domIds)}
                         ${sideHtml('ext', awayIds, ext, slot.count, d.extIds)}
-                        <input type="text" data-field="score" value="${siEsc(d.score || '')}" placeholder="21-15 / 21-18" aria-label="Score ${slot.code}">
+                        <div class="si-fm-score" data-field="score">${BS.setsHtml('', BS.splitScore(d.score))}</div>
                         <select data-field="vainqueur" aria-label="Vainqueur ${slot.code}">
                             <option value="">Vainqueur…</option>
                             <option value="dom" ${d.vainqueur === 'dom' ? 'selected' : ''}>${siEsc(dom)}</option>
@@ -1804,7 +1799,7 @@
                         </select>
                     </div>`;
                 }).join('')}
-                <p class="si-step-hint" style="margin:6px 0 0;">Astuce : en saisissant le score avec le domicile en premier (ex : 21-15 / 19-21 / 21-18), le vainqueur est proposé automatiquement. Vous pouvez le corriger à la main.</p>
+                <p class="si-step-hint" style="margin:6px 0 0;">Saisissez les sets avec le score du domicile en premier (ex : 21-15). Si les 2 premiers sets vont au même camp, le 3<sup>e</sup> set est inutile ; à un set partout il est <strong>obligatoire</strong>. Le vainqueur est proposé automatiquement.</p>
                 <div class="si-fm-foot">
                     <button type="button" class="si-btn danger" id="si-fm-clear">🗑️ Effacer la feuille</button>
                     <button type="button" class="si-btn secondary" id="si-fm-cancel">Annuler</button>
@@ -1822,10 +1817,13 @@
             overlay.querySelector('#si-fm-total').textContent = `${a} — ${b}`;
         };
         overlay.querySelectorAll('select[data-field="vainqueur"]').forEach(s => s.addEventListener('change', updateTotal));
-        overlay.querySelectorAll('input[data-field="score"]').forEach(inp => inp.addEventListener('input', () => {
-            const w = siWinnerFromScore(inp.value);
-            if (w) { inp.closest('.si-fm-row').querySelector('select[data-field="vainqueur"]').value = w; updateTotal(); }
+        overlay.querySelectorAll('.si-fm-score .sets-box').forEach(box => BS.bindSets(box, r => {
+            if (r && r.status === 'done') {
+                box.closest('.si-fm-row').querySelector('select[data-field="vainqueur"]').value = r.winner === 1 ? 'dom' : 'ext';
+                updateTotal();
+            }
         }));
+        BS.tintSelects(overlay);
         updateTotal();
 
         overlay.querySelector('#si-fm-x').addEventListener('click', siCloseFeuille);
@@ -1855,7 +1853,12 @@
                     alert(`Dans ${code}, le même joueur est sélectionné deux fois dans la même équipe.`);
                     return;
                 }
-                const score = row.querySelector('[data-field="score"]').value.trim();
+                const sr = BS.readSets(row.querySelector('.sets-box'));
+                if (sr.status !== 'empty' && !sr.ok) {
+                    alert(`${code} : ${sr.msg}`);
+                    return;
+                }
+                const score = sr.score;
                 const vainqueur = row.querySelector('[data-field="vainqueur"]').value;
                 if (!domSel.length && !extSel.length && !score && !vainqueur) continue;
                 const slotData = {};
@@ -1967,7 +1970,7 @@
 
             select.innerHTML = trouves.length
                 ? ['<option value="">Sélectionner...</option>'].concat(
-                    trouves.map(id => `<option value="${id}">${playerFullLabel(cacheJoueurs[id])}</option>`)).join('')
+                    trouves.map(id => `<option value="${id}" class="${BS.gClass(cacheJoueurs[id])}">${playerFullLabel(cacheJoueurs[id])}</option>`)).join('')
                 : '<option value="">Aucun joueur ne correspond à la recherche</option>';
 
             if (ancienneValeur && trouves.includes(ancienneValeur)) select.value = ancienneValeur;
@@ -2070,7 +2073,7 @@
             const isChecked = currentSerieCheckedIds.has(id);
             const heureVal = currentSerieConvocations[id] || '';
             tournoiList.innerHTML += `
-                <label class="joueur-convocation-row">
+                <label class="joueur-convocation-row hl ${BS.gClass(j)}">
                     <span><input type="checkbox" name="tournoi-joueur" value="${id}" ${isChecked ? 'checked' : ''}> ${label}</span>
                     ${isChecked ? `<span class="convocation-field">🕒 <input type="time" class="input-heure-convocation" data-id="${id}" value="${heureVal}" title="Heure de convocation"></span>` : ''}
                 </label>`;
@@ -2106,7 +2109,7 @@
             if (!matches) return;
 
             const pItem = document.createElement('div');
-            pItem.className = 'player-item';
+            pItem.className = 'player-item hl ' + BS.gClass(j);
             pItem.innerHTML = `
                 <span><strong>${label}</strong></span>
                 <button type="button" class="btn-edit" data-id="${id}">✏️ Modifier</button>
@@ -2181,7 +2184,7 @@
             // ne correspond plus au texte recherché, pour ne pas perdre le choix en cours.
             if (!matches && id !== currentValue) return;
             const selectedAttr = id === currentValue ? 'selected' : '';
-            html += `<option value="${id}" ${selectedAttr}>${label}</option>`;
+            html += `<option value="${id}" class="${BS.gClass(j)}" ${selectedAttr}>${label}</option>`;
         });
         selectEl.innerHTML = html;
     }
@@ -2256,8 +2259,8 @@
                 return;
             }
 
-            if(v1 && cacheJoueurs[v1]) select.innerHTML += `<option value="${v1}">${cacheJoueurs[v1].prenom} ${cacheJoueurs[v1].nom}</option>`;
-            if(v2 && cacheJoueurs[v2]) select.innerHTML += `<option value="${v2}">${cacheJoueurs[v2].prenom} ${cacheJoueurs[v2].nom}</option>`;
+            if(v1 && cacheJoueurs[v1]) select.innerHTML += `<option value="${v1}" class="${BS.gClass(cacheJoueurs[v1])}">${cacheJoueurs[v1].prenom} ${cacheJoueurs[v1].nom}</option>`;
+            if(v2 && cacheJoueurs[v2]) select.innerHTML += `<option value="${v2}" class="${BS.gClass(cacheJoueurs[v2])}">${cacheJoueurs[v2].prenom} ${cacheJoueurs[v2].nom}</option>`;
         } else {
             const e1j1 = document.getElementById('match-e1j1').value;
             const e1j2 = document.getElementById('match-e1j2').value;
@@ -2269,7 +2272,20 @@
                 select.innerHTML += `<option value="e2">${teamLabel(e2j1, e2j2)}</option>`;
             }
         }
+        autoPickVainqueur();
     }
+
+    // Vainqueur déduit automatiquement des sets (camp 1 = 1re option, camp 2 = 2e option)
+    function autoPickVainqueur() {
+        const box = document.getElementById('match-sets');
+        const select = document.getElementById('match-vainqueur');
+        if (!box || !select) return;
+        const r = BS.readSets(box);
+        if (r.status === 'done' && select.options.length === 3) {
+            select.selectedIndex = r.winner; // 1 ou 2
+        }
+    }
+    BS.bindSets(document.getElementById('match-sets'), autoPickVainqueur);
     
     document.getElementById('match-j1').addEventListener('change', updateVainqueurs);
     document.getElementById('match-j2').addEventListener('change', updateVainqueurs);
@@ -2411,7 +2427,7 @@
                 const genreTag = j.genre ? `[${j.genre}] ` : '';
                 const tag = j.isPro ? '⭐' : (j.hasAccount ? '[COMPTE]' : '[EXTERNE]');
                 const selectedAttr = id === currentValue ? 'selected' : '';
-                opts += `<option value="${id}" ${selectedAttr}>${genreTag}${j.prenom} ${j.nom} ${tag}</option>`;
+                opts += `<option value="${id}" class="${BS.gClass(j)}" ${selectedAttr}>${genreTag}${j.prenom} ${j.nom} ${tag}</option>`;
             });
             return opts;
         }
@@ -2430,10 +2446,10 @@
                 function slotHtml(slot, value, isWinner) {
                     if (decided) {
                         const cls = isWinner ? 'winner' : '';
-                        return `<div class="bracket-entry ${cls}">${value ? playerLabel(value) : '—'}</div>`;
+                        return `<div class="bracket-entry hl ${BS.gClass(cacheJoueurs[value])} ${cls}">${value ? playerLabel(value) : '—'}</div>`;
                     }
                     // Emplacement modifiable tant que le match n'est pas joué
-                    return `<div class="bracket-entry ${canDeclare ? '' : 'empty'}" data-round="${rIndex}" data-match="${mIndex}" data-slot="${slot}" ${canDeclare ? 'data-clickable="true"' : ''}>
+                    return `<div class="bracket-entry hl ${BS.gClass(cacheJoueurs[value])} ${canDeclare ? '' : 'empty'}" data-round="${rIndex}" data-match="${mIndex}" data-slot="${slot}" ${canDeclare ? 'data-clickable="true"' : ''}>
                         <select class="slot-select" data-round="${rIndex}" data-match="${mIndex}" data-slot="${slot}">
                             ${buildSelectOptions(value)}
                         </select>
@@ -2455,17 +2471,18 @@
                         <div class="score-entry-date">
                             <input type="date" class="score-input" id="date-${rIndex}-${mIndex}" value="${todayISO()}">
                         </div>
-                        <div class="score-entry-inputs">
-                            <input type="text" class="score-input" id="score-${rIndex}-${mIndex}-1" placeholder="21-18">
-                            <input type="text" class="score-input" id="score-${rIndex}-${mIndex}-2" placeholder="19-21">
-                            <input type="text" class="score-input" id="score-${rIndex}-${mIndex}-3" placeholder="21-15">
+                        <div class="sets-box score-entry-sets" id="sets-${rIndex}-${mIndex}">
+                            <label class="set-cell"><span>Set 1</span><input type="text" class="set-box" data-set="1" id="score-${rIndex}-${mIndex}-1" placeholder="21-15" inputmode="numeric" maxlength="5" autocomplete="off"></label>
+                            <label class="set-cell"><span>Set 2</span><input type="text" class="set-box" data-set="2" id="score-${rIndex}-${mIndex}-2" placeholder="21-18" inputmode="numeric" maxlength="5" autocomplete="off"></label>
+                            <label class="set-cell"><span>Set 3</span><input type="text" class="set-box" data-set="3" id="score-${rIndex}-${mIndex}-3" placeholder="si 1-1" inputmode="numeric" maxlength="5" autocomplete="off"></label>
+                            <div class="sets-hint"></div>
                         </div>
                         <button type="button" class="btn-save-score" data-round="${rIndex}" data-match="${mIndex}">✅ Enregistrer le score</button>
                         <div class="score-entry-wo">
                             Sans score (forfait) :
-                            <span class="declare-link" data-round="${rIndex}" data-match="${mIndex}" data-slot="a">${playerLabel(match.a)}</span>
+                            <span class="declare-link" data-round="${rIndex}" data-match="${mIndex}" data-slot="a">${BS.chip(playerLabel(match.a), cacheJoueurs[match.a])}</span>
                             /
-                            <span class="declare-link" data-round="${rIndex}" data-match="${mIndex}" data-slot="b">${playerLabel(match.b)}</span>
+                            <span class="declare-link" data-round="${rIndex}" data-match="${mIndex}" data-slot="b">${BS.chip(playerLabel(match.b), cacheJoueurs[match.b])}</span>
                         </div>
                     </div>`;
                 }
@@ -2475,6 +2492,8 @@
         html += '</div></div>';
 
         bracketDisplay.innerHTML = html;
+        BS.bindAllSets(bracketDisplay);
+        BS.tintSelects(bracketDisplay);
 
         // Choix direct du joueur pour un emplacement
         bracketDisplay.querySelectorAll('.slot-select').forEach(sel => {
@@ -2535,34 +2554,20 @@
         const match = draw.rounds[roundIndex][matchIndex];
         if (!match.a || !match.b || match.vainqueur) return;
 
-        const s1 = (document.getElementById(`score-${roundIndex}-${matchIndex}-1`).value || '').trim();
-        const s2 = (document.getElementById(`score-${roundIndex}-${matchIndex}-2`).value || '').trim();
-        const s3 = (document.getElementById(`score-${roundIndex}-${matchIndex}-3`).value || '').trim();
         const dateInput = document.getElementById(`date-${roundIndex}-${matchIndex}`);
         const matchDate = (dateInput && dateInput.value) ? dateInput.value : todayISO();
 
-        const sets = [s1, s2, s3].filter(Boolean);
-        if (sets.length === 0) {
-            alert("⚠️ Merci de renseigner au moins un score de set (ex: 21-18).");
+        const sr = BS.readSets(document.getElementById(`sets-${roundIndex}-${matchIndex}`));
+        if (sr.status === 'empty') {
+            alert("⚠️ Merci de renseigner les sets 1 et 2 (ex: 21-15).");
             return;
         }
-
-        let aWins = 0, bWins = 0;
-        for (const s of sets) {
-            const parts = s.split(/[-–]/).map(x => parseInt(x.trim(), 10));
-            if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1]) || parts[0] === parts[1]) {
-                alert(`⚠️ Score invalide : "${s}". Utilisez un format comme "21-18".`);
-                return;
-            }
-            if (parts[0] > parts[1]) aWins++; else bWins++;
-        }
-
-        if (aWins === bWins) {
-            alert("⚠️ Impossible de déterminer un vainqueur avec ces scores (égalité de sets). Ajoutez un set décisif.");
+        if (!sr.ok) {
+            alert("⚠️ " + sr.msg);
             return;
         }
-
-        const slot = aWins > bWins ? 'a' : 'b';
+        const [s1, s2, s3] = sr.vals;
+        const slot = sr.winner === 1 ? 'a' : 'b';
         finalizeMatch(tournoiId, drawId, roundIndex, matchIndex, slot, { set1: s1, set2: s2, set3: s3 }, matchDate);
     }
 
@@ -2672,8 +2677,9 @@
         // Gère à la fois les anciens matchs "simple" (j1/j2) et les nouveaux matchs
         // "double/mixte" (equipe1/equipe2, tableaux de 2 ids chacune).
         if (m.tableauType && (m.tableauType === 'double' || m.tableauType === 'mixte') && m.equipe1 && m.equipe2) {
-            const label1 = teamLabel(m.equipe1[0], m.equipe1[1]);
-            const label2 = teamLabel(m.equipe2[0], m.equipe2[1]);
+            const chipOf = id => BS.chip(cacheJoueurs[id] ? `${cacheJoueurs[id].prenom} ${cacheJoueurs[id].nom}` : '?', cacheJoueurs[id]);
+            const label1 = chipOf(m.equipe1[0]) + ' / ' + chipOf(m.equipe1[1]);
+            const label2 = chipOf(m.equipe2[0]) + ' / ' + chipOf(m.equipe2[1]);
             const isE1Winner = m.vainqueur === 'e1';
             const isE2Winner = m.vainqueur === 'e2';
             return {
@@ -2684,8 +2690,8 @@
 
         const j1 = cacheJoueurs[m.j1];
         const j2 = cacheJoueurs[m.j2];
-        const label1 = j1 ? `${j1.prenom} ${j1.nom}` : '?';
-        const label2 = j2 ? `${j2.prenom} ${j2.nom}` : '?';
+        const label1 = BS.chip(j1 ? `${j1.prenom} ${j1.nom}` : '?', j1);
+        const label2 = BS.chip(j2 ? `${j2.prenom} ${j2.nom}` : '?', j2);
         return {
             label1: (m.vainqueur === m.j1) ? `<span class="winner-name">${label1}</span>` : label1,
             label2: (m.vainqueur === m.j2) ? `<span class="winner-name">${label2}</span>` : label2
@@ -3473,15 +3479,27 @@
             return;
         }
 
+        const setsBox = document.getElementById('match-sets');
+        const sr = BS.readSets(setsBox);
+        if (sr.status !== 'empty' && !sr.ok) {
+            alert("⚠️ Scores des sets : " + sr.msg);
+            return;
+        }
+        if (sr.status === 'done') {
+            const selSel = document.getElementById('match-vainqueur');
+            if (selSel.selectedIndex !== sr.winner &&
+                !confirm("⚠️ Les scores indiquent que le camp " + sr.winner + " a gagné, mais un autre vainqueur est sélectionné. Enregistrer quand même ?")) return;
+        }
+
         const matchData = {
             type: type,
             tournoiId: type === 'tournoi' ? document.getElementById('match-tournoi').value : null,
             clubId: type === 'club' ? document.getElementById('match-club').value : null,
             tableauType: tableauType,
             date: matchDate,
-            set1: document.getElementById('set1').value.trim(),
-            set2: document.getElementById('set2').value.trim(),
-            set3: document.getElementById('set3').value.trim(),
+            set1: sr.vals[0] || '',
+            set2: sr.vals[1] || '',
+            set3: sr.vals[2] || '',
             timestamp: Date.now()
         };
 
@@ -3519,6 +3537,7 @@
         push(ref(db, 'matchs'), matchData).then(() => { 
             alert("✅ Match enregistré avec succès !"); 
             e.target.reset();
+            BS.clearSets(document.getElementById('match-sets'));
             document.getElementById('match-date').value = todayISO();
             matchTypeSelect.dispatchEvent(new Event('change'));
             matchTableauTypeSelect.dispatchEvent(new Event('change'));

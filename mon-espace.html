@@ -284,7 +284,7 @@
         .winrate-bar span { display: block; height: 100%; background: var(--green); }
 
         /* --- Feuille de match (SH1, SH2, SD1, SD2, DH, DD, MIX1, MIX2) --- */
-        .mdr { display: grid; grid-template-columns: 70px 1fr 1fr 130px 120px; gap: 8px; align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); margin-bottom: 8px; }
+        .mdr { display: grid; grid-template-columns: 70px 1fr 1fr 250px 130px; gap: 8px; align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); margin-bottom: 8px; }
         .mdr-code { font-weight: 800; color: var(--green); font-size: .85rem; }
         .mdr input, .mdr select { width: 100%; margin: 0; padding: 8px; border-radius: 7px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: .85rem; }
         .mdr-players { display: flex; flex-direction: column; gap: 4px; }
@@ -367,6 +367,8 @@
             font-size: .78rem; font-weight: 700;
         }
     </style>
+<link rel="stylesheet" href="badsmash-ui.css">
+<script src="badsmash-ui.js"></script>
 </head>
 <body>
 <!-- ===== BADSMASH — Décor : volants flottants ===== -->
@@ -1253,7 +1255,7 @@
     function playerRowHtml(id, player) {
         const stats = winRateForPlayer(id);
         const cls = stats.pct >= 50 ? 'winrate-high' : 'winrate-low';
-        return `<li class="player-row">
+        return `<li class="player-row hl ${BS.gClass(player)}">
             <div>
                 <b>${escapeHtml(shortPlayerName(player))}</b>
                 <small style="display:block; color: var(--sub);">${stats.total} rencontre${stats.total > 1 ? 's' : ''} — ${stats.wins}V / ${stats.losses}D</small>
@@ -1352,7 +1354,7 @@
             const current = selected[i] || '';
             rows.push(`<select data-field="${side}">
                 <option value="">${escapeHtml(teamLabel || (side === 'dom' ? 'Domicile' : 'Extérieur'))}${slot.count > 1 ? ' ' + (i + 1) : ''}…</option>
-                ${ids.map(id => `<option value="${id}" ${id === current ? 'selected' : ''}>${escapeHtml(shortPlayerName(allPlayers[id]))}</option>`).join('')}
+                ${ids.map(id => `<option value="${id}" class="${BS.gClass(allPlayers[id])}" ${id === current ? 'selected' : ''}>${escapeHtml(shortPlayerName(allPlayers[id]))}</option>`).join('')}
             </select>`);
         }
         return `<div class="mdr-players" data-side="${side}">${rows.join('')}</div>`;
@@ -1376,7 +1378,7 @@
                 <span class="mdr-code" title="${escapeHtml(slot.label)}">${slot.code}</span>
                 ${slotSideHtml('dom', slot, homeIds, dom, d.domIds)}
                 ${slotSideHtml('ext', slot, awayIds, ext, d.extIds)}
-                <input type="text" data-field="score" value="${escapeHtml(d.score || '')}" placeholder="21-15 / 21-18">
+                <div class="mdr-score">${BS.setsHtml('', BS.splitScore(d.score))}</div>
                 <select data-field="vainqueur">
                     <option value="">Vainqueur…</option>
                     <option value="dom" ${d.vainqueur === 'dom' ? 'selected' : ''}>${escapeHtml(dom || 'Domicile')}</option>
@@ -1389,12 +1391,20 @@
         const serie = allSeries[currentSerieId];
         const canEdit = teamIsMine(serie, dom) || teamIsMine(serie, ext);
         document.getElementById('btn-save-rencontre').style.display = canEdit ? '' : 'none';
+        // 3 encadrés de sets : 3e set inutile si 2-0, obligatoire si 1-1 ; vainqueur déduit automatiquement
+        document.querySelectorAll('#rencontre-slots .sets-box').forEach(box => BS.bindSets(box, r => {
+            if (r && r.status === 'done') {
+                box.closest('.mdr').querySelector('select[data-field="vainqueur"]').value = r.winner === 1 ? 'dom' : 'ext';
+                updateRencontreScore();
+            }
+        }));
         if (!canEdit) {
             document.querySelectorAll('#rencontre-slots select, #rencontre-slots input').forEach(el => { el.disabled = true; });
             document.getElementById('rencontre-view-sub').innerText = `${dateLabel(match.date)} · Poule ${match.pool || '-'} — consultation`;
         }
 
         document.querySelectorAll('#rencontre-slots select[data-field="vainqueur"]').forEach(sel => sel.addEventListener('change', updateRencontreScore));
+        BS.tintSelects(document.getElementById('rencontre-slots'));
         updateRencontreScore();
         showInterclubView('view-rencontre');
     }
@@ -1402,16 +1412,21 @@
     document.getElementById('btn-save-rencontre').addEventListener('click', () => {
         if (!currentRencontre || !currentSerieId) return;
         const feuille = {};
-        document.querySelectorAll('#rencontre-slots .mdr').forEach(row => {
+        for (const row of document.querySelectorAll('#rencontre-slots .mdr')) {
+            const sr = BS.readSets(row.querySelector('.sets-box'));
+            if (sr.status !== 'empty' && !sr.ok) {
+                alert(`${row.dataset.code} : ${sr.msg}`);
+                return;
+            }
             const domIds = Array.from(row.querySelectorAll('[data-side="dom"] select')).map(s => s.value).filter(Boolean);
             const extIds = Array.from(row.querySelectorAll('[data-side="ext"] select')).map(s => s.value).filter(Boolean);
             feuille[row.dataset.code] = {
                 domIds,
                 extIds,
-                score: row.querySelector('[data-field="score"]').value.trim(),
+                score: sr.score,
                 vainqueur: row.querySelector('[data-field="vainqueur"]').value
             };
-        });
+        }
         set(ref(db, `${serieBase()}/feuilles/${currentRencontre.key}`), feuille).then(() => {
             updateRencontreScore();
             alert("✅ Feuille de match enregistrée !");
@@ -1479,12 +1494,10 @@
 
         let opponentHtml;
         if (role.partnerId) {
-            const partnerName = playerName(role.partnerId);
-            const oppNames = role.opponentIds.map(playerName).join(' / ');
-            opponentHtml = `Avec <b>${escapeHtml(partnerName)}</b> vs <b>${escapeHtml(oppNames)}</b>`;
+            const chipOf = id => BS.chip(playerName(id), allPlayers[id]);
+            opponentHtml = `Avec ${chipOf(role.partnerId)} vs ${role.opponentIds.map(chipOf).join(' / ')}`;
         } else {
-            const advName = playerName(role.opponentIds[0]);
-            opponentHtml = `vs <b>${escapeHtml(advName)}</b>`;
+            opponentHtml = `vs ${BS.chip(playerName(role.opponentIds[0]), allPlayers[role.opponentIds[0]])}`;
         }
 
         return `<li class="match-line ${isWin ? 'match-line-win' : 'match-line-loss'}">
@@ -1561,7 +1574,7 @@
             count++;
 
             const li = document.createElement('li');
-            li.className = 'player-pick-item' + (id === currentFicheTargetId ? ' active' : '');
+            li.className = 'player-pick-item hl ' + BS.gClass(j) + (id === currentFicheTargetId ? ' active' : '');
             li.dataset.id = id;
             li.innerHTML = `<b>${escapeHtml(label)}</b>`;
             container.appendChild(li);
@@ -1748,7 +1761,7 @@
             const previousSelection = opponentSelect.value;
             if (sortedOpponents.length > 0) {
                 opponentSelect.innerHTML = '<option value="">Sélectionner un adversaire…</option>' +
-                    sortedOpponents.map(advId => `<option value="${advId}">${escapeHtml(oppStats[advId].name)} (${oppStats[advId].count} match${oppStats[advId].count > 1 ? 's' : ''})</option>`).join('');
+                    sortedOpponents.map(advId => `<option value="${advId}" class="${BS.gClass(allPlayers[advId])}">${escapeHtml(oppStats[advId].name)} (${oppStats[advId].count} match${oppStats[advId].count > 1 ? 's' : ''})</option>`).join('');
                 if (sortedOpponents.includes(previousSelection)) opponentSelect.value = previousSelection;
             } else {
                 opponentSelect.innerHTML = '<option value="">Aucun adversaire joué</option>';

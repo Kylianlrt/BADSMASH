@@ -1,0 +1,97 @@
+/* BADSMASH — feuille de style partagée : genre (bleu / rose), saisie des sets, lisibilité */
+
+/* ---------- Couleurs de genre ---------- */
+:root {
+    --m-bg: rgba(59,130,246,.20); --m-bd: #3b82f6; --m-fg: #cfe1ff; --m-solid: #1e3a6e;
+    --f-bg: rgba(236,72,153,.20); --f-bd: #ec4899; --f-fg: #ffd6ea; --f-solid: #6b1d45;
+    /* meilleurs contrastes pour les textes secondaires */
+    --sub: #b0bdd6; --chalk-dim: #b0bdd6; --text-sub: #b0bdd6;
+}
+:root[data-theme="light"] {
+    --m-bg: #dbeafe; --m-bd: #2563eb; --m-fg: #1e3a8a; --m-solid: #dbeafe;
+    --f-bg: #fce7f3; --f-bd: #db2777; --f-fg: #9d174d; --f-solid: #fce7f3;
+    --sub: #475569; --chalk-dim: #475569; --text-sub: #475569;
+}
+.g-h { --g-bg: var(--m-bg); --g-bd: var(--m-bd); --g-fg: var(--m-fg); }
+.g-f { --g-bg: var(--f-bg); --g-bd: var(--f-bd); --g-fg: var(--f-fg); }
+
+/* Nom de joueur surligné (puce) */
+.pl { display: inline-block; padding: 1px 9px; border-radius: 7px; font-weight: 600; line-height: 1.5;
+      background: var(--g-bg, transparent); border-left: 3px solid var(--g-bd, transparent); color: var(--g-fg, inherit); }
+.pl:not(.g-h):not(.g-f) { background: none; border-left: 0; padding: 0; color: inherit; }
+
+/* Ligne / carte entière surlignée */
+.hl.g-h, .hl.g-f { background: var(--g-bg) !important; box-shadow: inset 4px 0 0 var(--g-bd); border-color: var(--g-bd) !important; }
+tr.hl.g-h, tr.hl.g-f { box-shadow: none; }
+tr.hl.g-h > td, tr.hl.g-f > td { background: var(--g-bg); }
+tr.hl.g-h > td:first-child, tr.hl.g-f > td:first-child { box-shadow: inset 4px 0 0 var(--g-bd); }
+.avatar.g-h, .avatar.g-f { background: var(--g-bd) !important; }
+
+/* Listes déroulantes teintées */
+select.g-h, select.g-f { background-color: var(--g-bg) !important; border-color: var(--g-bd) !important; color: inherit; }
+option.g-h { background: var(--m-solid); color: var(--m-fg); }
+option.g-f { background: var(--f-solid); color: var(--f-fg); }
+
+/* Légende */
+.g-legend { display: inline-flex; gap: 14px; flex-wrap: wrap; align-items: center; font-size: .78rem; font-weight: 700; }
+.g-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.g-legend i { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+.g-legend .lh i { background: var(--m-bd); } .g-legend .lf i { background: var(--f-bd); }
+
+/* ---------- Saisie des sets (3 encadrés) ---------- */
+.sets-box { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; align-items: end; }
+.sets-box .set-cell { display: flex; flex-direction: column; gap: 3px; min-width: 0; margin: 0; }
+.sets-box .set-cell > span { font-size: .66rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--sub); text-align: center; }
+.sets-box .set-box { width: 100%; min-width: 0; margin: 0 !important; padding: 8px 4px !important; text-align: center;
+    font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 700; font-size: .92rem; letter-spacing: .02em; }
+.sets-box .set-box::placeholder { opacity: .45; font-weight: 400; }
+.sets-box .set-box:disabled { opacity: .35; cursor: not-allowed; background-image: repeating-linear-gradient(135deg, transparent 0 6px, rgba(148,163,184,.18) 6px 8px); }
+.sets-box .set-box.need { border-color: #f6b93b !important; box-shadow: 0 0 0 3px rgba(246,185,59,.25); }
+.sets-box .set-box.bad { border-color: #ef3d4e !important; box-shadow: 0 0 0 3px rgba(239,61,78,.22); }
+.sets-hint { grid-column: 1 / -1; min-height: 1.1em; font-size: .72rem; color: var(--sub); text-align: center; line-height: 1.3; }
+.sets-hint.need { color: #f6b93b; font-weight: 700; }
+.sets-hint.ok { color: #22c55e; font-weight: 700; }
+.sets-hint.bad { color: #ef3d4e; font-weight: 700; }
+.sets-box.sets-wide { max-width: 420px; }
+
+/* ---------- Lisibilité générale ---------- */
+html { -webkit-text-size-adjust: 100%; }
+body { line-height: 1.55; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+::selection { background: rgba(34,197,94,.35); }
+h1, h2, h3 { text-wrap: balance; }
+input, select, textarea { min-height: 42px; font-size: .95rem; }
+textarea { line-height: 1.5; }
+input::placeholder, textarea::placeholder { opacity: .55; }
+input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 3px rgba(79,143,209,.25); }
+button, a, summary { -webkit-tap-highlight-color: transparent; }
+button:not(:disabled) { transition: transform .15s ease, background-color .2s, border-color .2s, box-shadow .2s, filter .2s; }
+button:not(:disabled):active { transform: translateY(1px); }
+.card { border-radius: 16px; box-shadow: 0 14px 34px -22px rgba(0,0,0,.6); }
+h2 { letter-spacing: .01em; }
+li { line-height: 1.5; }
+table th { white-space: nowrap; }
+
+.tab-content.active, .spec-panel.active, .subview.active { animation: bsFade .35s cubic-bezier(.16,1,.3,1); }
+@keyframes bsFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* Barres d'onglets collantes (admin, mon espace) : toujours accessibles */
+.nav-tabs { position: sticky; top: 0; z-index: 30; padding: 10px 0; margin-top: -4px; background: color-mix(in srgb, var(--bg, #0a1120) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.nav-tabs button { white-space: nowrap; font-weight: 700; }
+
+/* Barres de défilement discrètes */
+* { scrollbar-width: thin; scrollbar-color: #3a4a6e transparent; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb { background: #3a4a6e; border-radius: 9px; }
+
+@media (max-width: 600px) {
+    body { padding-left: 12px; padding-right: 12px; }
+    input, select, textarea { font-size: 16px; }
+    .card { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .tab-content.active, .spec-panel.active, .subview.active { animation: none; } }
+
+/* Lignes surlignées : espacement */
+.joueur-convocation-row.hl, .player-item.hl { padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; }
+.si-chip.hl { border-radius: 999px; }
+.si-fm-score .sets-box { max-width: 100%; }
+.si-fm-score .sets-hint { font-size: .66rem; }

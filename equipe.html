@@ -304,6 +304,8 @@
     table.st.st-mini { min-width: 520px; }
     table.st.st-players { min-width: 480px; }
 </style>
+<link rel="stylesheet" href="badsmash-ui.css">
+<script src="badsmash-ui.js"></script>
 </head>
 <body>
 <!-- ===== BADSMASH — Décor : volants flottants ===== -->
@@ -512,7 +514,7 @@
         const playersHtml = players.length ? `<div class="st-wrap"><table class="st st-players">
             <colgroup><col><col style="width:78px"><col style="width:48px"><col style="width:48px"><col style="width:170px"></colgroup>
             <thead><tr><th class="l">Joueur</th><th>Matchs</th><th>V</th><th>D</th><th class="l">Taux de victoire</th></tr></thead>
-            <tbody>${players.map(p => `<tr>
+            <tbody>${players.map(p => `<tr class="hl ${BS.gClass(dbJoueurs[p.id])}">
                 <td class="l"><span class="st-team-name">${escapeHtml(specPlayerName(p.id))}</span></td>
                 <td>${p.played}</td><td>${p.wins}</td><td>${p.losses}</td>
                 <td class="l">${p.pct === null ? '<span style="color: var(--chalk-dim);">—</span>'
@@ -535,7 +537,7 @@
             </div>
             <section>
                 <div class="card"><h3 class="sub-title">Rencontres &amp; résultats</h3>${meetsHtml}</div>
-                <div class="card"><h3 class="sub-title">Joueurs (${players.length})</h3>${playersHtml}</div>
+                <div class="card"><h3 class="sub-title">Joueurs (${players.length})</h3><div style="margin:-4px 0 10px">${BS.legend()}</div>${playersHtml}</div>
             </section>`;
     }
 </script>
