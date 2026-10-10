@@ -269,6 +269,30 @@
     .st-panel .st-wrap { background: var(--card); }
     .st-loc { display: inline-block; min-width: 34px; margin-right: 8px; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--line);
         font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--chalk-dim); text-align: center; }
+    .meet-row { cursor: pointer; }
+    .meet-row:hover { background: rgba(34, 197, 94, .06) !important; }
+    .meet-row.open { background: rgba(34, 197, 94, .08); }
+    .meet-caret { display: inline-block; width: 16px; color: var(--chalk-dim); transition: transform .2s; }
+    .meet-row.open .meet-caret { transform: rotate(90deg); color: var(--court-green); }
+    .meet-detail > td { padding: 0 !important; text-align: left; overflow: visible; }
+    .md-panel { padding: 14px; background: var(--card-raised); border-bottom: 1px solid var(--line-soft); }
+    .md-head { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; text-align: center; }
+    .md-team { font-weight: 800; font-size: .92rem; }
+    .md-total { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 1.5rem; color: var(--court-green); }
+    .md-slot { display: grid; grid-template-columns: 60px 1fr auto 1fr; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--line-soft); border-radius: 10px; background: var(--card); margin-bottom: 8px; }
+    .md-code { font-weight: 800; color: var(--court-green); font-size: .85rem; }
+    .md-code small { display: block; color: var(--chalk-dim); font-weight: 600; font-size: .62rem; }
+    .md-side { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; min-width: 0; padding: 4px 6px; border-radius: 8px; }
+    .md-side.ext { align-items: flex-end; }
+    .md-side.win { background: rgba(34, 197, 94, .10); box-shadow: inset 0 0 0 1px rgba(34, 197, 94, .45); }
+    .md-side .none { color: var(--chalk-dim); font-style: italic; font-size: .82rem; }
+    .md-mid { text-align: center; min-width: 120px; }
+    .md-sets { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
+    .md-set { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: .82rem; padding: 3px 7px; border-radius: 6px; border: 1px solid var(--line); background: var(--card-raised); }
+    .md-set.lose { opacity: .75; }
+    .md-trophy { font-size: .68rem; color: var(--court-green); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
+    .md-empty { color: var(--chalk-dim); text-align: center; padding: 10px; }
+    @media (max-width: 640px) { .md-slot { grid-template-columns: 1fr; } .md-side, .md-side.ext { align-items: flex-start; } .md-mid { text-align: left; } .md-sets { justify-content: flex-start; } }
     .st-sc { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
     .st-badge { display: inline-block; min-width: 54px; padding: 2px 8px; border-radius: 99px; font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
     .st-badge.v { background: rgba(34, 197, 94, .15); color: var(--court-green); }
@@ -423,6 +447,44 @@
         return j ? `${(j.nom || '').toUpperCase()} ${j.prenom || ''}`.trim() : '';
     }
 
+    const SLOT_LABELS = { SH1: 'Simple Homme 1', SH2: 'Simple Homme 2', SD1: 'Simple Dame 1', SD2: 'Simple Dame 2', DH: 'Double Hommes', DD: 'Double Dames', MIX1: 'Double Mixte 1', MIX2: 'Double Mixte 2' };
+    const SLOT_ORDER = Object.keys(SLOT_LABELS);
+    let openMeet = null;
+
+    function specSideHtml(ids) {
+        const list = specList(ids).filter(Boolean);
+        if (!list.length) return '<span class="none">Non renseigné</span>';
+        return list.map(id => BS.chip(specPlayerName(id) || '?', dbJoueurs[id])).join('');
+    }
+
+    function specMeetDetail(serie, id) {
+        const m = (serie.matches || {})[id] || {};
+        const [dom, ext] = String(m.teams || '').split(' — ');
+        const feuille = (serie.feuilles || {})[id] || {};
+        const sc = specScore(feuille);
+        const codes = SLOT_ORDER.concat(Object.keys(feuille).filter(c => !SLOT_ORDER.includes(c)));
+        const slots = codes.filter(c => feuille[c]).map(code => {
+            const d = feuille[code];
+            const sets = BS.splitScore(d.score);
+            const setsHtml = sets.filter(Boolean).map(st => {
+                const pr = BS.parseSet(st);
+                const domWon = pr && pr !== 'bad' && pr.a > pr.b;
+                return `<span class="md-set ${pr && pr !== 'bad' && ((d.vainqueur === 'dom') !== domWon) ? 'lose' : ''}">${escapeHtml(st)}</span>`;
+            }).join('') || '<span class="md-set">—</span>';
+            const winner = d.vainqueur === 'dom' ? dom : d.vainqueur === 'ext' ? ext : '';
+            return `<div class="md-slot">
+                <div class="md-code">${escapeHtml(code)}<small>${escapeHtml(SLOT_LABELS[code] || '')}</small></div>
+                <div class="md-side dom ${d.vainqueur === 'dom' ? 'win' : ''}">${specSideHtml(d.domIds)}</div>
+                <div class="md-mid"><div class="md-sets">${setsHtml}</div>${winner ? `<div class="md-trophy">🏆 ${escapeHtml(winner)}</div>` : ''}</div>
+                <div class="md-side ext ${d.vainqueur === 'ext' ? 'win' : ''}">${specSideHtml(d.extIds)}</div>
+            </div>`;
+        }).join('');
+        return `<div class="md-panel">
+            <div class="md-head"><span class="md-team">${escapeHtml(dom || '')}</span><span class="md-total">${sc.ok ? `${sc.a} — ${sc.b}` : '— —'}</span><span class="md-team">${escapeHtml(ext || '')}</span></div>
+            ${slots || '<div class="md-empty">La feuille de match n\'a pas encore été saisie pour cette rencontre.</div>'}
+        </div>`;
+    }
+
     function specTeamMatches(serie, t) {
         const out = [];
         Object.keys(serie.matches || {}).forEach(id => {
@@ -502,12 +564,12 @@
         const meetsHtml = meets.length ? `<div class="st-wrap"><table class="st st-mini">
             <colgroup><col style="width:112px"><col><col style="width:84px"><col style="width:96px"></colgroup>
             <thead><tr><th class="l">Date</th><th class="l">Adversaire</th><th>Score</th><th>Résultat</th></tr></thead>
-            <tbody>${meets.map(x => `<tr>
-                <td class="l">${escapeHtml(specFmtDate(x.m.date))}${x.m.heure ? `<span class="st-small">${escapeHtml(x.m.heure)}</span>` : ''}</td>
+            <tbody>${meets.map(x => `<tr class="meet-row ${openMeet === x.id ? 'open' : ''}" data-meet="${escapeHtml(x.id)}" tabindex="0" title="Voir le détail de la rencontre">
+                <td class="l"><span class="meet-caret">▸</span>${escapeHtml(specFmtDate(x.m.date))}${x.m.heure ? `<span class="st-small">${escapeHtml(x.m.heure)}</span>` : ''}</td>
                 <td class="l"><span class="st-loc">${x.isHome ? 'Dom.' : 'Ext.'}</span>${escapeHtml(x.opp || '')}${x.m.lieu ? `<span class="st-small">📍 ${escapeHtml(x.m.lieu)}</span>` : ''}</td>
                 <td class="st-sc">${x.sc.ok ? `${x.own} — ${x.other}` : '—'}</td>
                 <td>${badge(x)}</td>
-            </tr>`).join('')}</tbody>
+            </tr>${openMeet === x.id ? `<tr class="meet-detail"><td colspan="4">${specMeetDetail(serie, x.id)}</td></tr>` : ''}`).join('')}</tbody>
         </table></div>` : '<div class="empty-state">Aucune rencontre programmée pour cette équipe.</div>';
 
         const players = specTeamPlayers(serie, team);
@@ -536,9 +598,15 @@
                 <div class="team-stat pts"><b>${r.pts}</b><span>Points</span></div>
             </div>
             <section>
-                <div class="card"><h3 class="sub-title">Rencontres &amp; résultats</h3>${meetsHtml}</div>
+                <div class="card"><h3 class="sub-title">Rencontres &amp; résultats</h3><p style="color:var(--chalk-dim);font-size:.8rem;margin:-4px 0 10px">Touchez une rencontre pour voir le détail des 8 matchs.</p>${meetsHtml}</div>
                 <div class="card"><h3 class="sub-title">Joueurs (${players.length})</h3><div style="margin:-4px 0 10px">${BS.legend()}</div>${playersHtml}</div>
             </section>`;
+
+        root.querySelectorAll('.meet-row').forEach(tr => {
+            const toggle = () => { openMeet = openMeet === tr.dataset.meet ? null : tr.dataset.meet; render(); };
+            tr.addEventListener('click', toggle);
+            tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+        });
     }
 </script>
 
