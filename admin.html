@@ -537,6 +537,7 @@
     </style>
 <link rel="stylesheet" href="badsmash-ui.css">
 <script src="badsmash-ui.js"></script>
+<script src="badsmash-import.js"></script>
 </head>
 <body>
 <!-- ===== BADSMASH — Décor : volants flottants ===== -->
@@ -3543,6 +3544,9 @@
             matchTableauTypeSelect.dispatchEvent(new Event('change'));
         });
     });
+
+    // --- Pont vers badsmash-import.js (onglet Import) ---
+    window.BSImport = { db, ref, push, update, regions: CL_REGIONS, caches: () => ({ joueurs: cacheJoueurs, clubs: cacheClubs, tournois: cacheTournois, matchs: cacheMatchs }) };
 </script>
 
 <script>
